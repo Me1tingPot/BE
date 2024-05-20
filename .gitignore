@@ -52,7 +52,7 @@ out/
 .idea/**/dbnavigator.xml
 
 ### Gradle ###
-.gradle
+.gradle/
 build/
 
 # Gradle
