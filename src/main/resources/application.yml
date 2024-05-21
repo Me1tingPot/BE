@@ -1,0 +1,4 @@
+spring:
+  data:
+    couchbase:
+      field-naming-strategy:
