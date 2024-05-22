@@ -9,7 +9,7 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
-public class CommunityImage extends BaseEntity {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +20,12 @@ public class CommunityImage extends BaseEntity {
     private String imageURl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Community community;
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

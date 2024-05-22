@@ -4,8 +4,6 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
-import meltingpot.server.domain.entity.enums.Type;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,31 +13,28 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
-public class Community extends BaseEntity {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "community_id")
+    @Column(name = "question_id")
     private Long id;
 
     private String title;
 
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private Type type;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "Question")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community")
-    private List<CommunityImage> communityImages = new ArrayList<>();
+    @OneToMany(mappedBy = "Question")
+    private List<Image> Images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "Question")
     private List<Report> reports = new ArrayList<>();
 
 }
