@@ -3,36 +3,36 @@ package meltingpot.server.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-public class SwaggerConfig {
+@Configuration    // 스프링 실행시 설정파일 읽어드리기 위한 어노테이션
+@Slf4j
+public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
-    public OpenAPI meltingPotAPI() {
-        Info info = new Info().title("meltingPot API").description("meltingPot API 명세서").version("0.0.1");
-
-        String jwtSchemeName = "JWT TOKEN";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
-
-        Components components =
-                new Components()
-                        .addSecuritySchemes(
-                                jwtSchemeName,
-                                new SecurityScheme()
-                                        .name(jwtSchemeName)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("Bearer")
-                                        .bearerFormat("JWT"));
-
+    public OpenAPI openAPI() {
         return new OpenAPI()
-                .addServersItem(new Server().url("/"))
-                .info(info)
-                .addSecurityItem(securityRequirement)
-                .components(components);
+                .components(new Components())
+                .info(apiInfo());
     }
+
+    private Info apiInfo() {
+        return new Info()
+                .title("Meltingpot API 문서 ")
+                .description("멜팅팟 백엔드 API Documentation")
+                .version("1.0.0");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+
 }
