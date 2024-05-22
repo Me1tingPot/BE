@@ -4,6 +4,8 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.enums.Type;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class Post extends BaseEntity {
     private String title;
 
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
