@@ -11,7 +11,7 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ChatUser extends BaseEntity {
+public class ChatRoomUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
