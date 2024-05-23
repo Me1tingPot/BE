@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import meltingpot.server.domain.entity.User;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Chat extends BaseEntity {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,4 +25,7 @@ public class Chat extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 }
