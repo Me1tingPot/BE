@@ -18,15 +18,15 @@ public class ChatRoomQueryService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    public List<ChatRoomsGetResponse> getChatRooms() {
+    public List<ChatRoomsGetResponse> getRooms() {
         return null;
     }
 
-    public List<ChatMessagesGetResponse> getChatMessage() {
+    public List<ChatMessagesGetResponse> getMessage(Long chatroomId, int page, int size) {
         return null;
     }
 
-    public ChatRoomDetailGetResponse getChatRoomDetail() {
+    public ChatRoomDetailGetResponse getRoomDetail(Long chatroomId) {
         return null;
     }
 }
