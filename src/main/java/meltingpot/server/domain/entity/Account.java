@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import jakarta.validation.constraints.NotNull;
+import meltingpot.server.domain.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -23,20 +24,21 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Entity
-public class User {
+public class Account extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "account_id")
     private Long id;
 
+    // 스프링 시큐리티에서 사용할 '이메일'
     @NotNull
     @Column(unique = true)
     private String username;
 
+    // 실제 사용자 이름
     @NotNull
-    @Column(unique = true)
-    private String email;
+    private String name;
 
     @NotNull
     private String password;
@@ -67,7 +69,7 @@ public class User {
 
     private LocalDateTime deleted;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL )
-    private List<UserProfileImage> profileImages = new ArrayList<>();
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
+    private List<AccountProfileImage> profileImages = new ArrayList<>();
 
 }
