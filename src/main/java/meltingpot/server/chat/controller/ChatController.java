@@ -1,7 +1,6 @@
 package meltingpot.server.chat.controller;
 
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.chat.application.service.usecase.ChatMessageCreateUseCase;
 import meltingpot.server.chat.dto.ChatMessageCreateResponse;
 import meltingpot.server.chat.dto.ChatMessageCreateRequest;
 import meltingpot.server.chat.service.ChatService;
