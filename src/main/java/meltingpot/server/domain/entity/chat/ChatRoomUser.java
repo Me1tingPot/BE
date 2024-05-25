@@ -14,6 +14,7 @@ import static meltingpot.server.domain.entity.chat.enums.Alarm.ON;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "chat_room_user")
 public class ChatRoomUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

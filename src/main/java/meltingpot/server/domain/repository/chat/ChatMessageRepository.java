@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     Optional<ChatRoom> findByChatRoomChatRoomId(Long id);
-    Slice<ChatMessage> findAllByChatRoom(ChatRoom chatRoomJpaEntity, PageRequest pageRequest);
+    Slice<ChatMessage> findAllByChatRoom(ChatRoom chatRoom, PageRequest pageRequest);
 }

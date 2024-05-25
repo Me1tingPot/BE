@@ -10,7 +10,8 @@ public record ChatRoomDetailGetResponse(
     public static ChatRoomDetailGetResponse of(Party party, int userCnt) {
         return new ChatRoomDetailGetResponse(
                 // [CHECK] 프로필 이미지
-                party.getUser().getProfileImages(),
+                // party.getUser().getProfileImages(),
+                "",
                 party.getPartySubject(),
                 userCnt
         );
