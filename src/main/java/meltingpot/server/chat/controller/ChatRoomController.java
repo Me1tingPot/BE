@@ -6,6 +6,7 @@ import meltingpot.server.chat.dto.ChatMessageCreateResponse;
 import meltingpot.server.chat.dto.ChatRoomDetailGetResponse;
 import meltingpot.server.chat.dto.ChatRoomsGetResponse;
 import meltingpot.server.chat.service.ChatRoomQueryService;
+import meltingpot.server.chat.service.ChatRoomService;
 import meltingpot.server.util.ResponseData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import static meltingpot.server.util.ResponseCode.SIGNIN_SUCCESS;
 @RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomService chatRoomService;
 
     // [CHECK] /{userId}
     @GetMapping("/{userId}")
