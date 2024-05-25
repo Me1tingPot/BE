@@ -2,6 +2,7 @@ package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
+import meltingpot.server.domain.entity.User;
 import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
@@ -18,7 +19,7 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 
@@ -26,5 +27,9 @@ public class ChatRoom extends BaseEntity {
     private List<ChatRoomUser> chatRoomUserList = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private List<Chat> chatList = new ArrayList<>();
+    private List<ChatMessage> chatMessageList = new ArrayList<>();
+
+    public void createMessage(ChatMessage chatMessage){
+        chatMessageList.add(chatMessage);
+    }
 }
