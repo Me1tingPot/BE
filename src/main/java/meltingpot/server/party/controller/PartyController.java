@@ -83,6 +83,36 @@ public class PartyController {
         }
     }
 
+    @DeleteMapping("/{partyId}")
+    @Operation(summary = "파티 삭제", description = "파티 ID를 통해 특정 파티를 삭제")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "NO_CONTENT", description = "파티 삭제 성공"),
+        @ApiResponse(responseCode = "NOT_FOUND", description = "파티 정보를 찾을 수 없습니다"),
+        @ApiResponse(responseCode = "BAD_REQUEST", description = "파티 삭제 실패 (작성자가 아닌 경우 등)")
+    })
+    public ResponseEntity<ResponseData> deleteParty(@PathVariable int partyId, @CurrentUser Account user) {
+        try {
+            return ResponseData.toResponseEntity(partyService.deleteParty(user, partyId));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{partyId}")
+    @Operation(summary = "파티 수정", description = "파티 ID를 통해 특정 파티를 수정")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "NO_CONTENT", description = "파티 수정 성공"),
+        @ApiResponse(responseCode = "NOT_FOUND", description = "파티 정보를 찾을 수 없습니다"),
+        @ApiResponse(responseCode = "BAD_REQUEST", description = "파티 수정 실패 (작성자가 아닌 경우 등)")
+    })
+    public ResponseEntity<ResponseData> updateParty(@PathVariable int partyId, @CurrentUser Account user, @RequestBody @Valid PartyCreateRequest partyCreateRequest) {
+        try {
+            return ResponseData.toResponseEntity(partyService.modifyParty(user, partyId, partyCreateRequest));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND);
+        }
+    }
+
     @GetMapping("/image-url")
     @Operation(summary = "파티 이미지 URL 생성", description = "파티 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 파티 생성시에 첨부할 수 있습니다.")
     @ApiResponses(value = {

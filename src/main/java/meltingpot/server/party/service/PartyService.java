@@ -6,9 +6,7 @@ import meltingpot.server.domain.entity.party.*;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 import meltingpot.server.domain.repository.AreaRepository;
-import meltingpot.server.domain.repository.party.PartyParticipantRepository;
-import meltingpot.server.domain.repository.party.PartyReportRepository;
-import meltingpot.server.domain.repository.party.PartyRepository;
+import meltingpot.server.domain.repository.party.*;
 import meltingpot.server.party.dto.PartyCreateRequest;
 import meltingpot.server.party.dto.PartyReportRequest;
 import meltingpot.server.party.dto.PartyResponse;
@@ -33,6 +31,8 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyParticipantRepository partyParticipantRepository;
     private final PartyReportRepository partyReportRepository;
+    private final PartyImageRepository partyImageRepository;
+    private final PartyContentRepository partyContentRepository;
 
     private final FileService fileService;
     private final AreaRepository areaRepository;
@@ -160,5 +160,79 @@ public class PartyService {
         partyRepository.save(party);
 
         return PartyResponse.of(party);
+    }
+
+    @Transactional
+    public ResponseCode modifyParty(Account user, int partyId, PartyCreateRequest partyCreateRequest) {
+        Party party = partyRepository.findById(partyId).orElseThrow();
+
+        if (!party.getAccount().equals(user)) {
+            return ResponseCode.PARTY_MODIFY_NOT_OWNER;
+        }
+
+        if (party.getPartyStatus() == PartyStatus.TEMP_SAVED) {
+            throw new NoSuchElementException();
+        }
+
+        // Todo: 입력값 검증
+        if (partyCreateRequest.startTime() != null) {
+            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(partyCreateRequest.startTime());
+            Instant i = Instant.from(ta);
+            LocalDateTime startTime = LocalDateTime.ofInstant(i, ZoneId.systemDefault());
+
+            party.setPartyStartTime(startTime);
+        }
+        if (partyCreateRequest.locationAddress() != null) {
+            party.setPartyLocationAddress(partyCreateRequest.locationAddress());
+        }
+        if (partyCreateRequest.locationDetail() != null) {
+            party.setPartyLocationDetail(partyCreateRequest.locationDetail());
+        }
+        if (partyCreateRequest.areaId() != null) {
+            party.setPartyArea(areaRepository.findById(partyCreateRequest.areaId()).orElseThrow());
+        }
+
+        // Todo: 입력값 검증
+        if (partyCreateRequest.partyMinParticipant() != null) {
+            party.setPartyMinParticipant(partyCreateRequest.partyMinParticipant());
+        }
+        if (partyCreateRequest.partyMaxParticipant() != null) {
+            party.setPartyMaxParticipant(partyCreateRequest.partyMaxParticipant());
+        }
+
+        if (partyCreateRequest.locationIsReserved() != null) {
+            party.setPartyLocationReserved(partyCreateRequest.locationIsReserved());
+        }
+        if (partyCreateRequest.locationCanBeChanged() != null) {
+            party.setPartyLocationCanBeChanged(partyCreateRequest.locationCanBeChanged());
+        }
+        if (partyCreateRequest.subject() != null) {
+            party.setPartySubject(partyCreateRequest.subject());
+        }
+        if (partyCreateRequest.imageKey() != null) {
+            partyImageRepository.deleteAll(party.getPartyImages());
+            party.setPartyImages(partyCreateRequest.imageKey().stream().map((key) -> PartyImage.builder().partyImageUploader(user).party(party).partyImageKey(key).partyImageOriginalName("").build()).toList());
+        }
+        if (partyCreateRequest.description() != null) {
+            partyContentRepository.deleteAll(party.getPartyContents());
+            party.setPartyContents(List.of(PartyContent.builder().party(party).partyContentLang(partyCreateRequest.descriptionLanguage()).partyContent(partyCreateRequest.description()).build()));
+        }
+
+        partyRepository.save(party);
+        return ResponseCode.PARTY_MODIFY_SUCCESS;
+    }
+
+    @Transactional
+    public ResponseCode deleteParty(Account user, int partyId) {
+        Party party = partyRepository.findById(partyId).orElseThrow();
+
+        if (!party.getAccount().equals(user)) {
+            return ResponseCode.PARTY_DELETE_NOT_OWNER;
+        }
+
+        party.setPartyStatus(PartyStatus.CANCELED);
+        partyRepository.save(party);
+
+        return ResponseCode.PARTY_DELETE_SUCCESS;
     }
 }

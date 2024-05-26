@@ -17,6 +17,8 @@ public enum ResponseCode {
     PARTY_SEARCH_SUCCESS(OK, "파티 검색 성공"),
     PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
+    PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
+    PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -54,6 +56,8 @@ public enum ResponseCode {
     HOLDING_WITHDRAWAL(FORBIDDEN, "30일 이내에 탈퇴한 계정입니다"),
     SIGNOUT_FAIL_REFRESH_TOKEN(FORBIDDEN, "본인의 REFRESH 토큰으로만 로그아웃할 수 있습니다"),
     S3_OBJECT_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
+    PARTY_DELETE_NOT_OWNER(FORBIDDEN, "파티를 삭제할 권한이 없습니다"),
+    PARTY_MODIFY_NOT_OWNER(FORBIDDEN, "파티를 수정할 권한이 없습니다"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),

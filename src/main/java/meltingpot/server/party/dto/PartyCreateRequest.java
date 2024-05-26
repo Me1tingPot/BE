@@ -13,9 +13,9 @@ public record PartyCreateRequest(
     String description,
     String descriptionLanguage,
     String startTime,
-    int areaId,
-    int partyMinParticipant,
-    int partyMaxParticipant,
+    Integer areaId,
+    Integer partyMinParticipant,
+    Integer partyMaxParticipant,
     Boolean locationIsReserved,
     Boolean locationCanBeChanged,
     Boolean isTempSave
