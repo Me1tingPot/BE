@@ -39,6 +39,20 @@ public class PartyController {
         }
     }
 
+    @GetMapping("/temp-saved")
+    @Operation(summary = "임시 저장된 파티 조회", description = "사용자가 임시 저장한 파티 정보를 조회합니다. * 임시 저장된 파티는 1회만 불러올 수 있으며, 이후에는 삭제됩니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "OK", description = "임시 저장된 파티 조회 성공"),
+        @ApiResponse(responseCode = "NOT_FOUND", description = "임시 저장된 파티 정보를 찾을 수 없습니다")
+    })
+    public ResponseEntity<ResponseData<PartyResponse>> getTempSavedParty(@CurrentUser Account user) {
+        try {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_FETCH_SUCCESS, partyService.getTempSavedParty(user));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND, null);
+        }
+    }
+
     @PostMapping("/{partyId}/join")
     @Operation(summary = "파티 참여", description = "파티 ID를 통해 특정 파티에 참여")
     @ApiResponses(value = {

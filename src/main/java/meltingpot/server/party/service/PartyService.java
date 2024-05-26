@@ -148,4 +148,17 @@ public class PartyService {
 
         return ResponseCode.PARTY_CREATE_SUCCESS;
     }
+
+    @Transactional
+    public PartyResponse getTempSavedParty(Account user) {
+        Party party = partyRepository.findByAccountAndPartyStatus(user, PartyStatus.TEMP_SAVED);
+        if (party == null) {
+            throw new NoSuchElementException();
+        }
+
+        party.setPartyStatus(PartyStatus.CANCELED);
+        partyRepository.save(party);
+
+        return PartyResponse.of(party);
+    }
 }
