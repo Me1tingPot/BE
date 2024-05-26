@@ -33,4 +33,4 @@ jobs:
           password: ${{secrets.DEV_SSH_PASSWORD}}
           port: 22
           uploads: |
-            ./build/libs/*.war => /root/apache-tomcat-10.1.24/webapps/
+            ./build/libs/ => /root/apache-tomcat-10.1.24/webapps/
