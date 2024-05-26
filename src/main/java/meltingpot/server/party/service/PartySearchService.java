@@ -8,6 +8,7 @@ import meltingpot.server.domain.entity.party.enums.PartyTemporalFilter;
 import meltingpot.server.domain.repository.AreaRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.domain.specification.party.PartySpecification;
+import meltingpot.server.party.dto.PartyNearbySearchRequest;
 import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.party.dto.PartySearchRequest;
 import meltingpot.server.util.PageResponse;
@@ -27,17 +28,36 @@ public class PartySearchService {
     private final AreaRepository areaRepository;
 
     @Transactional
+    public PageResponse<PartyResponse> searchNearbyParty(PartyNearbySearchRequest partyNearbySearchRequest) {
+        Area area = areaRepository.findById(partyNearbySearchRequest.areaId()).orElseThrow();
+        int searchTargetArea;
+
+        if (area.getAreaParent() != null) {
+            searchTargetArea = area.getAreaParent().getId();
+        } else {
+            searchTargetArea = area.getId();
+        }
+
+        PartySearchRequest partySearchRequest = PartySearchRequest.builder()
+            .areaIdFilter(searchTargetArea)
+            .statusFilter(PartyStatus.RECRUIT_OPEN.name())
+            .query("")
+            .build();
+
+        return searchParty(partySearchRequest);
+    }
+
+    @Transactional
     public PageResponse<PartyResponse> searchParty(PartySearchRequest partySearchRequest) {
         String query = partySearchRequest.query();
+        Specification<Party> spec;
         if (query.isEmpty()) {
-            query = "";
-        }
-
-        if (query.length() < 2 || query.length() > 30) {
+            spec = Specification.where(PartySpecification.containingSubject(query));
+        } else if (query.length() < 2 || query.length() > 30) {
             throw new IllegalArgumentException("검색어는 2자 이상 30자 이하로 입력해주세요.");
+        } else {
+            spec = Specification.where(PartySpecification.containingAddress(query).or(PartySpecification.containingSubject(query).or(PartySpecification.containingOwner(query))));
         }
-
-        Specification<Party> spec = Specification.where(PartySpecification.containingAddress(query).or(PartySpecification.containingSubject(query).or(PartySpecification.containingOwner(query))));
 
         if (partySearchRequest.areaIdFilter() != null) {
             ArrayList<Area> targetAreas = new ArrayList<>();

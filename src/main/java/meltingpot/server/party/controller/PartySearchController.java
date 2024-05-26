@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import meltingpot.server.party.dto.PartyNearbySearchRequest;
 import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.party.dto.PartySearchRequest;
 import meltingpot.server.party.service.PartySearchService;
@@ -33,6 +34,24 @@ public class PartySearchController {
     ) {
         try {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_SUCCESS, partySearchService.searchParty(partySearchRequest));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_FAIL, null);
+        } catch (IllegalArgumentException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_INVALID_QUERY, null);
+        }
+    }
+
+    @PostMapping("/nearby")
+    @Operation(summary = "내 주변 파티 검색", description = "사용자의 위치를 기반으로 주변 파티를 검색합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "OK", description = "내 주변 파티 검색 성공"),
+        @ApiResponse(responseCode = "BAD_REQUEST", description = "내 주변 파티 검색 실패")
+    })
+    public ResponseEntity<ResponseData<PageResponse<PartyResponse>>> searchNearbyParty(
+        @RequestBody @Valid PartyNearbySearchRequest partyNearbySearchRequest
+    ) {
+        try {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_SUCCESS, partySearchService.searchNearbyParty(partyNearbySearchRequest));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_FAIL, null);
         } catch (IllegalArgumentException e) {
