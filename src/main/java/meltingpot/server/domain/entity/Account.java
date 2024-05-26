@@ -68,4 +68,10 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
     private List<AccountProfileImage> profileImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "account")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Post> posts = new ArrayList<>();
+
 }
