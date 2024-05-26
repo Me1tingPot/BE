@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import meltingpot.server.domain.entity.common.BaseEntity;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class AccountProfileImage {
+public class AccountProfileImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +23,6 @@ public class AccountProfileImage {
 
     @NotNull
     private String imageKey;
-
-    @NotNull
-    private LocalDateTime created;
-
-    @NotNull
-    private LocalDateTime updated;
-
-    private LocalDateTime deleted;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

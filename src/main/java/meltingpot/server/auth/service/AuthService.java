@@ -41,7 +41,7 @@ public class AuthService implements UserDetailsService {
     // 로그인 유저 정보 반환 to @CurrentUser
     @Transactional(readOnly = true)
     public Account getUserInfo(){
-        return accountRepository.findByUsernameAndDeletedIsNull(SecurityUtil.getCurrentUserName())
+        return accountRepository.findByUsernameAndDeletedAtIsNull(SecurityUtil.getCurrentUserName())
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
     }
 
