@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostImageDto {
+public class PostImageDTO {
     @JsonProperty("id")
     private Long id;
 
