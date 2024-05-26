@@ -15,6 +15,7 @@ public enum ResponseCode {
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
     PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
     PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
+    AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
