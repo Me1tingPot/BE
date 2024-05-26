@@ -25,6 +25,9 @@ public class AccountProfileImage extends BaseEntity {
     private String imageKey;
 
     @NotNull
+    private boolean is_thumbnail;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
