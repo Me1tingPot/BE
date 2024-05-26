@@ -2,7 +2,7 @@ name: Build and Deploy with Gradle
 
 on:
   push:
-    branches: [ "develop", "feature/#34" ]
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -33,7 +33,7 @@ jobs:
           password: ${{secrets.DEV_SSH_PASSWORD}}
           port: 22
           uploads: |
-            ./build/libs/ => /root/apache-tomcat-10.1.24/webapps/
+            ./build/libs/ => /root/apache-tomcat-10.1.24/build-target/
 
       - name: Change old WAR to new WAR
         uses: appleboy/ssh-action@v1.0.3
@@ -45,4 +45,4 @@ jobs:
           script: |
             cd /root/apache-tomcat-10.1.24/webapps/
             rm -rf server server.war
-            mv meltingpot.war server.war
+            mv ../build-target/meltingpot.war server.war
