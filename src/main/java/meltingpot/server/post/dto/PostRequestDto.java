@@ -13,6 +13,6 @@ public class PostRequestDto {
         private String title;
         private String content;
         private PostType postType;
-        private List<PostImage> postImageList;
+//        private List<PostImage> postImageList;
     }
 }

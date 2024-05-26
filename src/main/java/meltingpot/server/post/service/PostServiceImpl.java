@@ -32,21 +32,21 @@ public class PostServiceImpl implements PostService {
     private final AmazonS3Manager s3Manager;
 
     @Override
-    public void createPost(Long accountId,PostRequestDto.CreatePostDTO createPostDTO, List<MultipartFile> multipartFileList){
-        Account account = findAccountById(accountId);
+    public void createPost(PostRequestDto.CreatePostDTO createPostDTO){
+
         Post post = toPost(createPostDTO);
         Post savedPost = postRepository.save(post);
 
-        for (MultipartFile file : multipartFileList) {
-            String uuid = UUID.randomUUID().toString();
-            Uuid savedUuid = uuidRepository.save(Uuid.builder()
-                    .uuid(uuid).build());
-
-            String pictureUrl = s3Manager.uploadFile(s3Manager.generatePostKeyName(savedUuid, file.getOriginalFilename()), file);
-
-            PostImage postImage = PostImageConverter.toPostImage(savedPost, file, pictureUrl);
-            postImageRepository.save(postImage);
-        }
+//        for (MultipartFile file : multipartFileList) {
+//            String uuid = UUID.randomUUID().toString();
+//            Uuid savedUuid = uuidRepository.save(Uuid.builder()
+//                    .uuid(uuid).build());
+//
+//            String pictureUrl = s3Manager.uploadFile(s3Manager.generatePostKeyName(savedUuid, file.getOriginalFilename()), file);
+//
+//            PostImage postImage = PostImageConverter.toPostImage(savedPost, file, pictureUrl);
+//            postImageRepository.save(postImage);
+//        }
     }
 
     private Account findAccountById(Long accountId) {

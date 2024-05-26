@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PostService {
 
-    void createPost (Long AccountId,PostRequestDto.CreatePostDTO createPostDTO, List<MultipartFile> multipartFileList);
+    void createPost (PostRequestDto.CreatePostDTO createPostDTO);
     }
 
 
