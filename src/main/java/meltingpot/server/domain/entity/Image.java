@@ -24,6 +24,6 @@ public class Image extends BaseEntity {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "user_id")
     private Account account;
 }

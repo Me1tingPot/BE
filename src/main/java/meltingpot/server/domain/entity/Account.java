@@ -1,16 +1,24 @@
 package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.enums.Gender;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -40,7 +48,9 @@ public class Account extends BaseEntity {
     private String password;
 
     @NotNull
-    private enum gender{ male, female, unknown };
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @NotNull
     private LocalDate birth;
@@ -67,5 +77,14 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
     private List<AccountProfileImage> profileImages = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "account")
+    private List<AccountRole> accountRoles = new ArrayList<>();
+
+    public List<String> toAuthStringList() {
+        return accountRoles.stream().map(a -> a.getRole().getAuthority())
+                .collect(Collectors.toList());
+    }
 
 }

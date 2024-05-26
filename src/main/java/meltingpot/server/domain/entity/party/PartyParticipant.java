@@ -24,7 +24,7 @@ public class PartyParticipant extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "user_id")
     private Account account;
 
     @NotNull
