@@ -63,12 +63,12 @@ public class Account extends BaseEntity {
     private String city;
 
     @NotNull
-    private LocalDateTime created;
+    private LocalDateTime createdAt;
 
     @NotNull
-    private LocalDateTime updated;
+    private LocalDateTime updatedAt;
 
-    private LocalDateTime deleted;
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
     private List<AccountProfileImage> profileImages = new ArrayList<>();

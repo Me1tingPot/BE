@@ -10,5 +10,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @EntityGraph(attributePaths = {"accountRoles"})
     Optional<Account> findByUsername(String name);
 
-    Optional<Account> findByUsernameAndDeletedIsNull(String currentUserName);
+    Optional<Account> findByUsernameAndDeletedAtIsNull(String currentUserName);
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import meltingpot.server.domain.entity.common.BaseEntity;
 
 @Getter
 @Builder
@@ -12,7 +13,7 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @Entity
 @IdClass(AccountRoleId.class)
-public class AccountRole {
+public class AccountRole extends BaseEntity {
 
     @Id
     @ManyToOne
