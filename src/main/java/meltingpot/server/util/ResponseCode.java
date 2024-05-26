@@ -13,6 +13,7 @@ public enum ResponseCode {
     SIGNIN_SUCCESS(OK, "로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
+    PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -42,6 +43,7 @@ public enum ResponseCode {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
+    PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

@@ -21,7 +21,7 @@ public class Party extends BaseEntity {
     private int id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "party_owner")
     private Account account;
 
@@ -58,5 +58,9 @@ public class Party extends BaseEntity {
     private int partyMinParticipant;
 
     @NotNull
-    private int partMaxParticipant;
+    private int partyMaxParticipant;
+
+    @NotNull
+    @Column(name = "part_max_participant", nullable = false)
+    private Integer partMaxParticipant;
 }
