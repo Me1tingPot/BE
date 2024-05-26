@@ -46,3 +46,4 @@ jobs:
             cd /root/apache-tomcat-10.1.24/webapps/
             rm -rf server server.war
             mv ../build-target/meltingpot.war server.war
+            service tomcat restart
