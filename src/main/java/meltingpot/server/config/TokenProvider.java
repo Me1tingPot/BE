@@ -163,11 +163,15 @@ public class TokenProvider {
             throw new InvalidTokenException(ResponseCode.INVALID_AUTH_TOKEN);
         }
 
-        // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities;
+        String[] rawAuthorities = claims.get(AUTHORITIES_KEY).toString().split(",");
+        if (rawAuthorities.length == 1 && rawAuthorities[0].isEmpty()) {
+            authorities = Collections.emptyList();
+        } else {
+            authorities = Arrays.stream(rawAuthorities)
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+        }
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);

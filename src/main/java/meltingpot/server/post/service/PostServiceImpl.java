@@ -3,7 +3,6 @@ package meltingpot.server.post.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.Post;
-import meltingpot.server.domain.entity.common.AmazonS3Manager;
 import meltingpot.server.domain.entity.common.UuidRepository;
 import meltingpot.server.domain.repository.AccountRepositroy;
 import meltingpot.server.domain.repository.PostImageRepository;
