@@ -172,10 +172,7 @@ public class TokenProvider {
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
 
-        // 유저 객체를 등록
-        Optional<Account> account = accountRepository.findByUsername(principal.getUsername());
-
-        return new UsernamePasswordAuthenticationToken(account, accessToken, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
     }
 
 
