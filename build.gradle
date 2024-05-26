@@ -41,6 +41,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'software.amazon.ion:ion-java:1.0.3'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -48,6 +50,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
 
