@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.Area;
-import meltingpot.server.domain.entity.User;
+import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.chat.ChatRoom;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
@@ -24,7 +24,7 @@ public class Party extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_owner")
-    private User user;
+    private Account account;
 
     @NotNull
     private String partySubject;

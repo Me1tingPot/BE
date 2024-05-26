@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class UserProfileImage {
+public class AccountProfileImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +34,6 @@ public class UserProfileImage {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Account account;
 
 }

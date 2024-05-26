@@ -26,7 +26,7 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalArgumentException("error"));
 
 
-        Role role = (partyRepository.findByChatRoomId(chatRoomId).getUser().getId().equals(request.userId()))
+        Role role = (partyRepository.findByChatRoomId(chatRoomId).getAccount().getId().equals(request.userId()))
                 ? Role.LEADER
                 : Role.MEMBER;
 

@@ -2,7 +2,6 @@ package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
-import meltingpot.server.domain.entity.User;
 import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.entity.common.BaseEntity;
 

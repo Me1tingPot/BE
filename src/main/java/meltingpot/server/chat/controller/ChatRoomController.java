@@ -1,6 +1,10 @@
 package meltingpot.server.chat.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.*;
 import meltingpot.server.chat.service.ChatRoomQueryService;
@@ -24,6 +28,8 @@ public class ChatRoomController {
     // [CHECK] /{userId}, PageResponse, param
     @GetMapping("/{userId}")
     @Operation(summary = "채팅방 전체 목록 조회")
+    @ApiResponse(responseCode = "100", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Parameter(name = "userId", description = "사용자 ID", required = true, example = "1")
     public ResponseEntity<ResponseData<PageResponse<List<ChatRoomsGetResponse>>>> getChatRooms(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -35,6 +41,11 @@ public class ChatRoomController {
     // [CHECK] /{userId}
     @PatchMapping("/alarm/{chatRoomId}/{userId}")
     @Operation(summary = "채팅방 알람 설정 변경")
+    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Parameters({
+            @Parameter(name = "chatRoomId", description = "채팅룸 ID", required = true, example = "1"),
+            @Parameter(name = "userId", description = "사용자 ID", required = true, example = "1")
+    })
     public ResponseEntity<ResponseData> updateAlarmStatus(
             @PathVariable Long userId,
             @PathVariable Long chatRoomId
@@ -46,6 +57,8 @@ public class ChatRoomController {
     // [CHECK] PageResponse
     @GetMapping("{chatRoomId}")
     @Operation(summary = "채팅방 채팅 내역 조회")
+    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Parameter(name = "chatRoomId", description = "채팅룸 ID", required = true, example = "1")
     public ResponseEntity<ResponseData<PageResponse<List<ChatMessageGetResponse>>>> getChatMessage(
             @PathVariable Long chatRoomId,
             @RequestParam(defaultValue = "0") int page,
@@ -59,9 +72,11 @@ public class ChatRoomController {
         return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getChatMessage(query));
     }
 
-    @GetMapping("{roomId}/detail")
+    @GetMapping("{chatRoomId}/detail")
     @Operation(summary = "채팅방 상단")
-    public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable Long roomId) {
-        return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getRoomDetail(roomId));
+    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Parameter(description = "채팅룸 ID", required = true, example = "1")
+    public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable Long chatRoomId) {
+        return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getRoomDetail(chatRoomId));
     }
 }

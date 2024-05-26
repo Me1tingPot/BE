@@ -1,11 +1,7 @@
 package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -17,17 +13,17 @@ import java.util.List;
 
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
 @Entity
-public class User {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "account_id")
     private Long id;
 
     @NotNull
@@ -67,7 +63,7 @@ public class User {
 
     private LocalDateTime deleted;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL )
-    private List<UserProfileImage> profileImages = new ArrayList<>();
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
+    private List<AccountProfileImage> profileImages = new ArrayList<>();
 
 }
