@@ -4,7 +4,7 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
-import meltingpot.server.domain.entity.enums.Type;
+import meltingpot.server.domain.entity.enums.PostType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@Setter
 public class Post extends BaseEntity {
 
     @Id
@@ -27,7 +28,7 @@ public class Post extends BaseEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private PostType postType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
@@ -36,10 +37,11 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<Image> Images = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostImage> postImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Report> reports = new ArrayList<>();
 
-}
+
+    }

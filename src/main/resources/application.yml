@@ -12,6 +12,19 @@ spring:
         use_sql_comments: true
         hbm2ddl:
           auto: update
+cloud:
+  aws:
+    s3:
+      bucket: meltingpot
+      path:
+        post : post
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
 springdoc:
   swagger-ui:
     tags-sorter: alpha

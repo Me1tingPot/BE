@@ -1,7 +1,11 @@
 package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
