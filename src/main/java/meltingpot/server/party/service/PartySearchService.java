@@ -33,7 +33,10 @@ public class PartySearchService {
             query = "";
         }
 
-        Specification<Party> spec = Specification.where(PartySpecification.containingAddress(query).or(PartySpecification.containingAddress(query).or(PartySpecification.containingAddress(query))));
+        if (query.length() < 2 || query.length() > 30) {
+            throw new IllegalArgumentException("검색어는 2자 이상 30자 이하로 입력해주세요.");
+        }
+
         Specification<Party> spec = Specification.where(PartySpecification.containingAddress(query).or(PartySpecification.containingSubject(query).or(PartySpecification.containingOwner(query))));
 
         if (partySearchRequest.areaIdFilter() != null) {

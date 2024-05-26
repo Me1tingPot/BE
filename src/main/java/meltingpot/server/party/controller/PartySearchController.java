@@ -35,6 +35,8 @@ public class PartySearchController {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_SUCCESS, partySearchService.searchParty(partySearchRequest));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_SEARCH_FAIL, null);
+        } catch (IllegalArgumentException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_INVALID_QUERY, null);
         }
     }
 }

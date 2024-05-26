@@ -36,6 +36,7 @@ public enum ResponseCode {
     PARTY_REPORT_SELF(BAD_REQUEST, "본인이 작성한 파티는 신고할 수 없습니다"),
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
+    PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
