@@ -4,6 +4,8 @@ import lombok.Builder;
 import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 
+import java.util.List;
+
 @Builder
 public record PartyResponse(
     int id,
@@ -16,7 +18,9 @@ public record PartyResponse(
     Boolean locationReserved,
     Boolean locationCanBeChanged,
     int minParticipant,
-    int maxParticipant
+    int maxParticipant,
+    List<PartyParticipantResponse> participants,
+    List<PartyContentResponse> contents
 ) {
     public static PartyResponse of(Party party) {
         return PartyResponse.builder().id(party.getId())
@@ -30,6 +34,8 @@ public record PartyResponse(
             .locationCanBeChanged(party.getPartyLocationCanBeChanged())
             .minParticipant(party.getPartyMinParticipant())
             .maxParticipant(party.getPartyMinParticipant())
+            .participants(party.getPartyParticipants().stream().map(PartyParticipantResponse::of).toList())
+            .contents(party.getPartyContents().stream().map(PartyContentResponse::of).toList())
             .build();
     }
 }

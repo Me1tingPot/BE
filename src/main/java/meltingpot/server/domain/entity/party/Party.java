@@ -9,6 +9,8 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -63,4 +65,12 @@ public class Party extends BaseEntity {
     @NotNull
     @Column(name = "part_max_participant", nullable = false)
     private Integer partMaxParticipant;
+
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<PartyContent> partyContents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<PartyParticipant> partyParticipants = new ArrayList<>();
 }
