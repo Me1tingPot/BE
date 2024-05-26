@@ -31,7 +31,7 @@ public class Post extends BaseEntity {
     private PostType postType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @OneToMany(mappedBy = "post")
@@ -45,4 +45,3 @@ public class Post extends BaseEntity {
 
 
     }
-

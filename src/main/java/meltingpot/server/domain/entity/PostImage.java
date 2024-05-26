@@ -23,6 +23,7 @@ public class PostImage extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 }
