@@ -12,6 +12,10 @@ java {
 	sourceCompatibility = '17'
 }
 
+war {
+	archiveFileName = 'server.war'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
