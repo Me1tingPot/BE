@@ -3,7 +3,7 @@ package meltingpot.server.domain.entity.party;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import meltingpot.server.domain.entity.User;
+import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 
@@ -25,7 +25,7 @@ public class PartyParticipant extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Account account;
 
     @NotNull
     @Enumerated(EnumType.STRING)

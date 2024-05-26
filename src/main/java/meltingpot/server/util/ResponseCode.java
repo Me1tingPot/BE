@@ -18,6 +18,7 @@ public enum ResponseCode {
     /* 201 CREATED : 요청 성공, 자원 생성 */
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
+    CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
 
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
@@ -37,7 +38,7 @@ public enum ResponseCode {
     BLACKLIST_MEMBER(FORBIDDEN, "접근할 수 없는 계정입니다"),
     HOLDING_WITHDRAWAL(FORBIDDEN, "30일 이내에 탈퇴한 계정입니다"),
     SIGNOUT_FAIL_REFRESH_TOKEN(FORBIDDEN, "본인의 REFRESH 토큰으로만 로그아웃할 수 있습니다"),
-
+    S3_OBJECT_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),
@@ -51,5 +52,6 @@ public enum ResponseCode {
 
     private final HttpStatus httpStatus;
     private final String detail;
+
 
 }

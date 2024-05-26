@@ -2,7 +2,7 @@ package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
-import meltingpot.server.domain.entity.User;
+import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
 @Entity
@@ -21,5 +21,5 @@ public class Chat extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Account account;
 }
