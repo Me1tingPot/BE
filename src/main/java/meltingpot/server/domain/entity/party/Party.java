@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.Area;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.chat.ChatRoom;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 
@@ -60,11 +61,8 @@ public class Party extends BaseEntity {
     private int partyMinParticipant;
 
     @NotNull
+    @Column(name = "party_max_participant", nullable = false)
     private int partyMaxParticipant;
-
-    @NotNull
-    @Column(name = "part_max_participant", nullable = false)
-    private Integer partMaxParticipant;
 
     @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @Builder.Default
@@ -73,4 +71,8 @@ public class Party extends BaseEntity {
     @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @Builder.Default
     private List<PartyParticipant> partyParticipants = new ArrayList<>();
+
+    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private ChatRoom chatRoom = null;
 }

@@ -13,7 +13,7 @@ public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
 
     public void updateAlarmStatus(Long userId, Long chatRoomId) {
-        ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUserByUserIdAndChatRoomId(userId, chatRoomId)
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUserByAccountIdAndChatRoomId(userId, chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("ChatRoomUser not found"));
         chatRoomUser.toggleAlarm();
         chatRoomUserRepository.save(chatRoomUser);
