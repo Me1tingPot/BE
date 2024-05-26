@@ -13,6 +13,8 @@ public enum ResponseCode {
     SIGNIN_SUCCESS(OK, "로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
+    PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
+    PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -25,6 +27,9 @@ public enum ResponseCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     MAIL_SEND_FAIL(BAD_REQUEST, "메일 전송 실패"),
     AUTH_NUMBER_INCORRECT(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
+    PARTY_NOT_OPEN(BAD_REQUEST, "모집중인 파티가 아닙니다"),
+    PARTY_FULL(BAD_REQUEST, "파티 인원이 가득 찼습니다"),
+    PARTY_ALREADY_JOINED(BAD_REQUEST, "이미 참여한 파티입니다"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -44,6 +49,7 @@ public enum ResponseCode {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
+    PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

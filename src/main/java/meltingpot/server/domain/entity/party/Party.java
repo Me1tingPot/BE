@@ -10,6 +10,8 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +24,7 @@ public class Party extends BaseEntity {
     private int id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "party_owner")
     private Account account;
 
@@ -59,8 +61,18 @@ public class Party extends BaseEntity {
     private int partyMinParticipant;
 
     @NotNull
-    private int partMaxParticipant;
+    @Column(name = "party_max_participant", nullable = false)
+    private int partyMaxParticipant;
 
-    @OneToOne(mappedBy = "party", cascade = CascadeType.ALL)
-    private ChatRoom chatRoom;
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<PartyContent> partyContents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<PartyParticipant> partyParticipants = new ArrayList<>();
+
+    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private ChatRoom chatRoom = null;
 }
