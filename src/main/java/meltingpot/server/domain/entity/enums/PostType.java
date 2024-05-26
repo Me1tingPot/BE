@@ -1,5 +1,5 @@
 package meltingpot.server.domain.entity.enums;
 
-public enum Type {
+public enum PostType {
     POSTING,QUESTION
 }

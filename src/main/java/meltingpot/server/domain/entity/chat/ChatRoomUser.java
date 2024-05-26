@@ -11,19 +11,25 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ChatUser extends BaseEntity {
+@Table(name = "chat_room_user")
+public class ChatRoomUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_room_user_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "chat_room_alarm_status")
     private Alarm alarm;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Account account;
+    @Column(name = "account_id")
+    private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+
+    public void toggleAlarm() {
+        this.alarm = this.alarm.toggle();
+    }
 }

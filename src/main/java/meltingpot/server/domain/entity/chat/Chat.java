@@ -20,6 +20,6 @@ public class Chat extends BaseEntity {
     private ChatRoom chatRoom;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "account_id")
     private Account account;
 }

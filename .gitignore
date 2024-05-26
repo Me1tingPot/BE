@@ -108,4 +108,6 @@ hs_err_pid*
 
 # mac
 .DS_Store
-src/main/resources/application.yml
+.idea/workspace.xml
+.idea/workspace.xml
+.idea/workspace.xml

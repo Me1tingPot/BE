@@ -13,18 +13,23 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "chat_room")
 public class ChatRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private List<ChatUser> chatUserList = new ArrayList<>();
+    private List<ChatRoomUser> chatRoomUserList = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private List<Chat> chatList = new ArrayList<>();
+    private List<ChatMessage> chatMessageList = new ArrayList<>();
+
+    public void createMessage(ChatMessage chatMessage){
+        chatMessageList.add(chatMessage);
+    }
 }
