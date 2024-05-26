@@ -1,4 +1,4 @@
-package meltingpot.server.domain;
+package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import meltingpot.server.domain.entity.User;
+import meltingpot.server.domain.entity.Account;
 
 @Getter
 @Builder
@@ -22,8 +22,8 @@ public class RefreshToken {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     private String tokenValue;
 

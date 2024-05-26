@@ -1,31 +1,27 @@
 package meltingpot.server.config;
 
-import meltingpot.server.domain.repository.RefreshTokenRepository;
-import meltingpot.server.domain.repository.UserRepository;
-import meltingpot.server.util.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.RefreshToken;
+import meltingpot.server.domain.repository.RefreshTokenRepository;
+import meltingpot.server.domain.repository.AccountRepository;
+import meltingpot.server.exception.ResourceNotFoundException;
+import meltingpot.server.util.ResponseCode;
+import meltingpot.server.util.TokenDto;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -33,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class TokenProvider {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     private static final String AUTHORITIES_KEY = "auth";
 
@@ -46,9 +42,9 @@ public class TokenProvider {
     private final Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey,
-                         RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+                         RefreshTokenRepository refreshTokenRepository, AccountRepository accountRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -69,7 +65,7 @@ public class TokenProvider {
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
 
         // Refresh Token 생성
@@ -77,7 +73,7 @@ public class TokenProvider {
                 .setSubject(authentication.getName())
                 .claim(UUID_KEY, uuid)
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
 
         return TokenDto.builder()
@@ -86,5 +82,67 @@ public class TokenProvider {
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+
+    // 재발급 TokenDto 반환
+    public TokenDto generateReissuedTokenDto(String accessToken) {
+        // accessToken에서 username 추출
+        String username = parseClaims(accessToken).getSubject();
+        // username으로 account 조회
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
+        // account에서 account_roles -> authorities로 변환
+        String authorities = account.toAuthStringList().stream().collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        String uuid = UUID.randomUUID().toString();
+
+        // Access Token 생성
+        String newAccessToken = Jwts.builder()
+                .setSubject(username)
+                .claim(AUTHORITIES_KEY, authorities)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(SignatureAlgorithm.HS512, key)
+                .compact();
+
+        // Refresh Token 생성
+        String newRefreshToken = Jwts.builder()
+                .setSubject(username)
+                .claim(UUID_KEY, uuid)
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(SignatureAlgorithm.HS512, key)
+                .compact();
+
+        return TokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(newAccessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .refreshToken(newRefreshToken)
+                .build();
+    }
+
+    // 재발급한 RefreshToken 저장
+    public void updateRefreshToken(String accessToken, String newRefreshToken) {
+        String username = parseClaims(accessToken).getSubject();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
+
+        // 재발급한 refresh token 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .account(account)
+                .tokenValue(newRefreshToken)
+                .build();
+        refreshTokenRepository.save(refreshToken);
+    }
+
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parser().setSigningKey(key).parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 }

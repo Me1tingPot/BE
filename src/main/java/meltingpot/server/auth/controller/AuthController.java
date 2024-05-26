@@ -1,13 +1,15 @@
-package meltingpot.server.user.controller;
+package meltingpot.server.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import meltingpot.server.user.controller.dto.SigninRequestDto;
-import meltingpot.server.user.controller.dto.UserResponseDto;
+import meltingpot.server.auth.controller.dto.SigninRequestDto;
+import meltingpot.server.auth.controller.dto.AccountResponseDto;
+import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.user.service.UserService;
+import meltingpot.server.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("user")
-public class UserController {
+@RequestMapping("auth")
+public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // 회원 가입
@@ -29,17 +31,20 @@ public class UserController {
 
     // 로그인
     @PostMapping("signin")
-    public ResponseEntity<ResponseData<UserResponseDto>> signin(
+    @Operation(summary="로그인", description="로그인 API 입니다.")
+    public ResponseEntity<ResponseData<AccountResponseDto>> signin(
             @RequestBody @Valid SigninRequestDto request
     ){
-
-
+        AccountResponseDto data = authService.signin(request.toServiceDto());
+        logger.info("SIGNIN_SUCCESS (200 OK) :: userId = {}, userEmail = {}",
+                data.getId(), data.getEmail());
+        return ResponseData.toResponseEntity(ResponseCode.SIGNIN_SUCCESS, data);
     }
 
 
     // 로그아웃
 
-    // 이메일 유효성 확인
+    // 이메일 인증
 
     // 비밀번호 재설정
 

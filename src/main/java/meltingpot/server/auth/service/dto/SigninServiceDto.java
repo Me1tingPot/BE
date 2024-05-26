@@ -1,4 +1,4 @@
-package meltingpot.server.user.service.dto;
+package meltingpot.server.auth.service.dto;
 
 import lombok.Builder;
 import lombok.Getter;

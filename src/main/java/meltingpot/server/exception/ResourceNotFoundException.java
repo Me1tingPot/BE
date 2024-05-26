@@ -1,4 +1,4 @@
-package meltingpot.server.Exception;
+package meltingpot.server.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
