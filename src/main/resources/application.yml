@@ -12,10 +12,24 @@ spring:
         use_sql_comments: true
         hbm2ddl:
           auto: update
+springdoc:
+  swagger-ui:
+    path: /api-docs.html
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-produces-media-type: application/json
+
+jwt:
+  header: Authorization
+  secret: ${JWT_KEY}
+  #  token-validity-in-seconds: 86400
+  token-validity-in-seconds: 1209600 # 테스트용 14일 유효기간
+
 cloud:
   aws:
     s3:
-      bucket: meltingpot
+
       path:
         post : post
     region:
@@ -25,7 +39,3 @@ cloud:
     credentials:
       accessKey: ${AWS_ACCESS_KEY}
       secretKey: ${AWS_SECRET_KEY}
-springdoc:
-  swagger-ui:
-    tags-sorter: alpha
-    operations-sorter: alpha

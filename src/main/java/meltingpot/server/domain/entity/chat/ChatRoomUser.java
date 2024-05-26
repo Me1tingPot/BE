@@ -22,9 +22,8 @@ public class ChatRoomUser extends BaseEntity {
     @Column(name = "chat_room_alarm_status")
     private Alarm alarm;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @Column(name = "account_id")
+    private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")

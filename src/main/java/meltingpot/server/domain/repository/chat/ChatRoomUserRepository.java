@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long> {
     int countChatRoomUsersByChatRoomId(Long chatRoomId);
-    Optional<ChatRoomUser> findChatRoomUserByUserIdAndChatRoomId(Long userId, Long chatRoomId);
+    Optional<ChatRoomUser> findChatRoomUserByAccountIdAndChatRoomId(Long userId, Long chatRoomId);
 }
