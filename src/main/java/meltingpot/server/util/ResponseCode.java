@@ -14,6 +14,7 @@ public enum ResponseCode {
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
     PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
+    PARTY_SEARCH_SUCCESS(OK, "파티 검색 성공"),
     PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
 
@@ -34,6 +35,7 @@ public enum ResponseCode {
     PARTY_ALREADY_JOINED(BAD_REQUEST, "이미 참여한 파티입니다"),
     PARTY_REPORT_SELF(BAD_REQUEST, "본인이 작성한 파티는 신고할 수 없습니다"),
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
+    PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
