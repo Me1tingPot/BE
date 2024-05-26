@@ -1,11 +1,7 @@
 package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
@@ -71,5 +67,11 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
     private List<AccountProfileImage> profileImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Post> posts = new ArrayList<>();
 
 }
