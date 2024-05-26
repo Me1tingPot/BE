@@ -3,10 +3,13 @@ package meltingpot.server.party.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.party.PartyParticipant;
+import meltingpot.server.domain.entity.party.PartyReport;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
 import meltingpot.server.domain.repository.party.PartyParticipantRepository;
+import meltingpot.server.domain.repository.party.PartyReportRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
+import meltingpot.server.party.dto.PartyReportRequest;
 import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.util.ResponseCode;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.NoSuchElementException;
 public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyParticipantRepository partyParticipantRepository;
+    private final PartyReportRepository partyReportRepository;
 
     @Transactional
     public PartyResponse getParty(int partyId, Account user) {
@@ -63,5 +67,32 @@ public class PartyService {
         partyParticipantRepository.save(partyParticipant);
 
         return ResponseCode.PARTY_JOIN_SUCCESS;
+    }
+
+    @Transactional
+    public ResponseCode reportParty(int partyId, Account user, PartyReportRequest partyReportRequest) {
+        Party party = partyRepository.findById(partyId).orElseThrow();
+        PartyStatus partyStatus = party.getPartyStatus();
+
+        if (party.getAccount().equals(user)) {
+            return ResponseCode.PARTY_REPORT_SELF;
+        }
+
+        if (partyStatus == PartyStatus.CANCELED || partyStatus == PartyStatus.TEMP_SAVED) {
+            return ResponseCode.PARTY_NOT_OPEN;
+        }
+
+        if (party.getPartyParticipants().stream().anyMatch((participant) -> participant.getAccount().equals(user))) {
+            return ResponseCode.PARTY_REPORT_ALREADY;
+        }
+
+        PartyReport partyReport = PartyReport.builder()
+                .party(party)
+                .account(user)
+                .reportContent(partyReportRequest.reportContent())
+                .build();
+        partyReportRepository.save(partyReport);
+
+        return ResponseCode.PARTY_REPORT_SUCCESS;
     }
 }

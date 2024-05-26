@@ -22,6 +22,7 @@ public enum ResponseCode {
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
+    PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
 
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
@@ -30,6 +31,8 @@ public enum ResponseCode {
     PARTY_NOT_OPEN(BAD_REQUEST, "모집중인 파티가 아닙니다"),
     PARTY_FULL(BAD_REQUEST, "파티 인원이 가득 찼습니다"),
     PARTY_ALREADY_JOINED(BAD_REQUEST, "이미 참여한 파티입니다"),
+    PARTY_REPORT_SELF(BAD_REQUEST, "본인이 작성한 파티는 신고할 수 없습니다"),
+    PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
