@@ -12,6 +12,10 @@ java {
 	sourceCompatibility = '17'
 }
 
+war {
+	archiveFileName = 'meltingpot.war'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
