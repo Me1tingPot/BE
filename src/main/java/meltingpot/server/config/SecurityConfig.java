@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                // 권한이 불필요한 api 권한 지정
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
@@ -43,7 +44,7 @@ public class SecurityConfig {
                 );
 
 
-
+        
         return http.build();
     }
 

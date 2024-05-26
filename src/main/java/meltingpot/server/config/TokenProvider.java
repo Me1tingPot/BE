@@ -13,10 +13,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -141,14 +138,6 @@ public class TokenProvider {
         refreshTokenRepository.save(refreshToken);
     }
 
-    private Claims parseClaims(String token) {
-        try {
-            return Jwts.parser().setSigningKey(key).parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
-    }
 
     public boolean validateToken(String token) {
         try {
@@ -183,6 +172,19 @@ public class TokenProvider {
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
+        // 유저 객체를 등록
+        Optional<Account> account = accountRepository.findByUsername(principal.getUsername());
+
+        return new UsernamePasswordAuthenticationToken(account, accessToken, authorities);
+    }
+
+
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parser().setSigningKey(key).parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 }
