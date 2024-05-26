@@ -3,8 +3,10 @@ package meltingpot.server.party.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.party.dto.PartyReportRequest;
 import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.party.service.PartyService;
 import meltingpot.server.util.CurrentUser;
@@ -45,6 +47,21 @@ public class PartyController {
     public ResponseEntity<ResponseData> joinParty(@PathVariable int partyId, @CurrentUser Account user) {
         try {
             return ResponseData.toResponseEntity(partyService.joinParty(partyId, user));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{partyId}/report")
+    @Operation(summary = "파티 신고", description = "파티 ID를 통해 특정 파티를 신고")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "CREATED", description = "파티 신고 접수 완료"),
+        @ApiResponse(responseCode = "NOT_FOUND", description = "파티 정보를 찾을 수 없습니다"),
+        @ApiResponse(responseCode = "BAD_REQUEST", description = "파티 신고 실패 (이미 신고한 파티, 작성자가 신고하는 경우 등)")
+    })
+    public ResponseEntity<ResponseData> reportParty(@PathVariable int partyId, @CurrentUser Account user, @RequestBody @Valid PartyReportRequest partyReportRequest) {
+        try {
+            return ResponseData.toResponseEntity(partyService.reportParty(partyId, user, partyReportRequest));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND);
         }
