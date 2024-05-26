@@ -15,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -64,15 +65,19 @@ public class Party extends BaseEntity {
     @Column(name = "party_max_participant", nullable = false)
     private int partyMaxParticipant;
 
-    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<PartyContent> partyContents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<PartyParticipant> partyParticipants = new ArrayList<>();
 
-    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "party", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<PartyImage> partyImages = new ArrayList<>();
+
+    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private ChatRoom chatRoom = null;
 }

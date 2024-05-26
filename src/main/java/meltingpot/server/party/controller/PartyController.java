@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.party.dto.PartyCreateRequest;
 import meltingpot.server.party.dto.PartyReportRequest;
 import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.party.service.PartyService;
 import meltingpot.server.util.CurrentUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
+import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,5 +67,24 @@ public class PartyController {
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.PARTY_NOT_FOUND);
         }
+    }
+
+    @GetMapping("/image-url")
+    @Operation(summary = "파티 이미지 URL 생성", description = "파티 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 파티 생성시에 첨부할 수 있습니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "OK", description = "파티 이미지 URL 생성 성공")
+    })
+    public ResponseEntity<ResponseData<FileUploadResponse>> createPartyImageUrl() {
+        return ResponseData.toResponseEntity(ResponseCode.IMAGE_URL_GENERATE_SUCCESS, partyService.generateImageUploadUrl());
+    }
+
+    @PostMapping("")
+    @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "CREATED", description = "파티 생성 성공"),
+        @ApiResponse(responseCode = "BAD_REQUEST", description = "파티 생성 실패")
+    })
+    public ResponseEntity<ResponseData> createParty(@CurrentUser Account user, @RequestBody @Valid PartyCreateRequest partyCreateRequest) {
+        return ResponseData.toResponseEntity(partyService.createParty(user, partyCreateRequest));
     }
 }

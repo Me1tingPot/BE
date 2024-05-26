@@ -25,6 +25,8 @@ public enum ResponseCode {
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
+    PARTY_CREATE_SUCCESS(CREATED, "파티 생성 성공"),
+    IMAGE_URL_GENERATE_SUCCESS(CREATED, "이미지 URL 생성 성공"),
 
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
