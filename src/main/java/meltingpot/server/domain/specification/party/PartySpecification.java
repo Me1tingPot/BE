@@ -21,8 +21,12 @@ public interface PartySpecification {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("partyLocationAddress"), "%" + q + "%");
     }
 
-    static Specification<Party> inArea(List<Area> q) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("partyArea").in(q));
+    static Specification<Party> areaEqual(Area q) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("partyArea"), q);
+    }
+
+    static Specification<Party> inParentArea(List<Area> q) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("partyArea").get("areaParent").in(q));
     }
 
     static Specification<Party> startInDay(Long q) {

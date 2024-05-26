@@ -41,13 +41,18 @@ public class PartySearchService {
 
         if (partySearchRequest.areaIdFilter() != null) {
             ArrayList<Area> targetAreas = new ArrayList<>();
-            Area currentArea = areaRepository.findById(partySearchRequest.areaIdFilter()).orElseThrow();
-            while (currentArea != null) {
-                targetAreas.add(currentArea);
-                currentArea = currentArea.getAreaParent();
-            }
+            Area area = areaRepository.findById(partySearchRequest.areaIdFilter()).orElseThrow();
+            targetAreas.add(area);
+            targetAreas.addAll(area.getSubAreas());
 
-            spec = spec.and(PartySpecification.inArea(targetAreas));
+            spec = spec.and(
+                PartySpecification.areaEqual(
+                    areaRepository.findById(partySearchRequest.areaIdFilter()).orElseThrow()
+                )
+                    .or(
+                        PartySpecification.inParentArea(targetAreas)
+                    )
+            );
         }
 
         if (partySearchRequest.temporalFilter() != null) {
