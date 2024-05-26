@@ -22,7 +22,6 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final UuidRepository uuidRepository;
-    private final AmazonS3Manager s3Manager;
 
     @Override
     public void createPost(PostRequestDTO.CreatePostDTO createPostDTO,Long accountId){

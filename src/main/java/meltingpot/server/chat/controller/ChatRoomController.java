@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.*;
 import meltingpot.server.chat.service.ChatRoomQueryService;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static meltingpot.server.util.ResponseCode.SIGNIN_SUCCESS;
 
+@Tag(name="API", description = "Sample API 입니다.")
 @RestController
 @RequestMapping("/api/v1/chatRooms")
 @RequiredArgsConstructor
