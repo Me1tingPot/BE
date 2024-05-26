@@ -13,7 +13,7 @@ java {
 }
 
 war {
-	archiveFileName = 'server.war'
+	archiveFileName = 'meltingpot.war'
 }
 
 configurations {
