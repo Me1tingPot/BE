@@ -2,7 +2,6 @@ package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
-import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.chat.enums.Alarm;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
@@ -22,8 +21,8 @@ public class ChatRoomUser extends BaseEntity {
     @Column(name = "chat_room_alarm_status")
     private Alarm alarm;
 
-    @Column(name = "account_id")
-    private Long accountId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
