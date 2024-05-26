@@ -1,12 +1,7 @@
 package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.enums.Gender;
@@ -86,5 +81,11 @@ public class Account extends BaseEntity {
         return accountRoles.stream().map(a -> a.getRole().getAuthority())
                 .collect(Collectors.toList());
     }
+  
+    @OneToMany(mappedBy = "account")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Post> posts = new ArrayList<>();
 
 }

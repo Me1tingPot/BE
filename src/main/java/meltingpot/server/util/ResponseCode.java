@@ -21,6 +21,7 @@ public enum ResponseCode {
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
+    CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
 
 
     /* 400 BAD_REQUEST : 잘못된 요청 */

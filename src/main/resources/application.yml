@@ -29,7 +29,7 @@ jwt:
 cloud:
   aws:
     s3:
-      bucket: meltingpot
+
       path:
         post : post
     region:
