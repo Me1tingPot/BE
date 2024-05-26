@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.enums.Gender;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -47,7 +48,9 @@ public class Account extends BaseEntity {
     private String password;
 
     @NotNull
-    private enum gender{ male, female, unknown };
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @NotNull
     private LocalDate birth;

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: root
-    password: 1234
-    url: jdbc:mysql://localhost:3306/meltingpot
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
@@ -22,7 +22,7 @@ springdoc:
 
 jwt:
   header: Authorization
-  secret: 7ZWt7ZW0OTntmZTsnbTtjIXtlZzqta3snYTrhIjrqLjshLjqs4TroZzrgpjslYTqsIDsnpDtm4zrpa3tlZzqsJzrsJzsnpDrpbzrp4zrk6TslrTqsIDsnpA=
+  secret: ${JWT_KEY}
   #  token-validity-in-seconds: 86400
   token-validity-in-seconds: 1209600 # 테스트용 14일 유효기간
 

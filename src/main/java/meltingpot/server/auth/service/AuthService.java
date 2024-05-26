@@ -1,6 +1,7 @@
 package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.entity.RefreshToken;
@@ -15,21 +16,26 @@ import meltingpot.server.util.SecurityUtil;
 import meltingpot.server.util.TokenDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
+@EnableWebSecurity
 public class AuthService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    //private final PasswordEncoder passwordEncoder;
     private static final String BEARER_HEADER = "Bearer ";
 
     // 로그인 유저 정보 반환 to @CurrentUser
