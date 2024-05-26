@@ -26,3 +26,16 @@ jwt:
   #  token-validity-in-seconds: 86400
   token-validity-in-seconds: 1209600 # 테스트용 14일 유효기간
 
+cloud:
+  aws:
+    s3:
+      bucket: meltingpot
+      path:
+        post : post
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
