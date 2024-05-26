@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a923d2ea-b23f-45b1-aea2-7bc3e96410d0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/server.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/server.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/server.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/server.test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/meltingpot/server/chat/controller/ChatRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/meltingpot/server/chat/controller/ChatRoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/meltingpot/server/config/WebSocketConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/meltingpot/server/config/WebSocketConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/meltingpot/server/domain/repository/chat/ChatMessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/meltingpot/server/domain/repository/chat/ChatMessageRepository.java" afterDir="false" />
-    </list>
+    <list default="true" id="a923d2ea-b23f-45b1-aea2-7bc3e96410d0" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -169,9 +161,9 @@
     </configuration>
     <configuration name="ServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <envs>
+        <env name="DB_PASSWORD" value="1234" />
+        <env name="DB_URL" value="jdbc:mysql://localhost:3306/meltingpot" />
         <env name="DB_USERNAME" value="root" />
-        <env name="DB_PASSWORD" value="m072715!" />
-        <env name="DB_URL" value="jdbc:mysql://localhost:3306/MeltingPot" />
       </envs>
       <module name="server.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="meltingpot.server.ServerApplication" />
@@ -180,6 +172,11 @@
           <option name="PATTERN" value="meltingpot.server.*" />
           <option name="ENABLED" value="true" />
         </pattern>
+      </extension>
+      <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+        <option name="credential" />
+        <option name="region" />
+        <option name="useCurrentConnection" value="false" />
       </extension>
       <method v="2">
         <option name="Make" enabled="true" />
