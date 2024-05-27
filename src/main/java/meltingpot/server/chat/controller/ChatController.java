@@ -1,5 +1,6 @@
 package meltingpot.server.chat.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.ChatMessageCreateResponse;
 import meltingpot.server.chat.dto.ChatMessageCreateRequest;
@@ -10,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name="chat-controller", description = "채팅 기능 API")
 @RestController
 @RequiredArgsConstructor
 public class ChatController {

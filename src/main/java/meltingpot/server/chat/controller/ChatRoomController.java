@@ -3,8 +3,8 @@ package meltingpot.server.chat.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.*;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static meltingpot.server.util.ResponseCode.SIGNIN_SUCCESS;
 
-@Tag(name="API", description = "Sample API 입니다.")
+@Tag(name="chatroom-controller", description = "채팅방 API")
 @RestController
 @RequestMapping("/api/v1/chatRooms")
 @RequiredArgsConstructor
@@ -29,8 +29,11 @@ public class ChatRoomController {
 
     // [CHECK] /{userId}, PageResponse, param
     @GetMapping("/{userId}")
-    @Operation(summary = "채팅방 전체 목록 조회")
-    @ApiResponse(responseCode = "100", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Operation(summary = "채팅방 전체 목록 조회", description = "사용자가 참여하는 전체 채팅방 조회. 파티에 참여하면 채팅방 자동으로 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "채팅방 전체 목록 조회 성공"),
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다")
+    })
     @Parameter(name = "userId", description = "사용자 ID", required = true, example = "1")
     public ResponseEntity<ResponseData<PageResponse<List<ChatRoomsGetResponse>>>> getChatRooms(
             @PathVariable Long userId,
@@ -42,8 +45,12 @@ public class ChatRoomController {
 
     // [CHECK] /{userId}
     @PatchMapping("/alarm/{chatRoomId}/{userId}")
-    @Operation(summary = "채팅방 알람 설정 변경")
-    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Operation(summary = "채팅방 알림 설정 변경", description = "채팅방 전체 목록에서 각 채팅방의 알림 (ON / OFF) 설정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "채팅방 알림 설정 변경 성공"),
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다"),
+            @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 알림 설정 변경 실패")
+    })
     @Parameters({
             @Parameter(name = "chatRoomId", description = "채팅룸 ID", required = true, example = "1"),
             @Parameter(name = "userId", description = "사용자 ID", required = true, example = "1")
@@ -58,8 +65,11 @@ public class ChatRoomController {
 
     // [CHECK] PageResponse
     @GetMapping("{chatRoomId}")
-    @Operation(summary = "채팅방 채팅 내역 조회")
-    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Operation(summary = "채팅방 채팅 내역 조회", description = "채팅방 입장 후, 채팅방 메시지 조회. (위치 고정) 좌측 : 주최자가 전송한 메세지 / 우측 : 참여자가 전송한 메세지")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "채팅방 채팅 내역 조회 성공"),
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다")
+    })
     @Parameter(name = "chatRoomId", description = "채팅룸 ID", required = true, example = "1")
     public ResponseEntity<ResponseData<PageResponse<List<ChatMessageGetResponse>>>> getChatMessage(
             @PathVariable Long chatRoomId,
@@ -75,8 +85,11 @@ public class ChatRoomController {
     }
 
     @GetMapping("{chatRoomId}/detail")
-    @Operation(summary = "채팅방 상단")
-    @ApiResponse(responseCode = "1000", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @Operation(summary = "채팅방 상단", description = "채팅방 상단 위치. 채팅방 정보")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "채팅방 상단 조회 성공"),
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다")
+    })
     @Parameter(description = "채팅룸 ID", required = true, example = "1")
     public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable Long chatRoomId) {
         return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getRoomDetail(chatRoomId));
