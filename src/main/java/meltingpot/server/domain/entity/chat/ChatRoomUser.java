@@ -1,8 +1,8 @@
 package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.chat.enums.Alarm;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
@@ -15,16 +15,18 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 public class ChatRoomUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_room_user_id")
     private Long id;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "chat_room_alarm_status")
     private Alarm alarm;
 
-    @Column(name = "account_id")
-    private Long accountId;
+    @NotNull
+    @Column(name = "user_id")
+    private Long userId;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
