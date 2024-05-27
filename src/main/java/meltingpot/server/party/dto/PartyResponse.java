@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public record PartyResponse(
     int id,
-    String ownerName,
+    PartyOwnerResponse owner,
     String subject,
     PartyStatus partyStatus,
     String startTime,
@@ -24,7 +24,7 @@ public record PartyResponse(
 ) {
     public static PartyResponse of(Party party) {
         return PartyResponse.builder().id(party.getId())
-            .ownerName(party.getAccount().getName())
+            .owner(PartyOwnerResponse.of(party.getAccount()))
             .subject(party.getPartySubject())
             .partyStatus(party.getPartyStatus())
             .startTime(party.getPartyStartTime().toString())

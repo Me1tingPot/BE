@@ -70,7 +70,7 @@ public class Account extends BaseEntity {
 
     private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AccountProfileImage> profileImages = new ArrayList<>();
 
     @Builder.Default
