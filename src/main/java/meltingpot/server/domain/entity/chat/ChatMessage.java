@@ -1,6 +1,7 @@
 package meltingpot.server.domain.entity.chat;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.chat.enums.Role;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,19 +20,24 @@ public class ChatMessage {
     @Column(name = "chat_message_id")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
-    @Column(name = "content")
+    @NotNull
     private String content;
 
+    @NotNull
     @Column(name = "user_id")
     private Long userId;
 
+    @NotNull
     @Column(name = "is_leader")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
+    @NotNull
     @CreatedDate
     private LocalDateTime createdAt;
 }
