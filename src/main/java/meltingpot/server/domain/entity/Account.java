@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.enums.Gender;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -40,7 +43,9 @@ public class Account extends BaseEntity {
     private String password;
 
     @NotNull
-    private enum gender{ male, female, unknown };
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @NotNull
     private LocalDate birth;
@@ -57,17 +62,28 @@ public class Account extends BaseEntity {
     @NotNull
     private String city;
 
-    @NotNull
-    private LocalDateTime created;
+    private String bio; // 사용자 자기소개
 
     @NotNull
-    private LocalDateTime updated;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime deleted;
+    @NotNull
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL )
+    private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AccountProfileImage> profileImages = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "account")
+    private List<AccountRole> accountRoles = new ArrayList<>();
+
+    public List<String> toAuthStringList() {
+        return accountRoles.stream().map(a -> a.getRole().getAuthority())
+                .collect(Collectors.toList());
+    }
+  
     @OneToMany(mappedBy = "account")
     private List<Comment> comments = new ArrayList<>();
 

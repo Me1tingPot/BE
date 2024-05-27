@@ -14,5 +14,32 @@ spring:
           auto: update
 springdoc:
   swagger-ui:
-    tags-sorter: alpha
-    operations-sorter: alpha
+    path: /api-docs.html
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-produces-media-type: application/json
+
+jwt:
+  header: Authorization
+  secret: ${JWT_KEY}
+  #  token-validity-in-seconds: 86400
+  token-validity-in-seconds: 1209600 # 테스트용 14일 유효기간
+
+cloud:
+  r2:
+    url: ${R2_URL}
+    accessKey: ${R2_ACCESS_KEY}
+    secretKey: ${R2_SECRET_KEY}
+    bucket: ${R2_BUCKET}
+  aws:
+    s3:
+      path:
+        post : post
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}

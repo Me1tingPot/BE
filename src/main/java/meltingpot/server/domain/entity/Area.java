@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -15,10 +17,13 @@ public class Area extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_parent_id")
     private Area areaParent;
 
+    @OneToMany(mappedBy = "areaParent", fetch = FetchType.LAZY)
+    private List<Area> subAreas;
+
     @NotNull
-    private String area_name;
+    private String areaName;
 }
