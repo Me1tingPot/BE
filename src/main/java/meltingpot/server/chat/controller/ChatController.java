@@ -15,12 +15,11 @@ import org.springframework.stereotype.Controller;
 public class ChatController {
     private final ChatService chatService;
 
-    @MessageMapping("/chat/rooms/{chatRoomId}/send")    // <- 해당 경로로 들어오면 메서드 호출
-    @SendTo("/topic/public/rooms/{chatRoomId}") // 구독 중인 장소로 메세지 전달
+    @MessageMapping("/chat/rooms/{chatRoomId}/send")
+    @SendTo("/topic/public/rooms/{chatRoomId}")
     public ChatMessageCreateResponse sendMessage(
             @DestinationVariable Long chatRoomId,
             @Payload ChatMessageCreateRequest request) {
-        ChatMessageCreateResponse response = chatService.createChatMessage(chatRoomId, request);
-        return response;
+        return chatService.createChatMessage(chatRoomId, request);
     }
 }
