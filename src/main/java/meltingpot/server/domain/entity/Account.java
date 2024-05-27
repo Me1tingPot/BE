@@ -62,7 +62,6 @@ public class Account extends BaseEntity {
     @NotNull
     private String city;
 
-    @NotNull
     private String bio; // 사용자 자기소개
 
     @NotNull
