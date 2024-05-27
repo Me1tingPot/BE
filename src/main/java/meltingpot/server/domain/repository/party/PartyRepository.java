@@ -10,4 +10,6 @@ public interface PartyRepository extends JpaRepository<Party, Integer>, JpaSpeci
     Party findByChatRoomId(Long chatRoomId);
 
     Party findByAccountAndPartyStatus(Account account, PartyStatus status);
+
+    int countByAccountAndPartyStatus(Account account, PartyStatus status);
 }
