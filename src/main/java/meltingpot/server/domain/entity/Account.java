@@ -63,6 +63,9 @@ public class Account extends BaseEntity {
     private String city;
 
     @NotNull
+    private String bio; // 사용자 자기소개
+
+    @NotNull
     private LocalDateTime createdAt;
 
     @NotNull
