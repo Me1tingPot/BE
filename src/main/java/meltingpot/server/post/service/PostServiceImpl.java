@@ -3,14 +3,21 @@ package meltingpot.server.post.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.Post;
-import meltingpot.server.domain.entity.common.UuidRepository;
+import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.repository.AccountRepositroy;
-import meltingpot.server.domain.repository.PostImageRepository;
 import meltingpot.server.domain.repository.PostRepository;
+import meltingpot.server.post.converter.PostConverter;
 import meltingpot.server.post.dto.PostRequestDTO;
+import meltingpot.server.post.dto.PostResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
+import java.util.List;
+
+import static meltingpot.server.post.converter.PostConverter.toPageDTO;
 import static meltingpot.server.post.converter.PostConverter.toPost;
 
 @Service
@@ -19,12 +26,10 @@ import static meltingpot.server.post.converter.PostConverter.toPost;
 public class PostServiceImpl implements PostService {
     private final AccountRepositroy accountRepositroy;
     private final PostRepository postRepository;
-    private final PostImageRepository postImageRepository;
-    private final UuidRepository uuidRepository;
+
 
     @Override
-    public void createPost(PostRequestDTO.CreatePostDTO createPostDTO,Long accountId){
-        Account account = findAccountById(accountId);
+    public void createPost(PostRequestDTO.CreatePostDTO createPostDTO,Account account){
         Post post = toPost(createPostDTO,account);
         postRepository.save(post);
 
@@ -40,9 +45,19 @@ public class PostServiceImpl implements PostService {
 //        }
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponseDTO.PageDTO getPostsList(PostType postType, Account account,Long cursor, Pageable pageable){
+        Page<Post> posts = postRepository.findByPostType(postType,pageable);
+       return PostConverter.toPageDTO(posts);
+    }
+
+
     private Account findAccountById(Long accountId) {
         return accountRepositroy.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
+
 }
 
