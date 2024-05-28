@@ -42,10 +42,10 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(new JwtFilter(tokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 // 권한이 불필요한 api 권한 지정
+                //TODO 개발 완료 후 permitAll 삭제
                 .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**", "/ws/*", "/api/v1/chatRooms/").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/api/v1/posts/**").permitAll()
+                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/auth/**", "/ws/**","/api/v1/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 
