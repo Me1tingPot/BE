@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.chat.dto.*;
 import meltingpot.server.chat.service.ChatRoomQueryService;
 import meltingpot.server.chat.service.ChatRoomService;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.util.CurrentUser;
 import meltingpot.server.util.PageResponse;
 import meltingpot.server.util.ResponseData;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,7 @@ public class ChatRoomController {
         return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getChatRooms());
     }
 
-    @PostMapping("/alarm/{chatRoomId}/{userId}")
+    @PostMapping("/alarm/{chatRoomId}")
     @Operation(summary = "채팅방 알림 설정 변경", description = "채팅방 전체 목록에서 각 채팅방의 알림 (ON / OFF) 설정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 알림 설정 변경 성공"),
@@ -56,10 +58,10 @@ public class ChatRoomController {
             @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 알림 설정 변경 실패")
     })
     public ResponseEntity<ResponseData> updateAlarmStatus(
-            @PathVariable("chatRoomId") Long chatRoomId,
-            @PathVariable("userId") Long userId
+            @CurrentUser Account user,
+            @PathVariable("chatRoomId") Long chatRoomId
     ) {
-        return ResponseData.toResponseEntity(chatRoomService.updateAlarmStatus(userId, chatRoomId));
+        return ResponseData.toResponseEntity(chatRoomService.updateAlarmStatus(user.getId(), chatRoomId));
     }
 
     // [CHECK] PageResponse
