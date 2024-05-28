@@ -21,6 +21,7 @@ public enum ResponseCode {
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
+    READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
