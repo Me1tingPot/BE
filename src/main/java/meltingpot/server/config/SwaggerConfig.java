@@ -2,6 +2,7 @@ package meltingpot.server.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -15,12 +16,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.Collections;
 
-@Configuration    // 스프링 실행시 설정파일 읽어드리기 위한 어노테이션
+@Configuration    // 스프링 실행시 설정파일 읽어들이기 위한 어노테이션
 @Slf4j
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public OpenAPI openAPI(){
+        Info info = new Info()
+                .title("MeltingPot API")
+                .description("Authorize value: Bearer {accessToken}\n" +
+                        "* accessToken: /auth/signin으로 로그인 후 받은 accessToken")
+                .contact(new Contact()
+                        .name("Me1tingPot Backend")
+                        .url("https://github.com/Me1tingPot/BE")
+                );
+
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER).name("Authorization");
@@ -28,14 +38,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-                .security(Arrays.asList(securityRequirement));
-    }
-
-    private Info apiInfo() {
-        return new Info()
-                .title("Meltingpot API 문서 ")
-                .description("멜팅팟 백엔드 API Documentation")
-                .version("1.0.0");
+                .security(Arrays.asList(securityRequirement))
+                .info(info);
     }
 
     @Override
