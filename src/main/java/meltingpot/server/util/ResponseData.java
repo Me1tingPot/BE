@@ -2,6 +2,8 @@ package meltingpot.server.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 @Getter
 @Builder
 @ToString
+@AllArgsConstructor
 public class ResponseData<T> {
 
     private final LocalDateTime timestamp = LocalDateTime.now();

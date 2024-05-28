@@ -19,6 +19,7 @@ public enum ResponseCode {
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
+    CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -63,6 +64,7 @@ public enum ResponseCode {
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
+    CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방 정보를 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
