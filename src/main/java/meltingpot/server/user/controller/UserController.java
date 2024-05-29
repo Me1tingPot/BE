@@ -1,5 +1,6 @@
 package meltingpot.server.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.auth.service.AuthService;
 import meltingpot.server.domain.entity.Account;
@@ -25,6 +26,7 @@ public class UserController {
 
     // 프로필 조회
     @GetMapping()
+    @Operation(summary="마이페이지", description="사용자 프로필 정보를 불러옵니다\n" )
     public ResponseEntity<ResponseData<UserResponseDto>> readProfile(@CurrentUser Account account){
         UserResponseDto data = userService.readProfile(account);
         if( account != null ){
