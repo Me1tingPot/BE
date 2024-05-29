@@ -2,6 +2,7 @@ package meltingpot.server.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import meltingpot.server.auth.controller.dto.SigninRequestDto;
 import meltingpot.server.auth.controller.dto.AccountResponseDto;
 import meltingpot.server.util.ResponseCode;
@@ -12,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import meltingpot.server.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class AuthController {
 
     // 로그인
     @PostMapping("signin")
-    @Operation(summary="로그인", description="로그인 API 입니다.")
+    @Operation(summary="로그인", description="로그인 API 입니다. 결과로 반환되는 accessToken을 복사해 Authorize에 입력해주세요\n" )
     public ResponseEntity<ResponseData<AccountResponseDto>> signin(
             @RequestBody @Valid SigninRequestDto request
     ){
@@ -43,6 +41,15 @@ public class AuthController {
 
 
     // 로그아웃
+    @GetMapping("signout")
+    @Operation(summary="로그아웃", description="로그아웃 API 입니다.\n" )
+    public ResponseEntity<ResponseData> signout(
+            @RequestParam("refresh-token") @NotBlank String refreshToken) {
+        authService.signout(refreshToken);
+        logger.info("SIGNOUT_SUCCESS (200 OK)");
+        return ResponseData.toResponseEntity(ResponseCode.SIGNOUT_SUCCESS);
+    }
+
 
     // 이메일 인증
 
