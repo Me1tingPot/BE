@@ -90,4 +90,14 @@ public class AuthService implements UserDetailsService {
 
     }
 
+    // 로그아웃
+    @Transactional(rollbackFor = Exception.class)
+    public void signout(String refreshToken) {
+        // refresh token 삭제
+        if (Boolean.FALSE.equals(refreshTokenRepository.existsByTokenValue(refreshToken))) {
+            throw new ResourceNotFoundException(ResponseCode.REFRESH_TOKEN_NOT_FOUND);
+        }
+        refreshTokenRepository.deleteByTokenValue(refreshToken);
+    }
+
 }
