@@ -23,7 +23,7 @@ public class AccountProfileImage extends BaseEntity {
     private String imageKey;
 
     @NotNull
-    private boolean isTumbnail;
+    private boolean isThumbnail;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
