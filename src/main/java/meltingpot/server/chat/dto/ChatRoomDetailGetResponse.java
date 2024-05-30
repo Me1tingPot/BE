@@ -10,7 +10,7 @@ public record ChatRoomDetailGetResponse(
 ) {
     public static ChatRoomDetailGetResponse of(Party party, int userCnt) {
         String thumbnailImageKey = party.getAccount().getProfileImages().stream()
-                .filter(AccountProfileImage::isTumbnail)
+                .filter(AccountProfileImage::isThumbnail)
                 .map(AccountProfileImage::getImageKey)
                 .findFirst()
                 .orElse(null);
