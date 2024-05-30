@@ -20,6 +20,8 @@ public enum ResponseCode {
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
+    CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
+    POST_LIST_FETCH_SUCCESS(OK,"게시글 목록 불러오기 성공"),
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
 
