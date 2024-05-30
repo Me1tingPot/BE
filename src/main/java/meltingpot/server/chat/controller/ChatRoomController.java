@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static meltingpot.server.util.ResponseCode.CHAT_DETAIL_GET_SUCCESS;
 import static meltingpot.server.util.ResponseCode.SIGNIN_SUCCESS;
 
 @Slf4j
@@ -88,9 +89,10 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 상단", description = "채팅방 상단 위치. 채팅방 정보")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 상단 조회 성공"),
-            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다")
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다"),
+            @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 상단 조회 실패")
     })
-    public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable Long chatRoomId) {
-        return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getRoomDetail(chatRoomId));
+    public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable("chatRoomId") Long chatRoomId) {
+        return ResponseData.toResponseEntity(CHAT_DETAIL_GET_SUCCESS, chatRoomQueryService.getRoomDetail(chatRoomId));
     }
 }

@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @NoArgsConstructor
@@ -25,7 +23,7 @@ public class AccountProfileImage extends BaseEntity {
     private String imageKey;
 
     @NotNull
-    private boolean is_thumbnail;
+    private boolean isTumbnail;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

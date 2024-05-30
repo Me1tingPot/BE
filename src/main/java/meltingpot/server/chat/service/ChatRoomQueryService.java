@@ -11,6 +11,7 @@ import meltingpot.server.domain.repository.chat.ChatMessageRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomUserRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
+import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.util.PageResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +32,8 @@ public class ChatRoomQueryService {
     private final PartyRepository partyRepository;
 
     public ChatRoomDetailGetResponse getRoomDetail(Long chatRoomId) {
-        Party party = partyRepository.findByChatRoomId(chatRoomId);
+        Party party = partyRepository.findByChatRoomId(chatRoomId)
+                .orElseThrow(() -> new ResourceNotFoundException(PARTY_NOT_FOUND));
         return ChatRoomDetailGetResponse.of(party, chatRoomUserRepository.countChatRoomUsersByChatRoomId(chatRoomId));
     }
 
@@ -45,6 +49,7 @@ public class ChatRoomQueryService {
         return null;
     }
 
+    // [CHECK]
     public PageResponse<List<ChatRoomsGetResponse>> getChatRooms() {
         return null;
     }
