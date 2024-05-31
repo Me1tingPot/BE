@@ -28,7 +28,6 @@ import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatRoomQueryService {
-    private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final PartyRepository partyRepository;
@@ -36,7 +35,7 @@ public class ChatRoomQueryService {
     public ChatRoomDetailGetResponse getRoomDetail(Long chatRoomId) {
         Party party = partyRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new ResourceNotFoundException(PARTY_NOT_FOUND));
-        return ChatRoomDetailGetResponse.of(party, chatRoomUserRepository.countChatRoomUsersByChatRoomId(chatRoomId));
+        return ChatRoomDetailGetResponse.from(party);
     }
 
     // [CHECK] 1. slice or page or list 2. PageResponse api
