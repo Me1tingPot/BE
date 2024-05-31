@@ -25,6 +25,7 @@ import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatRoomQueryService {
+    private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final PartyRepository partyRepository;
