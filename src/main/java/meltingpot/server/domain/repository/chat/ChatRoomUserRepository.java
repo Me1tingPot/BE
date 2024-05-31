@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long> {
-    int countChatRoomUsersByChatRoomId(Long chatRoomId);
     Optional<ChatRoomUser> findChatRoomUserByUserIdAndChatRoomId(Long userId, Long chatRoomId);
     Slice<ChatRoomUser> findAllByUserId(Long userId, PageRequest pageRequest);
 }
