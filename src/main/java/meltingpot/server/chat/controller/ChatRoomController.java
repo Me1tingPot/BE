@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static meltingpot.server.util.ResponseCode.CHAT_DETAIL_GET_SUCCESS;
-import static meltingpot.server.util.ResponseCode.SIGNIN_SUCCESS;
+import static meltingpot.server.util.ResponseCode.*;
 
 @Slf4j
 @Tag(name="chatroom-controller", description = "채팅방 API")
@@ -70,19 +69,14 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 채팅 내역 조회", description = "채팅방 입장 후, 채팅방 메시지 조회. (위치 고정) 좌측 : 주최자가 전송한 메세지 / 우측 : 참여자가 전송한 메세지")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 채팅 내역 조회 성공"),
-            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다")
+            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다"),
+            @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 메세지 조회 실패")
     })
-    public ResponseEntity<ResponseData<PageResponse<List<ChatMessageGetResponse>>>> getChatMessage(
-            @PathVariable Long chatRoomId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
-    ) {
-        ChatMessageListQuery query = ChatMessageListQuery.builder()
-                .chatRoomId(chatRoomId)
-                .page(page)
-                .size(size)
-                .build();
-        return ResponseData.toResponseEntity(SIGNIN_SUCCESS, chatRoomQueryService.getChatMessage(query));
+    public ResponseEntity<ResponseData<ChatMessagePageResponse>> getChatMessage(
+            @PathVariable("chatRoomId") Long chatRoomId,
+            @RequestBody PageGetRequest pageGetRequest
+            ) {
+        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessage(chatRoomId, pageGetRequest));
     }
 
     @GetMapping("/chat/{chatRoomId}/detail")

@@ -3,8 +3,7 @@ package meltingpot.server.chat.dto;
 import lombok.Builder;
 
 @Builder
-public record ChatMessageListQuery(
-        Long chatRoomId,
+public record PageGetRequest(
         int page,
         int size
 ) {

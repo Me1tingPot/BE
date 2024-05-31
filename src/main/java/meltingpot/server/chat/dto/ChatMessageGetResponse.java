@@ -5,7 +5,7 @@ import meltingpot.server.domain.entity.chat.enums.Role;
 import org.springframework.data.domain.Slice;
 
 public record ChatMessageGetResponse(
-        Long chatId,
+        Long chatMessageId,
         String content,
         Role role
 ) {

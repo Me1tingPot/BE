@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    Slice<ChatMessage> findAllByChatRoom(ChatRoom chatRoom, PageRequest pageRequest);
+    Slice<ChatMessage> findAllByChatRoomId(Long chatRoomId, PageRequest pageRequest);
 }

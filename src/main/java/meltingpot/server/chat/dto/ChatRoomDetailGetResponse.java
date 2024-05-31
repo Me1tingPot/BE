@@ -16,7 +16,6 @@ public record ChatRoomDetailGetResponse(
                 .orElse(null);
 
         return new ChatRoomDetailGetResponse(
-                // [CHECK] 프로필 이미지
                 thumbnailImageKey,
                 party.getPartySubject(),
                 userCnt

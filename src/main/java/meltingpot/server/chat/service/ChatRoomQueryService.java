@@ -1,10 +1,9 @@
 package meltingpot.server.chat.service;
 
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.chat.dto.ChatMessageGetResponse;
-import meltingpot.server.chat.dto.ChatMessageListQuery;
-import meltingpot.server.chat.dto.ChatRoomDetailGetResponse;
-import meltingpot.server.chat.dto.ChatRoomsGetResponse;
+import lombok.extern.slf4j.Slf4j;
+import meltingpot.server.chat.dto.*;
+import meltingpot.server.domain.entity.chat.ChatMessage;
 import meltingpot.server.domain.entity.chat.ChatRoom;
 import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.repository.chat.ChatMessageRepository;
@@ -14,14 +13,17 @@ import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.util.PageResponse;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,16 +39,19 @@ public class ChatRoomQueryService {
         return ChatRoomDetailGetResponse.of(party, chatRoomUserRepository.countChatRoomUsersByChatRoomId(chatRoomId));
     }
 
-    // [CHECK]
-    public PageResponse<List<ChatMessageGetResponse>> getChatMessage(ChatMessageListQuery query) {
-        ChatRoom chatRoom = chatRoomRepository.findById(query.chatRoomId())
+    // [CHECK] 1. slice or page or list 2. PageResponse api
+    public ChatMessagePageResponse getChatMessage(Long chatRoomId, PageGetRequest pageGetRequest) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("ChatRoom not found"));
-        PageRequest pageRequest = PageRequest.of(query.page(), query.size(), Sort.by("chatMessageId").descending());
-        List<ChatMessageGetResponse> chatMessages = chatMessageRepository.findAllByChatRoom(chatRoom, pageRequest)
-                .stream().map(ChatMessageGetResponse::from).toList();
+        log.info("chatRoom.id = {}", chatRoom.getId());
+        PageRequest pageRequest = PageRequest.of(pageGetRequest.page(), pageGetRequest.size(), Sort.by(Sort.Direction.DESC, "id"));
+        log.info("pageGetRequest.page() = {}", pageGetRequest.page());
+//        List<ChatMessageGetResponse> chatMessages = chatMessageRepository.findAllByChatRoom(chatRoom, pageRequest)
+//                .stream().map(ChatMessageGetResponse::from).toList();
+        Slice<ChatMessage> chatMessagesSlice = chatMessageRepository.findAllByChatRoomId(chatRoom.getId(), pageRequest);
+        log.info("chatMessagesSlice = {}", chatMessagesSlice);
 
-        // return PageResponse.of(chatMessages, pageRequest);
-        return null;
+        return ChatMessagePageResponse.from(chatMessagesSlice);
     }
 
     // [CHECK]
