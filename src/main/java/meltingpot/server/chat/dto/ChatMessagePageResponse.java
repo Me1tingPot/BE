@@ -1,12 +1,10 @@
 package meltingpot.server.chat.dto;
 
-import lombok.Builder;
 import meltingpot.server.domain.entity.chat.ChatMessage;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
-@Builder
 public record ChatMessagePageResponse(
         List<ChatMessageGetResponse> chatMessageGetResponseList,
         Boolean isFirst,

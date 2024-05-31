@@ -1,7 +1,5 @@
 package meltingpot.server.domain.entity.common;
 
-
-
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
