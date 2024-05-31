@@ -22,6 +22,7 @@ public enum ResponseCode {
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
+    CHAT_ROOMS_LIST_GET_SUCCESS(OK, "전체 채팅방 조회 성공"),
     POST_LIST_FETCH_SUCCESS(OK,"게시글 목록 불러오기 성공"),
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
@@ -71,6 +72,7 @@ public enum ResponseCode {
     PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방 정보를 찾을 수 없습니다"),
     POST_NOT_FOUND(NOT_FOUND,"게시글을 찾을 수 없습니다"),
+    PARTY_PARTICIPANT_NOT_FOUND(NOT_FOUND, "파티 참여자 정보를 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
