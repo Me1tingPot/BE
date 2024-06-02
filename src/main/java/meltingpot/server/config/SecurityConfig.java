@@ -35,7 +35,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/ws/**", "/chat/**");
+        return (web) -> web.ignoring().requestMatchers("/chat/**");
     }
 
     @Bean
@@ -49,7 +49,7 @@ public class SecurityConfig {
                 // 권한이 불필요한 api 권한 지정
                 //TODO 개발 완료 후 permitAll 삭제
                 .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**", "/chat/**", "/ws/**").permitAll()
+                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**", "/chat/**").permitAll()
                                 .requestMatchers("/auth/**", "/api/v1/**").permitAll()
                                 .anyRequest().authenticated()
                 );
