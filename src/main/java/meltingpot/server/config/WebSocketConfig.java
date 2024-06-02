@@ -15,7 +15,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtChannelInterceptor jwtChannelInterceptor;
+    // private final JwtChannelInterceptor jwtChannelInterceptor;
+    private final ChatErrorHandler chatErrorHandler;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -26,12 +27,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 주소 : ws://localhost:8080/chat
-        registry.addEndpoint("/ws") // socket 연결 url
-                .setAllowedOriginPatterns("*"); // CORS 허용 범위
+        registry.addEndpoint("/chat").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/chat").setAllowedOriginPatterns("*");
+        registry.setErrorHandler(chatErrorHandler);
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration){
-        registration.interceptors(jwtChannelInterceptor);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration){
+//        registration.interceptors(jwtChannelInterceptor);
+//    }
 }
