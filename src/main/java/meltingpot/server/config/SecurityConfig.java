@@ -34,6 +34,11 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/ws/**", "/chat/**");
+    }
+
+    @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http, TokenProvider tokenProvider) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -44,7 +49,7 @@ public class SecurityConfig {
                 // 권한이 불필요한 api 권한 지정
                 //TODO 개발 완료 후 permitAll 삭제
                 .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**", "/chat/**").permitAll()
+                        authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**", "/chat/**", "/ws/**").permitAll()
                                 .requestMatchers("/auth/**", "/api/v1/**").permitAll()
                                 .anyRequest().authenticated()
                 );

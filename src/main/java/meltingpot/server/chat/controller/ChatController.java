@@ -1,5 +1,6 @@
 package meltingpot.server.chat.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.ChatMessageCreateResponse;
@@ -16,6 +17,7 @@ public class ChatController {
 
     @MessageMapping("/chat/rooms/{chatRoomId}/send")
     @SendTo("/topic/public/rooms/{chatRoomId}")
+    @Operation(summary = "채팅 메시지 전송", description = "메세지 송신 요청 들어오면 구독자들에게 해당 채팅 메시지 전송")
     public ChatMessageCreateResponse sendMessage(
             @DestinationVariable("chatRoomId") Long chatRoomId,
             @Payload ChatMessageCreateRequest request,

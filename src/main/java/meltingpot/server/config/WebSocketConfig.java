@@ -15,7 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    // private final JwtChannelInterceptor jwtChannelInterceptor;
+    private final JwtChannelInterceptor jwtChannelInterceptor;
     private final ChatErrorHandler chatErrorHandler;
 
     @Override
@@ -32,8 +32,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setErrorHandler(chatErrorHandler);
     }
 
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration){
-//        registration.interceptors(jwtChannelInterceptor);
-//    }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration){
+        registration.interceptors(jwtChannelInterceptor);
+    }
 }

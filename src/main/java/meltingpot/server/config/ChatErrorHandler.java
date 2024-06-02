@@ -12,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class ChatErrorHandler extends StompSubProtocolErrorHandler {
+    // Interceptor 통해 jwt 검사하는 과정에서 에러 발생한 경우, 에러 핸들링
+    // 메시지 객체 만들어서 반환 (메시지 안에 에러 내용 담아서 반환하면, 클라이언트에서 에러 내용 처리해주도록)
+
     public ChatErrorHandler() {
         super();
     }
