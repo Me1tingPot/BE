@@ -9,4 +9,7 @@ public class VerificationUtil {
     // 유저 닉네임
     public static final String NAME_REGEXP = "^[^\\s]{1,10}$";
 
+    // 유저 프로필 소개
+    public static final String BIO_REGEXP = "^[^\\s]{1,50}$";
+
 }

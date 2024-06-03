@@ -93,4 +93,9 @@ public class Account extends BaseEntity {
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+
 }

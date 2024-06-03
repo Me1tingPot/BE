@@ -7,6 +7,7 @@ import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.user.controller.dto.UserResponseDto;
+import meltingpot.server.user.service.dto.UpdateBioServiceDto;
 import meltingpot.server.user.service.dto.UpdateNameServiceDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,13 @@ public class UserService {
 
     public UserResponseDto updateProfileName(Account account, UpdateNameServiceDto serviceDto) {
         account.updateName(serviceDto.getName());
+        accountRepository.save(account);
+
+        return readProfile(account);
+    }
+
+    public UserResponseDto updateProfileBio(Account account, UpdateBioServiceDto serviceDto) {
+        account.updateBio(serviceDto.getBio());
         accountRepository.save(account);
 
         return readProfile(account);
