@@ -12,6 +12,9 @@ public class UserResponseDto {
     private Long id;
     private String email; // username
     private String bio;
+    private String nationality; // 국적
+    private int participate_count; // 참여 횟수
+    private int host_count; // 주최 횟수
     //private String thumbnail;
 
     public static UserResponseDto of(Account account ){
@@ -19,6 +22,7 @@ public class UserResponseDto {
                 .id(account.getId())
                 .email(account.getUsername())
                 .bio(account.getBio())
+                .nationality(account.getNationality())
                 //.thumbnail(thumbnail.getImageKey())
                 .build();
     }
