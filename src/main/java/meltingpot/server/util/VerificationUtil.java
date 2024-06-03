@@ -7,9 +7,9 @@ public class VerificationUtil {
     public static final String PASSWORD_REGEXP = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$`~!@$!%#^?&\\(\\)-_=+])[A-Za-z\\d$`~!@$!%#^?&\\(\\)-_=+]{10,25}$";
 
     // 유저 닉네임
-    public static final String NAME_REGEXP = "^[^\\s]{1,10}$";
+    public static final String NAME_REGEXP = "^.{1,10}$";
 
     // 유저 프로필 소개
-    public static final String BIO_REGEXP = "^[^\\s]{1,50}$";
+    public static final String BIO_REGEXP = "^.{1,50}$";
 
 }

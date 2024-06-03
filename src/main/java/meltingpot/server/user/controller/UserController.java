@@ -27,7 +27,7 @@ public class UserController {
 
     // 프로필 조회
     @GetMapping()
-    @Operation(summary="마이페이지", description="사용자 프로필 정보를 불러옵니다\n" )
+    @Operation(summary="마이페이지 사용자 기본 프로필 정보", description="마이페이지에서 사용자 기본 프로필 정보를 불러옵니다.\n" )
     public ResponseEntity<ResponseData<UserResponseDto>> readProfile(@CurrentUser Account account){
         UserResponseDto data = userService.readProfile(account);
         if( account != null ){
@@ -60,11 +60,15 @@ public class UserController {
         return ResponseData.toResponseEntity(ResponseCode.UPDATE_NICKNAME_SUCCESS, data);
     }
 
+    // 사용자 프로필 이미지 조회
+
     // 대표 이미지 변경
 
-    // 이미지 수정
+    // 프로필 이미지 등록 및 삭제
 
-    
+    // 프로필 상세 보기
+
+
 
 
 }

@@ -25,6 +25,7 @@ public class UserService {
         // TODO 프로필 이미지 인스턴스 생성시 주석 풀기
         // 프로필 사진 가져오기
         //AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailIsTrue(account).orElseThrow();
+
         //return UserResponseDto.of(account,thumbnail);
         return UserResponseDto.of(account);
     }

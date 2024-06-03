@@ -57,5 +57,7 @@ public class AuthController {
 
     // 토큰 재발급
 
+    // 탈퇴
+
 
 }
