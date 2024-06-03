@@ -6,6 +6,8 @@ import lombok.*;
 import meltingpot.server.domain.entity.chat.enums.Alarm;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -18,13 +20,21 @@ public class ChatRoomUser extends BaseEntity {
     private Long id;
 
     @NotNull
+    @Column(name = "user_id")
+    private Long userId;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "chat_room_alarm_status")
     private Alarm alarm;
 
     @NotNull
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "exit_at")
+    private LocalDateTime exitAt;
+
+    @NotNull
+    @Column(name = "unread_message_cnt")
+    private int unreadMessageCnt;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

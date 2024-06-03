@@ -1,19 +1,24 @@
 package meltingpot.server.chat.dto;
 
+import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.party.Party;
 
 public record ChatRoomDetailGetResponse(
         String imageKey,
         String title,
-        Integer userCnt
+        int userCnt
 ) {
-    public static ChatRoomDetailGetResponse of(Party party, int userCnt) {
+    public static ChatRoomDetailGetResponse from(Party party) {
+        String thumbnailImageKey = party.getAccount().getProfileImages().stream()
+                .filter(AccountProfileImage::isThumbnail)
+                .map(AccountProfileImage::getImageKey)
+                .findFirst()
+                .orElse(null);
+
         return new ChatRoomDetailGetResponse(
-                // [CHECK] 프로필 이미지
-                // party.getUser().getProfileImages(),
-                "",
+                thumbnailImageKey,
                 party.getPartySubject(),
-                userCnt
+                party.getPartyParticipants().size()
         );
     }
 }
