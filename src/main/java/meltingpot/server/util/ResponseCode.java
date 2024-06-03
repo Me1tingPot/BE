@@ -13,15 +13,20 @@ public enum ResponseCode {
     SIGNIN_SUCCESS(OK, "로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
+
     PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
     PARTY_SEARCH_SUCCESS(OK, "파티 검색 성공"),
     PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
+
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
+
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
+
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
+    UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */

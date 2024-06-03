@@ -90,4 +90,7 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account")
     private List<Post> posts = new ArrayList<>();
 
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
