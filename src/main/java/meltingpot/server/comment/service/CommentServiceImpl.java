@@ -48,23 +48,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentResponseDTO.CreateCommentResultDTO processCommentCreation(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Comment comment) {
-        List<String> commentImgUrls = Collections.emptyList();
-        if (createCommentDTO.getImageKeys() != null && !createCommentDTO.getImageKeys().isEmpty()) {
-            commentImgUrls = getCdnUrls(createCommentDTO.getImageKeys());
+        String commentImgUrl = null;
+        if (createCommentDTO.getImageKey() != null && !createCommentDTO.getImageKey().isEmpty()) {
+            String prefix = "comment";
+            commentImgUrl = fileService.getCdnUrl(prefix, createCommentDTO.getImageKey());
         }
-        List<CommentImage> commentImages = toCommentImage(createCommentDTO, account, comment);
-        comment.setCommentImages(commentImages);
+        CommentImage commentImage = toCommentImage(createCommentDTO, account, comment);
+        comment.setCommentImage(commentImage);
         commentRepository.save(comment);
 
-        return toCreateCommentResult(commentImgUrls, comment);
-    }
-    private List<String> getCdnUrls(List<String> imageKeys) {
-        return imageKeys.stream()
-                .map(imageKey -> {
-                    String prefix = "comment"; // 적절한 prefix 값을 설정
-                    return fileService.getCdnUrl(prefix, imageKey);
-                })
-                .collect(Collectors.toList());
+        return toCreateCommentResult(commentImgUrl, comment);
     }
 
     private Comment findCommentById(Long commentId) {

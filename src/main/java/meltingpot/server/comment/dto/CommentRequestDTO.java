@@ -10,14 +10,14 @@ public class CommentRequestDTO {
     public static class CreateCommentDTO{
         private String content;
         private Boolean isAnonymous;
-        private List<String> imageKeys;
+        private String  imageKey;
     }
 
     @Getter
     public class CreateChildCommentDTO {
         private String content;
         private boolean isAnonymous;
-        private List<String> imageKey;
+        private String imageKey;
         private Long postId;
         private Long accountId;
         private Long parentId;

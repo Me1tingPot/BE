@@ -22,7 +22,7 @@ public class CommentImage extends BaseEntity {
     @NotNull
     private String imageKey;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 

@@ -13,17 +13,16 @@ import java.util.stream.Collectors;
 
 public class CommentImageConverter {
 
-    public static List<CommentImage> toCommentImage(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Comment comment) {
-        if (createCommentDTO.getImageKeys() == null || createCommentDTO.getImageKeys().isEmpty()) {
-            return Collections.emptyList();
+    public static CommentImage toCommentImage(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Comment comment) {
+        if (createCommentDTO.getImageKey() == null || createCommentDTO.getImageKey().isEmpty()) {
+            return null;
         }
-        return  createCommentDTO.getImageKeys().stream()
-                .map(imageKey -> CommentImage.builder()
-                        .imageKey(imageKey)
-                        .comment(comment)
-                        .account(account)
-                        .build())
-                .collect(Collectors.toList());
+
+        return  CommentImage.builder()
+                .imageKey(createCommentDTO.getImageKey())
+                .comment(comment)
+                .account(account)
+                .build();
     }
 }
 

@@ -14,7 +14,7 @@ public class CommentResponseDTO {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class CreateCommentResultDTO{
         private Long commentId;
-        private List <String> commentImageUrls;
+        private String commentImageUrl;
     }
 
 
