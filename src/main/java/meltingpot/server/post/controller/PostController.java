@@ -9,9 +9,7 @@ import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.post.dto.PostRequestDTO;
 import meltingpot.server.post.dto.PostResponseDTO;
 import meltingpot.server.post.service.PostService;
-import meltingpot.server.util.CurrentUser;
-import meltingpot.server.util.ResponseCode;
-import meltingpot.server.util.ResponseData;
+import meltingpot.server.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +27,6 @@ public class PostController {
     @Operation(summary = "게시물 작성")
     @PostMapping("")
     public ResponseEntity<ResponseData<PostResponseDTO.CreatePostResultDTO>> createPost( @CurrentUser Account account,@RequestBody PostRequestDTO.CreatePostDTO createPostDTO) {
-        postService.createPost(createPostDTO,account);
         try{
             return ResponseData.toResponseEntity(ResponseCode.CREATE_POST_SUCCESS, postService.createPost(createPostDTO,account));
         }catch (NoSuchElementException e) {
