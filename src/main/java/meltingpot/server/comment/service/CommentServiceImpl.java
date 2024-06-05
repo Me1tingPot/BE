@@ -2,14 +2,13 @@ package meltingpot.server.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.comment.converter.CommentConverter;
-import meltingpot.server.comment.converter.CommentImageConverter;
 import meltingpot.server.comment.dto.CommentRequestDTO;
 import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.post.Post;
-import meltingpot.server.domain.repository.AccountRepositroy;
+import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.util.r2.FileService;
@@ -29,7 +28,7 @@ import static meltingpot.server.comment.converter.CommentImageConverter.toCommen
 @Transactional
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final AccountRepositroy accountRepositroy;
+    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private FileService fileService;
 
@@ -73,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     private Account findAccountById(Long accountId) {
-        return accountRepositroy.findById(accountId)
+        return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 

@@ -9,7 +9,7 @@ import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.entity.post.PostImage;
-import meltingpot.server.domain.repository.AccountRepositroy;
+import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.post.converter.PostConverter;
@@ -35,7 +35,7 @@ import static meltingpot.server.post.converter.PostImageConverter.toPostImage;
 @RequiredArgsConstructor
 @Transactional
 public class PostServiceImpl implements PostService {
-    private final AccountRepositroy accountRepositroy;
+    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private FileService fileService;
@@ -110,7 +110,7 @@ public class PostServiceImpl implements PostService {
     }
 
     private Account findAccountById(Long accountId) {
-        return accountRepositroy.findById(accountId)
+        return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
