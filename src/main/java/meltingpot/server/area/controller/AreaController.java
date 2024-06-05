@@ -40,6 +40,15 @@ public class AreaController {
         return ResponseData.toResponseEntity(ResponseCode.AREA_FETCH_SUCCESS, areaService.listArea(parentAreaId));
     }
 
+    @GetMapping("/{areaId}/parent")
+    @Operation(summary = "상위 지역 조회", description = "상위 지역을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "지역 조회 성공")
+    })
+    public ResponseEntity<ResponseData<List<AreaResponse>>> listParentAreas(@PathVariable("areaId") Integer areaId) {
+        return ResponseData.toResponseEntity(ResponseCode.AREA_FETCH_SUCCESS, areaService.listParentAreas(areaId));
+    }
+
     @GetMapping("/search-by-coord")
     @Operation(summary = "좌표로 지역 조회", description = "좌표로 지역을 조회합니다.")
     @ApiResponses(value = {

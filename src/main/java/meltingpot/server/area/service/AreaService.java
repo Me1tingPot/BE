@@ -6,13 +6,12 @@ import meltingpot.server.area.dto.KakaoGeocodingDocumentResponse;
 import meltingpot.server.area.dto.KakaoResponse;
 import meltingpot.server.domain.entity.Area;
 import meltingpot.server.domain.repository.AreaRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AreaService {
-    private static final Logger log = LoggerFactory.getLogger(AreaService.class);
     private final AreaRepository areaRepository;
 
     @Value("${cloud.kakao.rest_key}")
@@ -38,6 +36,19 @@ public class AreaService {
                     .map(AreaResponse::of)
                     .collect(Collectors.toList());
         }
+    }
+
+    @Transactional
+    public List<AreaResponse> listParentAreas(Integer areaId) {
+        Area area = areaRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("해당 지역 정보가 없습니다."));
+        List<AreaResponse> parentAreas = new ArrayList<>();
+
+        parentAreas.add(AreaResponse.of(area));
+        while (area.getAreaParent() != null) {
+            area = areaRepository.findById(area.getAreaParent().getId()).orElseThrow(() -> new IllegalArgumentException("해당 지역 정보가 없습니다."));
+            parentAreas.add(AreaResponse.of(area));
+        }
+        return parentAreas;
     }
 
     @Transactional
