@@ -12,6 +12,7 @@ import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.util.r2.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
+    @Autowired
     private FileService fileService;
 
     @Override
