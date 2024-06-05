@@ -3,8 +3,12 @@ package meltingpot.server.chat.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.chat.ChatRoomUser;
 import meltingpot.server.domain.repository.chat.ChatRoomUserRepository;
+import meltingpot.server.exception.ResourceNotFoundException;
+import meltingpot.server.util.ResponseCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static meltingpot.server.util.ResponseCode.CHAT_ROOM_NOT_FOUND;
 
 @Service
 @Transactional
@@ -12,10 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public void updateAlarmStatus(Long userId, Long chatRoomId) {
+    public ResponseCode updateAlarmStatus(Long userId, Long chatRoomId) {
         ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUserByUserIdAndChatRoomId(userId, chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("ChatRoomUser not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CHAT_ROOM_NOT_FOUND));
         chatRoomUser.toggleAlarm();
         chatRoomUserRepository.save(chatRoomUser);
+        return ResponseCode.CHAT_ALARM_UPDATE_SUCCESS;
     }
 }

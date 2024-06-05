@@ -46,7 +46,7 @@ public class PostController {
     public ResponseEntity<ResponseData<PostResponseDTO.PageDTO>> getPostList(@PathVariable PostType postType, @CurrentUser Account account,  @RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
         Pageable pageable = (Pageable) PageRequest.of(0, pageSize);
         try {
-            return ResponseData.toResponseEntity(ResponseCode.POST_LIST_FETCH_SUCCEESS, postService.getPostsList(postType,account,cursor, pageable));
+            return ResponseData.toResponseEntity(ResponseCode.POST_LIST_FETCH_SUCCESS, postService.getPostsList(postType,account,cursor, pageable));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
         }
