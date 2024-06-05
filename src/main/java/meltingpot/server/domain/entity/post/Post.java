@@ -1,13 +1,18 @@
-package meltingpot.server.domain.entity;
+package meltingpot.server.domain.entity.post;
 
 
 import jakarta.persistence.*;
 import lombok.*;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.Report;
+import meltingpot.server.domain.entity.comment.Comment;
+import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.enums.PostType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -43,5 +48,13 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Report> reports = new ArrayList<>();
 
+    public void setPostImages(List<PostImage> postImages) {
+        this.postImages = postImages.stream()
+                .map(postImage -> {
+                    postImage.setPost(this);
+                    return postImage;
+                })
+                .collect(Collectors.toList());
+    }
 
     }
