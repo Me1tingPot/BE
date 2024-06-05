@@ -51,7 +51,10 @@ public enum ResponseCode {
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
-
+    AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
+    AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),
+    AREA_FETCH_FAILED_NOT_IN_OUR_DB(BAD_REQUEST, "해당 좌표는 등록되지 않은 좌표입니다"),
+    AREA_FETCH_FAILED_NO_BDONG_INFO(BAD_REQUEST, "해당 좌표는 법정동 정보가 없습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
