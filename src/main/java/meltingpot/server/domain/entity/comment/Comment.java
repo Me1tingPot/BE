@@ -40,8 +40,8 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> children;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<CommentImage> commentImages = new ArrayList<>();
+    @OneToOne(mappedBy = "comment", cascade = CascadeType.ALL)
+    private CommentImage commentImage ;
 
 
 
@@ -61,13 +61,9 @@ public class Comment extends BaseEntity {
         return isAnonymous;
     }
 
-    public void setCommentImages(List<CommentImage> commentImages) {
-        this.commentImages = commentImages.stream()
-                .map(commentImage -> {
-                    commentImage.setComment(this);
-                    return commentImage;
-                })
-                .collect(Collectors.toList());
+
+    public void setCommentImage(CommentImage commentImage) {
+        this.commentImage = commentImage;
     }
 
 

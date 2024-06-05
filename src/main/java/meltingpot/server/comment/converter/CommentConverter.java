@@ -28,10 +28,10 @@ public class CommentConverter {
                 .account(account)
                 .build();
     }
-    public static CommentResponseDTO.CreateCommentResultDTO toCreateCommentResult(List<String> urls,Comment comment){
+    public static CommentResponseDTO.CreateCommentResultDTO toCreateCommentResult(String url,Comment comment){
         return CommentResponseDTO.CreateCommentResultDTO.builder()
                 .commentId(comment.getId())
-                .commentImageUrls(urls)
+                .commentImageUrl(url)
                 .build();
     }
 
