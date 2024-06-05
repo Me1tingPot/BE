@@ -1,6 +1,7 @@
 package meltingpot.server.post.dto;
 
 import lombok.*;
+import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.domain.entity.enums.PostType;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,20 @@ public class PostResponseDTO {
     public static class CreatePostResultDTO {
         private Long postId;
         private LocalDateTime createAt;
+        private List <String> postImageUrls;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PostDetailDTO {
+        private Long postId;
+        private String name;
+        private String title;
+        private String content;
+        private List<CommentResponseDTO.CommentDetailDTO> comments;
+        private LocalDateTime updatedAt;
     }
 
     @Builder

@@ -3,6 +3,7 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.post.Post;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

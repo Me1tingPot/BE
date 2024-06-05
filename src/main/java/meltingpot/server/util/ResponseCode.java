@@ -20,6 +20,7 @@ public enum ResponseCode {
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
+    POST_DETAIL_FETCH_SUCCEESS(OK,"게시글 내용 불러오기 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -27,6 +28,7 @@ public enum ResponseCode {
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
+    CREATE_CHILD_COMMENT_SUCCESS(CREATED,"대댓글 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
     PARTY_CREATE_SUCCESS(CREATED, "파티 생성 성공"),
     IMAGE_URL_GENERATE_SUCCESS(CREATED, "이미지 URL 생성 성공"),
@@ -42,6 +44,8 @@ public enum ResponseCode {
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
+    COMMENT_CREATE_FAIL(BAD_REQUEST,"댓글 작성 실패 "),
+    POST_CREATE_FAIL(BAD_REQUEST,"게시글 작성 실패"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */

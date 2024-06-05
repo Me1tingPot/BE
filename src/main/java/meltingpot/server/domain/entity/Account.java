@@ -3,15 +3,17 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
+import meltingpot.server.domain.entity.comment.Comment;
+import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.domain.entity.post.Post;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +88,9 @@ public class Account extends BaseEntity {
   
     @OneToMany(mappedBy = "account")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<CommentImage> commentImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts = new ArrayList<>();
