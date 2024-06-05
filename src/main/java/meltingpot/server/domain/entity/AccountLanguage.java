@@ -13,7 +13,7 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class AccountProfileImage extends BaseEntity {
+public class AccountLanguage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +25,6 @@ public class AccountProfileImage extends BaseEntity {
     private Account account;
 
     @NotNull
-    private String imageKey;
-
-    @NotNull
-    private boolean isThumbnail;
-
-    @NotNull
-    private String imageOriginalName;
-
+    private String language;
 
 }

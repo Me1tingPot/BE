@@ -11,6 +11,7 @@ import org.apache.catalina.User;
 public class UserResponseDto {
     private Long id;
     private String email; // username
+    private String name; // name
     private String bio;
     private String nationality; // 국적
     private int participate_count; // 참여 횟수
@@ -21,6 +22,7 @@ public class UserResponseDto {
         return UserResponseDto.builder()
                 .id(account.getId())
                 .email(account.getUsername())
+                .name(account.getName())
                 .bio(account.getBio())
                 .nationality(account.getNationality())
                 //.thumbnail(thumbnail.getImageKey())
