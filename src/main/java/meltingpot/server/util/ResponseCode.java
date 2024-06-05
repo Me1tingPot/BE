@@ -22,6 +22,7 @@ public enum ResponseCode {
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
     POST_DETAIL_FETCH_SUCCEESS(OK,"게시글 내용 불러오기 성공"),
 
+
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
@@ -38,6 +39,7 @@ public enum ResponseCode {
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
     CREATE_CHILD_COMMENT_SUCCESS(CREATED,"대댓글 작성 성공"),
+    REPORT_CREATE_SUCCESS(CREATED,"신고 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
     PARTY_CREATE_SUCCESS(CREATED, "파티 생성 성공"),
     IMAGE_URL_GENERATE_SUCCESS(CREATED, "이미지 URL 생성 성공"),
@@ -55,6 +57,7 @@ public enum ResponseCode {
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
     COMMENT_CREATE_FAIL(BAD_REQUEST,"댓글 작성 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST,"게시글 작성 실패"),
+    REPORT_CREATE_FAIL(BAD_REQUEST,"신고 작성 실패"),
 
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
     AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),

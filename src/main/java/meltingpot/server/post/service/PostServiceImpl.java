@@ -16,6 +16,7 @@ import meltingpot.server.post.converter.PostConverter;
 import meltingpot.server.post.dto.PostRequestDTO;
 import meltingpot.server.post.dto.PostResponseDTO;
 import meltingpot.server.util.r2.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class PostServiceImpl implements PostService {
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    @Autowired
     private FileService fileService;
 
 
@@ -45,14 +47,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponseDTO.CreatePostResultDTO createPost(PostRequestDTO.CreatePostDTO createPostDTO,Account account){
         Post post = toPost(createPostDTO,account);
-        postRepository.save(post);
         List<String> postImgUrls = Collections.emptyList();
         if (createPostDTO.getImageKeys() != null && !createPostDTO.getImageKeys().isEmpty()) {
             postImgUrls = getCdnUrls(createPostDTO.getImageKeys());
         }
         List<PostImage> postImages = toPostImage(createPostDTO,account, post);
-        post.setPostImages(postImages);
         postRepository.save(post);
+        post.setPostImages(postImages);
         return toCreatePostResult(postImgUrls,post);
     }
 
