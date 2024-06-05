@@ -44,6 +44,11 @@ dependencies {
 	implementation 'software.amazon.ion:ion-java:1.0.3'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	if (isAppleSilicon()) {
+		runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.94.Final:osx-aarch_64")
+	}
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -57,4 +62,8 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+static boolean isAppleSilicon() {
+	System.getProperty("os.name") == "Mac OS X" && System.getProperty("os.arch") == "aarch64"
 }
