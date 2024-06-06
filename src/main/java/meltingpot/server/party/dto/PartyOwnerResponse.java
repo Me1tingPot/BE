@@ -3,6 +3,7 @@ package meltingpot.server.party.dto;
 import lombok.Builder;
 import lombok.Setter;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.AccountLanguage;
 import meltingpot.server.domain.entity.AccountProfileImage;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public record PartyOwnerResponse(
     String introduction,
     String nationality,
     String country,
-    String language,
+    List<String> language,
     String city,
     List<String> profileImages,
     int partyParticipantCount,
@@ -23,9 +24,7 @@ public record PartyOwnerResponse(
         return PartyOwnerResponse.builder()
             .name(account.getName())
             .nationality(account.getNationality())
-            .country(account.getCountry())
-            .language(account.getLanguage())
-            .city(account.getCity())
+            .language(account.getLanguages().stream().map(AccountLanguage::getLanguage).toList())
             .profileImages(account.getProfileImages().stream().map(AccountProfileImage::getImageKey).toList())
             .build();
     }
