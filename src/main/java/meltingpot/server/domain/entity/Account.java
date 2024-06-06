@@ -82,13 +82,7 @@ public class Account extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "account")
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "account")
     private List<CommentImage> commentImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "account")
-    private List<Post> posts = new ArrayList<>();
 
     public void updateName(String name) {
         this.name = name;
