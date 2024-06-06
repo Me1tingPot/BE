@@ -28,7 +28,7 @@ jwt:
 
 cloud:
   kakao:
-    rest_key: ${KAKAO_RESET_KEY}
+    rest_key: ${KAKAO_REST_KEY}
   r2:
     url: ${R2_URL}
     accessKey: ${R2_ACCESS_KEY}
