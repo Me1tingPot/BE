@@ -9,9 +9,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
-    void createPost (PostRequestDTO.CreatePostDTO createPostDTO, Account account);
+    PostResponseDTO.CreatePostResultDTO createPost (PostRequestDTO.CreatePostDTO createPostDTO, Account account);
 
-    PostResponseDTO.PageDTO getPostsList(PostType postType, Account account,Long cursor, Pageable pageable);
+    PostResponseDTO.PageDTO getPostsList(PostType postType,Account account, Long cursor, Pageable pageable);
+
 
 
 }

@@ -1,7 +1,8 @@
 package meltingpot.server.post.converter;
 
+import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.domain.entity.Account;
-import meltingpot.server.domain.entity.Post;
+import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.post.dto.PostImageDTO;
 import meltingpot.server.post.dto.PostRequestDTO;
 import meltingpot.server.post.dto.PostResponseDTO;
@@ -9,10 +10,12 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PostConverter {
-    public static Post toPost(PostRequestDTO.CreatePostDTO createPostDTO, Account account) {
 
+    /*post 작성*/
+    public static Post toPost(PostRequestDTO.CreatePostDTO createPostDTO, Account account) {
         return Post.builder()
                 .title(createPostDTO.getTitle())
                 .content(createPostDTO.getContent())
@@ -20,17 +23,24 @@ public class PostConverter {
                 .account(account)
                 .build();
     }
-
-    public static List<PostImageDTO> toPostImageDto(Post post) {
-        return post.getPostImages().stream()
-                .map(p -> PostImageDTO.builder()
-                        .id(p.getId())
-                        .imgUrl(p.getImageUrl())
-                        .build())
-                .collect(Collectors.toList());
+    /*post 작성 응답*/
+    public static PostResponseDTO.CreatePostResultDTO toCreatePostResult(List<String> urls,Post post){
+        return PostResponseDTO.CreatePostResultDTO.builder()
+                .postId(post.getId())
+                .postImageUrls(urls)
+                .build();
     }
 
+//    public static List<PostImageDTO> toPostImageDto(Post post) {
+//        return post.getPostImages().stream()
+//                .map(p -> PostImageDTO.builder()
+//                        .id(p.getId())
+//                        .imgUrl(p.getImageUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//    }
 
+    /*post 목록 조회*/
     public  static PostResponseDTO.PostsListDTO toPostsListDTO(Post post) {
         return PostResponseDTO.PostsListDTO.builder()
                 .postId(post.getId())
@@ -56,4 +66,24 @@ public class PostConverter {
                 .isLast(posts.isLast())
                 .build();
     }
+
+//    public static PostResponseDTO.PostDetailDTO toPostDetailDTO(Post post, CommentResponseDTO.CommentsListDTO comments) {
+//        List<CommentResponseDTO.CommentDetailDTO> allComments = comments.getParentComments().stream()
+//                .flatMap(parentCommentDTO -> Stream.concat(
+//                        Stream.of(parentCommentDTO.getParentComment()),
+//                        parentCommentDTO.getChildrenComments().stream()
+//                                .map(CommentResponseDTO.ParentCommentDTO::getChildrenComments)
+//                ))
+//                .collect(Collectors.toList());
+//
+//        return PostResponseDTO.PostDetailDTO.builder()
+//                .postId(post.getId())
+//                .name(post.getAccount().getName())
+//                .title(post.getTitle())
+//                .content(post.getContent())
+//                .comments(allComments)
+//                .updatedAt(post.getUpdatedAt())
+//                .build();
+//    }
+
 }

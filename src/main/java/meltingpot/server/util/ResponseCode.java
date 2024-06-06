@@ -13,13 +13,15 @@ public enum ResponseCode {
     SIGNIN_SUCCESS(OK, "로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
-
     PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
     PARTY_SEARCH_SUCCESS(OK, "파티 검색 성공"),
     PARTY_JOIN_SUCCESS(OK, "파티 참여 성공"),
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
+    POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
+    POST_DETAIL_FETCH_SUCCEESS(OK,"게시글 내용 불러오기 성공"),
+
 
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
@@ -36,6 +38,8 @@ public enum ResponseCode {
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
+    CREATE_CHILD_COMMENT_SUCCESS(CREATED,"대댓글 작성 성공"),
+    REPORT_CREATE_SUCCESS(CREATED,"신고 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
     PARTY_CREATE_SUCCESS(CREATED, "파티 생성 성공"),
     IMAGE_URL_GENERATE_SUCCESS(CREATED, "이미지 URL 생성 성공"),
@@ -51,7 +55,14 @@ public enum ResponseCode {
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
+    COMMENT_CREATE_FAIL(BAD_REQUEST,"댓글 작성 실패 "),
+    POST_CREATE_FAIL(BAD_REQUEST,"게시글 작성 실패"),
+    REPORT_CREATE_FAIL(BAD_REQUEST,"신고 작성 실패"),
 
+    AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
+    AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),
+    AREA_FETCH_FAILED_NOT_IN_OUR_DB(BAD_REQUEST, "해당 좌표는 등록되지 않은 좌표입니다"),
+    AREA_FETCH_FAILED_NO_BDONG_INFO(BAD_REQUEST, "해당 좌표는 법정동 정보가 없습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

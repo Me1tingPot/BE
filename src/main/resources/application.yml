@@ -3,7 +3,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     properties:
       hibernate:
@@ -27,6 +27,8 @@ jwt:
   token-validity-in-seconds: 1209600 # 테스트용 14일 유효기간
 
 cloud:
+  kakao:
+    rest_key: ${KAKAO_RESET_KEY}
   r2:
     url: ${R2_URL}
     accessKey: ${R2_ACCESS_KEY}
