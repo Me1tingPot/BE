@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Area extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
