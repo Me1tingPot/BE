@@ -13,7 +13,7 @@ public record PartyCreateRequest(
     String description,
     String descriptionLanguage,
     String startTime,
-    Integer areaId,
+    String areaId,
     Integer partyMinParticipant,
     Integer partyMaxParticipant,
     Boolean locationIsReserved,
