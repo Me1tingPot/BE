@@ -33,5 +33,7 @@ public class AccountProfileImage extends BaseEntity {
     @NotNull
     private String imageOriginalName;
 
+    @Column(nullable = true)
+    private int sequence; // 네 장 중 몇 번째
 
 }

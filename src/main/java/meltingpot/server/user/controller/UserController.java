@@ -9,6 +9,7 @@ import meltingpot.server.user.controller.dto.UpdateBioRequestDto;
 import meltingpot.server.user.controller.dto.UpdateNameRequestDto;
 import meltingpot.server.user.controller.dto.UserResponseDto;
 import meltingpot.server.user.service.UserService;
+import meltingpot.server.user.service.dto.UserImagesResponseDto;
 import meltingpot.server.util.CurrentUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
@@ -16,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
@@ -61,10 +65,26 @@ public class UserController {
     }
 
     // 사용자 프로필 이미지 조회
+    @GetMapping("/{accountId}")
+    @Operation(summary="마이페이지 사용자 프로필 이미지 조회", description="마이페이지에서 사용자 본인 혹은 다른 사람의 프로필 사진 목록을 불러옵니다.\n" )
+    public ResponseEntity<ResponseData<List<UserImagesResponseDto>>> readProfileImages(@PathVariable int accountId){
+        try{
+            List<UserImagesResponseDto> data = userService.readProfileImages(accountId);
+
+            return ResponseData.toResponseEntity(ResponseCode.READ_PROFILE_SUCCESS, data);
+
+        }catch( NoSuchElementException e ){
+            return ResponseData.toResponseEntity(ResponseCode.ACCOUNT_NOT_FOUND, null);
+        }
+    }
+
+
 
     // 대표 이미지 변경
 
-    // 프로필 이미지 등록 및 삭제
+
+    // 프로필 이미지 수정 및 삭제
+
 
     // 프로필 상세 보기
 

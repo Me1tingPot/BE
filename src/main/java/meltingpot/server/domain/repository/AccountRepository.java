@@ -4,6 +4,7 @@ import meltingpot.server.domain.entity.Account;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
@@ -13,4 +14,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByUsernameAndDeletedAtIsNull(String currentUserName);
 
     boolean existsByUsername(String username);
+
+    Account findByIdAndDeletedAtIsNull(Long id);
 }

@@ -2,10 +2,7 @@ package meltingpot.server.user.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import meltingpot.server.auth.controller.dto.ProfileImageSignupDto;
 import meltingpot.server.domain.entity.Account;
-import meltingpot.server.domain.entity.AccountProfileImage;
-import org.apache.catalina.User;
 
 @Getter
 @Builder

@@ -50,10 +50,10 @@ public class AuthService implements UserDetailsService {
     public AccountResponseDto signup(SignupRequestDto signupRequest) {
 
         // 이메일(아이디) 중복 검사
-        checkUserName(signupRequest.username());
+        checkUserName(signupRequest.email());
 
         Account account = Account.builder()
-                .username(signupRequest.username())
+                .username(signupRequest.email())
                 .name(signupRequest.name())
                 .password(passwordEncoder.encode(signupRequest.password()))
                 .gender(Gender.valueOf(signupRequest.gender()))
@@ -66,6 +66,7 @@ public class AuthService implements UserDetailsService {
                         .account(account)
                         .imageKey(image.getImageKey())
                         .isThumbnail(image.isThumbnail())
+                        .sequence(image.getSequence())
                         .imageOriginalName("")
                         .build()).toList()
         );
