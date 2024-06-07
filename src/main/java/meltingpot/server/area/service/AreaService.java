@@ -26,7 +26,7 @@ public class AreaService {
     private String kakaoRestKey;
 
     @Transactional
-    public List<AreaResponse> listArea(Integer parentAreaId) {
+    public List<AreaResponse> listArea(String parentAreaId) {
         if (parentAreaId == null) {
             return areaRepository.findAllByAreaParentIdNull().stream()
                     .map(AreaResponse::of)
@@ -39,7 +39,7 @@ public class AreaService {
     }
 
     @Transactional
-    public List<AreaResponse> listParentAreas(Integer areaId) {
+    public List<AreaResponse> listParentAreas(String areaId) {
         Area area = areaRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("해당 지역 정보가 없습니다."));
         List<AreaResponse> parentAreas = new ArrayList<>();
 

@@ -14,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Area extends BaseEntity {
     @Id
-    private int id;
+    @Column(columnDefinition = "CHAR(10)")
+    private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_parent_id")

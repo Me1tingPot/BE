@@ -36,7 +36,7 @@ public class AreaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "지역 조회 성공")
     })
-    public ResponseEntity<ResponseData<List<AreaResponse>>> listChildArea(@PathVariable("parentAreaId") Integer parentAreaId) {
+    public ResponseEntity<ResponseData<List<AreaResponse>>> listChildArea(@PathVariable("parentAreaId") String parentAreaId) {
         return ResponseData.toResponseEntity(ResponseCode.AREA_FETCH_SUCCESS, areaService.listArea(parentAreaId));
     }
 
@@ -45,7 +45,7 @@ public class AreaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "지역 조회 성공")
     })
-    public ResponseEntity<ResponseData<List<AreaResponse>>> listParentAreas(@PathVariable("areaId") Integer areaId) {
+    public ResponseEntity<ResponseData<List<AreaResponse>>> listParentAreas(@PathVariable("areaId") String areaId) {
         return ResponseData.toResponseEntity(ResponseCode.AREA_FETCH_SUCCESS, areaService.listParentAreas(areaId));
     }
 
