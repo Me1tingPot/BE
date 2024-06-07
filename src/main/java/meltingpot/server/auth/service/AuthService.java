@@ -2,11 +2,14 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import meltingpot.server.auth.controller.dto.ReissueTokenRequestDto;
+import meltingpot.server.auth.controller.dto.ReissueTokenResponseDto;
 import meltingpot.server.auth.controller.dto.SignupRequestDto;
 import meltingpot.server.domain.entity.AccountLanguage;
 import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.enums.Gender;
 import meltingpot.server.exception.DuplicateException;
+import meltingpot.server.exception.InvalidTokenException;
 import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.entity.RefreshToken;
@@ -165,5 +168,30 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto request) {
+        String refreshToken = request.refreshToken();
+        String oldAccessToken = request.accessToken();
+        TokenDto reissuedTokenDto;
 
+        if (tokenProvider.validateToken(refreshToken) && Boolean.TRUE.equals(
+                tokenProvider.validRefreshToken(refreshToken, oldAccessToken))) {
+            reissuedTokenDto = tokenProvider.generateReissuedTokenDto(oldAccessToken);
+
+            // 이전 refresh token 삭제
+            RefreshToken targetRefreshToken = refreshTokenRepository.getByTokenValue(refreshToken);
+            Long accountId = targetRefreshToken.getAccount().getId();
+            refreshTokenRepository.deleteByTokenValue(refreshToken);
+
+            tokenProvider.updateRefreshToken(oldAccessToken, reissuedTokenDto.getRefreshToken());
+
+            return ReissueTokenResponseDto.builder()
+                    .accountId(accountId)
+                    .accessToken(reissuedTokenDto.getAccessToken())
+                    .refreshToken(reissuedTokenDto.getRefreshToken())
+                    .build();
+        } else {
+            throw new InvalidTokenException(ResponseCode.INVALID_REFRESH_TOKEN);
+        }
+    }
 }
