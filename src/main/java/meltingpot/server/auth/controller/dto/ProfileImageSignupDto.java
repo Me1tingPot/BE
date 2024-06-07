@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ProfileImageSignupDto {
     String imageKey;
     boolean thumbnail;
+    int sequence;
 }

@@ -13,11 +13,14 @@ import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.user.controller.dto.UserResponseDto;
 import meltingpot.server.user.service.dto.UpdateBioServiceDto;
 import meltingpot.server.user.service.dto.UpdateNameServiceDto;
+import meltingpot.server.user.service.dto.UserImagesResponseDto;
 import meltingpot.server.util.r2.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -56,5 +59,22 @@ public class UserService {
         accountRepository.save(account);
 
         return readProfile(account);
+    }
+
+    public List<UserImagesResponseDto> readProfileImages( long accountId ) {
+        Account account = accountRepository.findByIdAndDeletedAtIsNull(accountId);
+        if(account == null) throw new NoSuchElementException();
+
+        List<AccountProfileImage> accountProfileImages = accountProfileImageRepository.findAllByAccountAndDeletedAtIsNull(account);
+
+        List<UserImagesResponseDto> profileImages = new ArrayList<>();
+
+        for( AccountProfileImage image : accountProfileImages ){
+            String imageUrl = fileService.getCdnUrl("userProfile-image", image.getImageKey());
+            profileImages.add(UserImagesResponseDto.of(image, imageUrl));
+        }
+
+        return profileImages;
+
     }
 }
