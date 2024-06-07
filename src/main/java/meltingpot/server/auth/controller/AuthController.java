@@ -88,9 +88,11 @@ public class AuthController {
     @PostMapping("reissue-token")
     @Operation(summary="토큰 재발급", description="AccessToken과 RefreshToken을 받으면 두 토큰을 새로 재발급해주는 API 입니다.\n" )
     public ResponseEntity<ResponseData<ReissueTokenResponseDto>> reissueToken(
-            @RequestBody ReissueTokenRequestDto request) {
+            @RequestHeader("Authorization") String accessToken,
+            @RequestHeader("RefreshToken") String refreshToken
+    ) {
         try{
-            return ResponseData.toResponseEntity(ResponseCode.REISSUE_TOKEN_SUCCESS, authService.reissueToken(request));
+            return ResponseData.toResponseEntity(ResponseCode.REISSUE_TOKEN_SUCCESS, authService.reissueToken(accessToken, refreshToken));
         }
         catch ( InvalidTokenException e ){
             return ResponseData.toResponseEntity(ResponseCode.INVALID_REFRESH_TOKEN, null);
