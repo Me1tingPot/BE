@@ -169,10 +169,13 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto request) {
-        String refreshToken = request.refreshToken();
-        String oldAccessToken = request.accessToken();
+    public ReissueTokenResponseDto reissueToken( String oldAccessToken, String refreshToken ) {
         TokenDto reissuedTokenDto;
+
+        // Bearer 접두사 제거 및 공백 제거
+        oldAccessToken = oldAccessToken.replace("Bearer ", "").trim();
+        refreshToken = refreshToken.trim();
+
 
         if (tokenProvider.validateToken(refreshToken) && Boolean.TRUE.equals(
                 tokenProvider.validRefreshToken(refreshToken, oldAccessToken))) {
