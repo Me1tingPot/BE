@@ -82,31 +82,6 @@ public class AreaService {
             throw new IllegalArgumentException("법정동 정보가 없는 좌표입니다.");
         }
 
-        List<String> areaNames = Arrays.asList(bArea.region_1depth_name(), bArea.region_2depth_name(), bArea.region_3depth_name(), bArea.region_4depth_name());
-        Area lastArea = null;
-        for (String areaName: areaNames) {
-            if (areaName.isEmpty()) {
-                continue;
-            }
-
-            Area area;
-            if (lastArea == null) {
-                area = areaRepository.findAreaByAreaParentIdIsNullAndAreaName(areaName);
-            } else {
-                area = areaRepository.findAreaByAreaParentIdAndAreaName(lastArea.getId(), areaName);
-            }
-
-            if (area == null) {
-                // 만약 정보가 없는 경우 상위 지역을 반환한다
-                continue;
-            }
-            lastArea = area;
-        }
-
-        if (lastArea == null) {
-            throw new IllegalArgumentException("해당 지역 정보가 없습니다.");
-        }
-
-        return AreaResponse.of(lastArea);
+        return AreaResponse.of(areaRepository.findById(bArea.code()).orElseThrow(() -> new IllegalArgumentException("해당 지역 정보가 없습니다.")));
     }
 }
