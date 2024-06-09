@@ -31,6 +31,10 @@ public enum ResponseCode {
 
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
     UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
+    UPDATE_PROFILE_IMAGE_SUCCESS(OK, "프로필 이미지 추가 성공"),
+    PROFILE_IMAGE_DELETE_SUCCESS(OK, "프로필 이미지 삭제 성공"),
+    PROFILE_CHANGE_THUMBNAIL_SUCCESS(OK, "대표 사진 변경 성공"),
+    PROFILE_IMAGE_ALREADY_THUMBNAIL(OK, "이미 대표사진입니다"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -64,6 +68,13 @@ public enum ResponseCode {
     AREA_FETCH_FAILED_NOT_IN_OUR_DB(BAD_REQUEST, "해당 좌표는 등록되지 않은 좌표입니다"),
     AREA_FETCH_FAILED_NO_BDONG_INFO(BAD_REQUEST, "해당 좌표는 법정동 정보가 없습니다"),
 
+    PROFILE_UPDATE_FAIL(BAD_REQUEST, "프로필 수정 실패"),
+    PROFILE_IMAGE_DELETE_FAIL(BAD_REQUEST, "프로필 이미지 삭제 실패"),
+    PROFILE_IMAGE_UPDATE_FAIL(BAD_REQUEST, "프로필 이미지 수정 실패"),
+    PROFILE_IMAGE_NOT_FOUND(BAD_REQUEST,"해당 이미지는 존재하지 않습니다"),
+    PROFILE_IMAGE_LESS_THAN_TWO(BAD_REQUEST,"프로필 이미지가 하나인 경우 삭제할 수 없습니다"),
+
+
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     INVALID_ACCOUNT(UNAUTHORIZED, "계정이 비활성화 되었습니다"),
@@ -79,6 +90,9 @@ public enum ResponseCode {
     S3_OBJECT_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_DELETE_NOT_OWNER(FORBIDDEN, "파티를 삭제할 권한이 없습니다"),
     PARTY_MODIFY_NOT_OWNER(FORBIDDEN, "파티를 수정할 권한이 없습니다"),
+
+    PROFILE_IMAGE_UPDATE_NOT_OWNER(FORBIDDEN, "프로필 이미지를 수정할 권한이 없습니다"),
+
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),

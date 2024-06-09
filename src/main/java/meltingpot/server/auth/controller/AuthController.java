@@ -47,7 +47,7 @@ public class AuthController {
 
     // 프로필 이미지 URL 생성
     @GetMapping("/image-url")
-    @Operation(summary = "프로필 이미지 URL 생성", description = "프로필 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 회원가입에 첨부해주세요.")
+    @Operation(summary = "회원가입 프로필 이미지 URL 생성", description = "프로필 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 회원가입에 첨부해주세요.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "프로필 이미지 URL 생성 성공")
     })
