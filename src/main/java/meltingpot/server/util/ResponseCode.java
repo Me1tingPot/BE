@@ -19,16 +19,14 @@ public enum ResponseCode {
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
+    SOCKET_TOKEN_GET_SUCCESS(OK, "소켓 토큰 조회 성공"),
     POST_LIST_FETCH_SUCCEESS(OK,"게시글 목록 불러오기 성공"),
     POST_DETAIL_FETCH_SUCCEESS(OK,"게시글 내용 불러오기 성공"),
-
-
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
     CHAT_ROOMS_LIST_GET_SUCCESS(OK, "전체 채팅방 조회 성공"),
     POST_LIST_FETCH_SUCCESS(OK,"게시글 목록 불러오기 성공"),
-
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
     UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
     UPDATE_PROFILE_IMAGE_SUCCESS(OK, "프로필 이미지 추가 성공"),
@@ -59,15 +57,16 @@ public enum ResponseCode {
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
+    SOCKET_CONNECT_HEADER_CHECK_FAIL(BAD_REQUEST, "소켓 연결 요청 헤더에 필수 헤더 값이 없습니다"),
+    AUTHORIZATION_CHECK_FAIL(BAD_REQUEST, "헤더에서 올바른 Authorization을 찾을 수 없습니다"),
+    DESTINATION_NOT_VALID(BAD_REQUEST, "잘못된 목적지로 접근하였습니다"),
     COMMENT_CREATE_FAIL(BAD_REQUEST,"댓글 작성 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST,"게시글 작성 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST,"신고 작성 실패"),
-
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
     AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),
     AREA_FETCH_FAILED_NOT_IN_OUR_DB(BAD_REQUEST, "해당 좌표는 등록되지 않은 좌표입니다"),
     AREA_FETCH_FAILED_NO_BDONG_INFO(BAD_REQUEST, "해당 좌표는 법정동 정보가 없습니다"),
-
     PROFILE_UPDATE_FAIL(BAD_REQUEST, "프로필 수정 실패"),
     PROFILE_IMAGE_DELETE_FAIL(BAD_REQUEST, "프로필 이미지 삭제 실패"),
     PROFILE_IMAGE_UPDATE_FAIL(BAD_REQUEST, "프로필 이미지 수정 실패"),
@@ -90,6 +89,8 @@ public enum ResponseCode {
     S3_OBJECT_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_DELETE_NOT_OWNER(FORBIDDEN, "파티를 삭제할 권한이 없습니다"),
     PARTY_MODIFY_NOT_OWNER(FORBIDDEN, "파티를 수정할 권한이 없습니다"),
+    USER_NOT_IN_CHATROOM(FORBIDDEN, "사용자가 참여하는 채팅방이 아닙니다"),
+
 
     PROFILE_IMAGE_UPDATE_NOT_OWNER(FORBIDDEN, "프로필 이미지를 수정할 권한이 없습니다"),
 
@@ -99,6 +100,7 @@ public enum ResponseCode {
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방 정보를 찾을 수 없습니다"),
+    CHAT_ROOM_USER_NOT_FOUND(NOT_FOUND, "채팅방 유저 정보를 찾을 수 없습니다"),
     POST_NOT_FOUND(NOT_FOUND,"게시글을 찾을 수 없습니다"),
     PARTY_PARTICIPANT_NOT_FOUND(NOT_FOUND, "파티 참여자 정보를 찾을 수 없습니다"),
 
