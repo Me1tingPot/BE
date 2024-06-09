@@ -24,11 +24,6 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/chat/**");
-    }
-
-    @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http, TokenProvider tokenProvider) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
