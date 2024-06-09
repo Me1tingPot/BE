@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
         // 권한이 필요하지 않은 요청은 custom jwt filter를 거치지 않도록 설정
         if (request.getRequestURI().contains("/contract") || request.getRequestURI()
-                .contains("/auth") || request.getRequestURI().contains("/mail/reset-password")
+                .contains("/api/v1/auth") || request.getRequestURI().contains("/api/v1/mail")
                 || request.getRequestURI().contains("/docs") || request.getRequestURI()
                 .contains("/favicon.ico") || request.getRequestURI().contains("/h2-console") ||
                 request.getRequestURI().contains("/swagger-ui") ||
