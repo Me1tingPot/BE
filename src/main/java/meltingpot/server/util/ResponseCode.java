@@ -19,6 +19,7 @@ public enum ResponseCode {
     AREA_FETCH_SUCCESS(OK, "지역 조회 성공"),
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
+    SOCKET_TOKEN_GET_SUCCESS(OK, "소켓 토큰 조회 성공"),
     CHAT_ALARM_UPDATE_SUCCESS(OK, "채팅 알림 설정 수정 성공"),
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
@@ -48,6 +49,9 @@ public enum ResponseCode {
     PARTY_REPORT_ALREADY(BAD_REQUEST, "이미 신고한 파티입니다"),
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
+    SOCKET_CONNECT_HEADER_CHECK_FAIL(BAD_REQUEST, "소켓 연결 요청 헤더에 필수 헤더 값이 없습니다"),
+    AUTHORIZATION_CHECK_FAIL(BAD_REQUEST, "헤더에서 올바른 Authorization을 찾을 수 없습니다"),
+    DESTINATION_NOT_VALID(BAD_REQUEST, "잘못된 목적지로 접근하였습니다"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -65,12 +69,15 @@ public enum ResponseCode {
     S3_OBJECT_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_DELETE_NOT_OWNER(FORBIDDEN, "파티를 삭제할 권한이 없습니다"),
     PARTY_MODIFY_NOT_OWNER(FORBIDDEN, "파티를 수정할 권한이 없습니다"),
+    USER_NOT_IN_CHATROOM(FORBIDDEN, "사용자가 참여하는 채팅방이 아닙니다"),
+
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ACCOUNT_NOT_FOUND(NOT_FOUND, "계정 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "REFRESH 토큰 정보를 찾을 수 없습니다"),
     PARTY_NOT_FOUND(NOT_FOUND, "파티 정보를 찾을 수 없습니다"),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방 정보를 찾을 수 없습니다"),
+    CHAT_ROOM_USER_NOT_FOUND(NOT_FOUND, "채팅방 유저 정보를 찾을 수 없습니다"),
     POST_NOT_FOUND(NOT_FOUND,"게시글을 찾을 수 없습니다"),
     PARTY_PARTICIPANT_NOT_FOUND(NOT_FOUND, "파티 참여자 정보를 찾을 수 없습니다"),
 

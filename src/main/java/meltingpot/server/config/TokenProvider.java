@@ -124,6 +124,24 @@ public class TokenProvider {
                 .build();
     }
 
+    public String generateSocketToken(Account account) {
+        final long now = (new Date()).getTime();
+        final long expiredTime = (long) 1000 * 60;
+        Date accessTokenExpiresIn = new Date(now + expiredTime);
+
+        String socketToken = Jwts.builder()
+                .setSubject(account.getUsername())
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return socketToken;
+    }
+
+    public Claims getSocketTokenClaims(String accessToken) {
+        return parseClaims(accessToken);
+    }
+
     // 재발급한 RefreshToken 저장
     public void updateRefreshToken(String accessToken, String newRefreshToken) {
         String username = parseClaims(accessToken).getSubject();
