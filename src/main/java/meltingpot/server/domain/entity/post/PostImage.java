@@ -1,8 +1,12 @@
-package meltingpot.server.domain.entity;
+package meltingpot.server.domain.entity.post;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import meltingpot.server.domain.entity.post.Post;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,8 +20,11 @@ public class PostImage extends BaseEntity {
     @Column(name = "image_id")
     private Long id;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @NotNull
+    private String imageKey;
+
+    @NotNull
+    private String postImageOriginalName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -26,4 +33,9 @@ public class PostImage extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Account account;
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }
+

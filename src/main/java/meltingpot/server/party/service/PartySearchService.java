@@ -30,7 +30,7 @@ public class PartySearchService {
     @Transactional
     public PageResponse<PartyResponse> searchNearbyParty(PartyNearbySearchRequest partyNearbySearchRequest) {
         Area area = areaRepository.findById(partyNearbySearchRequest.areaId()).orElseThrow();
-        int searchTargetArea;
+        String searchTargetArea;
 
         if (area.getAreaParent() != null) {
             searchTargetArea = area.getAreaParent().getId();

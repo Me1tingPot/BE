@@ -2,6 +2,14 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import meltingpot.server.auth.controller.dto.ReissueTokenRequestDto;
+import meltingpot.server.auth.controller.dto.ReissueTokenResponseDto;
+import meltingpot.server.auth.controller.dto.SignupRequestDto;
+import meltingpot.server.domain.entity.AccountLanguage;
+import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.exception.DuplicateException;
+import meltingpot.server.exception.InvalidTokenException;
 import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.entity.RefreshToken;
@@ -14,6 +22,8 @@ import meltingpot.server.util.AccountUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.SecurityUtil;
 import meltingpot.server.util.TokenDto;
+import meltingpot.server.util.r2.FileService;
+import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,24 +45,51 @@ public class AuthService implements UserDetailsService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    //private final PasswordEncoder passwordEncoder;
-    private static final String BEARER_HEADER = "Bearer ";
+    private final PasswordEncoder passwordEncoder;
+    private final FileService fileService;
 
-    // 로그인 유저 정보 반환 to @CurrentUser
-    @Transactional(readOnly = true)
-    public Account getUserInfo(){
-        return accountRepository.findByUsernameAndDeletedAtIsNull(SecurityUtil.getCurrentUserName())
-                .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
+    // 회원가입
+    @Transactional
+    public AccountResponseDto signup(SignupRequestDto signupRequest) {
+
+        // 이메일(아이디) 중복 검사
+        checkUserName(signupRequest.email());
+
+        Account account = Account.builder()
+                .username(signupRequest.email())
+                .name(signupRequest.name())
+                .password(passwordEncoder.encode(signupRequest.password()))
+                .gender(Gender.valueOf(signupRequest.gender()))
+                .birth(signupRequest.birth())
+                .nationality(signupRequest.nationality())
+                .build();
+
+        account.setProfileImages(signupRequest.profileImages().stream().map(
+                (image) -> AccountProfileImage.builder()
+                        .account(account)
+                        .imageKey(image.getImageKey())
+                        .isThumbnail(image.isThumbnail())
+                        .sequence(image.getSequence())
+                        .imageOriginalName("")
+                        .build()).toList()
+        );
+
+        account.setLanguages(signupRequest.languages().stream().map(
+                (language) -> AccountLanguage.builder()
+                        .account(account)
+                        .language(language)
+                        .build()).toList()
+        );
+
+        accountRepository.save(account);
+
+        return signin(SigninServiceDto.builder()
+                .username(account.getUsername())
+                .password(signupRequest.password())
+                .build());
+
     }
 
-    // 로그인시 유저정보 조회하는 메서드 override
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        return new AccountUser(account);
-    }
 
     // 로그인
     @Transactional(rollbackFor = Exception.class)
@@ -100,4 +137,64 @@ public class AuthService implements UserDetailsService {
         refreshTokenRepository.deleteByTokenValue(refreshToken);
     }
 
+
+    // 사용자 이미지 업로드용 presignedUrl 생성
+    @Transactional
+    public FileUploadResponse generateImageUploadUrl() {
+        return fileService.getPreSignedUrl("userProfile-image");
+    }
+
+    // 로그인 유저 정보 반환 to @CurrentUser
+    @Transactional(readOnly = true)
+    public Account getUserInfo(){
+        return accountRepository.findByUsernameAndDeletedAtIsNull(SecurityUtil.getCurrentUserName())
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
+    }
+
+    // 로그인시 유저정보 조회하는 메서드 override
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return new AccountUser(account);
+    }
+
+    // 회원가입시 이메일 유효성 확인
+    @Transactional(readOnly = true)
+    public void checkUserName(String username) {
+        if(accountRepository.existsByUsername(username)){
+            throw new DuplicateException(ResponseCode.EMAIL_DUPLICATION);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReissueTokenResponseDto reissueToken( String oldAccessToken, String refreshToken ) {
+        TokenDto reissuedTokenDto;
+
+        // Bearer 접두사 제거 및 공백 제거
+        oldAccessToken = oldAccessToken.replace("Bearer ", "").trim();
+        refreshToken = refreshToken.trim();
+
+
+        if (tokenProvider.validateToken(refreshToken) && Boolean.TRUE.equals(
+                tokenProvider.validRefreshToken(refreshToken, oldAccessToken))) {
+            reissuedTokenDto = tokenProvider.generateReissuedTokenDto(oldAccessToken);
+
+            // 이전 refresh token 삭제
+            RefreshToken targetRefreshToken = refreshTokenRepository.getByTokenValue(refreshToken);
+            Long accountId = targetRefreshToken.getAccount().getId();
+            refreshTokenRepository.deleteByTokenValue(refreshToken);
+
+            tokenProvider.updateRefreshToken(oldAccessToken, reissuedTokenDto.getRefreshToken());
+
+            return ReissueTokenResponseDto.builder()
+                    .accountId(accountId)
+                    .accessToken(reissuedTokenDto.getAccessToken())
+                    .refreshToken(reissuedTokenDto.getRefreshToken())
+                    .build();
+        } else {
+            throw new InvalidTokenException(ResponseCode.INVALID_REFRESH_TOKEN);
+        }
+    }
 }

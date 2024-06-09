@@ -2,13 +2,11 @@ package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,14 +18,20 @@ public class AccountProfileImage extends BaseEntity {
     private Long id;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
+
+    @NotNull
     private String imageKey;
 
     @NotNull
     private boolean isThumbnail;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String imageOriginalName;
+
+    @Column(nullable = true)
+    private int sequence; // 네 장 중 몇 번째
 
 }
