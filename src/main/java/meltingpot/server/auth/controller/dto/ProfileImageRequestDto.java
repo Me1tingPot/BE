@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileImageSignupDto {
+public class ProfileImageRequestDto {
     String imageKey;
     boolean thumbnail;
     int sequence;
