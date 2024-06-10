@@ -44,4 +44,9 @@ public class ChatRoomUser extends BaseEntity {
     public void toggleAlarm() {
         this.alarm = this.alarm.toggle();
     }
+
+    public int updateUnreadMessageCnt() {
+        this.unreadMessageCnt += 1;
+        return this.unreadMessageCnt;
+    }
 }

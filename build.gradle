@@ -44,6 +44,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// implementation 'org.springframework:spring-messaging:6.0.3'
 	implementation 'software.amazon.ion:ion-java:1.0.3'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 

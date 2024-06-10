@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.chat.enums.Role;
 import meltingpot.server.domain.entity.common.BaseEntity;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

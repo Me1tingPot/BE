@@ -1,7 +1,6 @@
 package meltingpot.server.chat.dto;
 
-public record ChatMessageCreateRequest(
-        Long userId,
+public record ChatMessageSendRequest(
         String content,
         Long chatRoomId
 ) {
