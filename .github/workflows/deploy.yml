@@ -34,7 +34,6 @@ jobs:
           port: 22
           uploads: |
             ./build/libs/ => /root/apache-tomcat-10.1.24/build-target/
-
       - name: Change old WAR to new WAR
         uses: appleboy/ssh-action@v1.0.3
         with:
