@@ -72,20 +72,12 @@ public enum ResponseCode {
     AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),
     AREA_FETCH_FAILED_NOT_IN_OUR_DB(BAD_REQUEST, "해당 좌표는 등록되지 않은 좌표입니다"),
     AREA_FETCH_FAILED_NO_BDONG_INFO(BAD_REQUEST, "해당 좌표는 법정동 정보가 없습니다"),
-    PROFILE_UPDATE_FAIL(BAD_REQUEST, "프로필 수정 실패"),
-    PROFILE_IMAGE_DELETE_FAIL(BAD_REQUEST, "프로필 이미지 삭제 실패"),
-    PROFILE_IMAGE_UPDATE_FAIL(BAD_REQUEST, "프로필 이미지 수정 실패"),
-    PROFILE_IMAGE_NOT_FOUND(BAD_REQUEST,"해당 이미지는 존재하지 않습니다"),
-    PROFILE_IMAGE_LESS_THAN_TWO(BAD_REQUEST,"프로필 이미지가 하나인 경우 삭제할 수 없습니다"),
-
 
     PROFILE_UPDATE_FAIL(BAD_REQUEST, "프로필 수정 실패"),
     PROFILE_IMAGE_DELETE_FAIL(BAD_REQUEST, "프로필 이미지 삭제 실패"),
     PROFILE_IMAGE_UPDATE_FAIL(BAD_REQUEST, "프로필 이미지 수정 실패"),
     PROFILE_IMAGE_NOT_FOUND(BAD_REQUEST,"해당 이미지는 존재하지 않습니다"),
     PROFILE_IMAGE_LESS_THAN_TWO(BAD_REQUEST,"프로필 이미지가 하나인 경우 삭제할 수 없습니다"),
-
-
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
@@ -108,10 +100,6 @@ public enum ResponseCode {
     PARTY_DELETE_NOT_OWNER(FORBIDDEN, "파티를 삭제할 권한이 없습니다"),
     PARTY_MODIFY_NOT_OWNER(FORBIDDEN, "파티를 수정할 권한이 없습니다"),
     USER_NOT_IN_CHATROOM(FORBIDDEN, "사용자가 참여하는 채팅방이 아닙니다"),
-
-
-    PROFILE_IMAGE_UPDATE_NOT_OWNER(FORBIDDEN, "프로필 이미지를 수정할 권한이 없습니다"),
-
 
     PROFILE_IMAGE_UPDATE_NOT_OWNER(FORBIDDEN, "프로필 이미지를 수정할 권한이 없습니다"),
 
