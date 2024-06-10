@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import meltingpot.server.auth.controller.dto.*;
+import meltingpot.server.exception.AuthException;
+import meltingpot.server.exception.DuplicateException;
 import meltingpot.server.exception.InvalidTokenException;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
@@ -23,7 +25,7 @@ import java.util.NoSuchElementException;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -39,15 +41,20 @@ public class AuthController {
     public ResponseEntity<ResponseData<AccountResponseDto>> signup(
             @RequestBody @Valid SignupRequestDto request
     ){
-        AccountResponseDto data = authService.signup(request);
-        logger.info("SIGNUP_SUCCESS (200 OK) :: userId = {}, userEmail = {}",
-                data.getId(), data.getEmail());
-        return ResponseData.toResponseEntity(ResponseCode.SIGNUP_SUCCESS, data);
+        try{
+            AccountResponseDto data = authService.signup(request);
+            logger.info("SIGNUP_SUCCESS (200 OK) :: userId = {}, userEmail = {}",
+                    data.getId(), data.getEmail());
+            return ResponseData.toResponseEntity(ResponseCode.SIGNUP_SUCCESS, data);
+
+        }catch ( AuthException e ){
+            return ResponseData.toResponseEntity( e.getResponseCode(), null);
+        }
     }
 
     // 프로필 이미지 URL 생성
     @GetMapping("/image-url")
-    @Operation(summary = "프로필 이미지 URL 생성", description = "프로필 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 회원가입에 첨부해주세요.")
+    @Operation(summary = "회원가입 프로필 이미지 URL 생성", description = "프로필 이미지 업로드를 위한 URL을 생성합니다. 생성된 URL에 PUT으로 이미지를 업로드 한 뒤 key를 회원가입에 첨부해주세요.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "프로필 이미지 URL 생성 성공")
     })
@@ -99,9 +106,6 @@ public class AuthController {
         }
     }
 
-
-
-    // 이메일 인증
 
     // 비밀번호 재설정
 

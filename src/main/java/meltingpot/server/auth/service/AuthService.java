@@ -8,9 +8,8 @@ import meltingpot.server.auth.controller.dto.SignupRequestDto;
 import meltingpot.server.domain.entity.AccountLanguage;
 import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.enums.Gender;
-import meltingpot.server.exception.DuplicateException;
-import meltingpot.server.exception.InvalidTokenException;
-import meltingpot.server.exception.ResourceNotFoundException;
+import meltingpot.server.domain.repository.MailVerificationRepository;
+import meltingpot.server.exception.*;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.entity.RefreshToken;
 import meltingpot.server.domain.entity.Account;
@@ -47,13 +46,22 @@ public class AuthService implements UserDetailsService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
+    private final MailVerificationRepository mailVerificationRepository;
 
     // 회원가입
     @Transactional
     public AccountResponseDto signup(SignupRequestDto signupRequest) {
 
-        // 이메일(아이디) 중복 검사
-        checkUserName(signupRequest.email());
+        // TODO 개발 완료 후 이메일 인증 확인 주석 풀기
+//        // 이메일 인증을 거친 유효한 이메일인지 확인
+//        if(!mailVerificationRepository.existsByEmailAndVerifiedTrue(signupRequest.email())){
+//            throw new AuthException(ResponseCode.MAIL_NOT_AUTHORIZED);
+//        };
+
+        // 이미 가입한 이메일인지 확인
+        if(accountRepository.existsByUsername(signupRequest.email())){
+            throw new AuthException(ResponseCode.EMAIL_DUPLICATION);
+        }
 
         Account account = Account.builder()
                 .username(signupRequest.email())
@@ -158,14 +166,6 @@ public class AuthService implements UserDetailsService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         return new AccountUser(account);
-    }
-
-    // 회원가입시 이메일 유효성 확인
-    @Transactional(readOnly = true)
-    public void checkUserName(String username) {
-        if(accountRepository.existsByUsername(username)){
-            throw new DuplicateException(ResponseCode.EMAIL_DUPLICATION);
-        }
     }
 
     @Transactional(rollbackFor = Exception.class)
