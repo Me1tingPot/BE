@@ -1,9 +1,11 @@
 package meltingpot.server.domain.entity;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import meltingpot.server.domain.entity.common.BaseEntity;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -11,27 +13,23 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class AccountProfileImage extends BaseEntity {
-
+public class MailVerification extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String email;
 
     @NotNull
-    private String imageKey;
+    private String authenticationNumber;
+
 
     @NotNull
-    private boolean isThumbnail;
+    private LocalDateTime expiredAt;
 
     @NotNull
-    private String imageOriginalName;
-
-    @Column(nullable = true)
-    private int sequence; // 네 장 중 몇 번째
+    @ColumnDefault("false")
+    private boolean verified = false;
 
 }

@@ -35,7 +35,7 @@ public class SecurityConfig {
                 //TODO 개발 완료 후 permitAll 삭제
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/auth/**", "/ws/**","/api/v1/**").permitAll()
+                                .requestMatchers("/ws/**","/api/v1/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 
