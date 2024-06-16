@@ -36,19 +36,23 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private FileService fileService;
 
+
     @Override
+    //
     public CommentResponseDTO.CreateCommentResultDTO createComment (CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Long postId) {
         Post post = findPostById(postId);
         Comment comment = toComment(createCommentDTO, account, post);
         return processCommentCreation(createCommentDTO, account, comment);
     }
 
+    @Override
     public CommentResponseDTO.CreateCommentResultDTO createChildComment(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Long commentId) {
         Comment parentComment = findCommentById(commentId);
         Comment childComment = CommentConverter.toChildComment(createCommentDTO, account, parentComment);
         return processCommentCreation(createCommentDTO, account, childComment);
     }
 
+    @Override
     public CommentResponseDTO.CreateCommentResultDTO updateComment (CommentRequestDTO.CreateCommentDTO updateCommentDTO, Account account,Long commentId){
         Comment comment = findCommentById(commentId);
         Post post = comment.getPost();
