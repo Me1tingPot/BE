@@ -13,7 +13,7 @@ import lombok.*;
 public class SocketSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @NotNull
     @Column(name = "session_id")
