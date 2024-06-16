@@ -45,7 +45,6 @@ public class Account extends BaseEntity {
     private String password;
 
     @NotNull
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -55,27 +54,23 @@ public class Account extends BaseEntity {
     @NotNull
     private String nationality;
 
-    @NotNull
-    private String language;
-
-    @NotNull
-    private String country;
-
-    @NotNull
-    private String city;
-
     private String bio; // 사용자 자기소개
-
-    @NotNull
-    private LocalDateTime createdAt;
-
-    @NotNull
-    private LocalDateTime updatedAt;
 
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Builder.Default
     private List<AccountProfileImage> profileImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<AccountLanguage> languages = new ArrayList<>();
+  
+    @OneToMany(mappedBy = "account")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Post> posts = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "account")
@@ -85,15 +80,9 @@ public class Account extends BaseEntity {
         return accountRoles.stream().map(a -> a.getRole().getAuthority())
                 .collect(Collectors.toList());
     }
-  
-    @OneToMany(mappedBy = "account")
-    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "account")
     private List<CommentImage> commentImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "account")
-    private List<Post> posts = new ArrayList<>();
 
     public void updateName(String name) {
         this.name = name;

@@ -28,19 +28,18 @@ jobs:
       - name: Deploy to development server
         uses: Dylan700/sftp-upload-action@latest
         with:
-          server: ${{secrets.DEV_SSH_HOST}}
-          username: ${{secrets.DEV_SSH_ID}}
-          password: ${{secrets.DEV_SSH_PASSWORD}}
+          server: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_ID }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
           uploads: |
             ./build/libs/ => /root/apache-tomcat-10.1.24/build-target/
-
       - name: Change old WAR to new WAR
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.DEV_SSH_HOST}}
-          username: ${{secrets.DEV_SSH_ID}}
-          password: ${{secrets.DEV_SSH_PASSWORD}}
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_ID }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
           script: |
             cd /root/apache-tomcat-10.1.24/webapps/

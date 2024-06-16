@@ -124,6 +124,39 @@ public class TokenProvider {
                 .build();
     }
 
+    public String generateSocketToken(Account account) {
+        final long now = (new Date()).getTime();
+        final long expiredTime = (long) 1000 * 60;
+        Date accessTokenExpiresIn = new Date(now + expiredTime);
+
+        String socketToken = Jwts.builder()
+                .setSubject(account.getUsername())
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return socketToken;
+    }
+
+    public Claims getSocketTokenClaims(String accessToken) {
+        return parseClaims(accessToken);
+    }
+
+    // 저장되어있는 RefreshToken의 account와 접속한 계정이 동일한지 확인
+    public Boolean validRefreshToken(String refreshToken, String accessToken) {
+        String username = parseClaims(accessToken).getSubject();
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
+
+        RefreshToken matchRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
+                .orElseThrow(() -> new InvalidTokenException(ResponseCode.REFRESH_TOKEN_NOT_FOUND));
+
+        if (matchRefreshToken.getAccount().equals(account)) {
+            return true;
+        }
+        return false;
+    }
+
     // 재발급한 RefreshToken 저장
     public void updateRefreshToken(String accessToken, String newRefreshToken) {
         String username = parseClaims(accessToken).getSubject();
@@ -188,4 +221,6 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+
 }

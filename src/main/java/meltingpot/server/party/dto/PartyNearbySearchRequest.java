@@ -2,16 +2,14 @@ package meltingpot.server.party.dto;
 
 import lombok.Builder;
 
-import java.util.List;
-
 @Builder
 public record PartyNearbySearchRequest(
     Integer page,
-    Integer areaId
+    String areaId
 ) {
     public static PartyNearbySearchRequest of(
             Integer page,
-            Integer areaId
+            String areaId
     ) {
         return new PartyNearbySearchRequest(
             page,
