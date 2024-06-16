@@ -6,9 +6,7 @@ import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -73,5 +71,10 @@ public class Comment extends BaseEntity {
 
     public CommentImage getCommentImage() {
         return commentImage;
+    }
+
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }
