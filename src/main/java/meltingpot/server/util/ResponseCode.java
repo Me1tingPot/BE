@@ -38,6 +38,7 @@ public enum ResponseCode {
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED,"게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED,"댓글 작성 성공"),
+    UPDATE_COMMENT_SUCCESS(CREATED,"댓글 수정 성공"),
     CREATE_CHILD_COMMENT_SUCCESS(CREATED,"대댓글 작성 성공"),
     REPORT_CREATE_SUCCESS(CREATED,"신고 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
@@ -56,6 +57,7 @@ public enum ResponseCode {
     PARTY_SEARCH_FAIL(BAD_REQUEST, "파티 검색 실패"),
     PARTY_INVALID_QUERY(BAD_REQUEST, "검색어는 2글자 이상 30글자 이하로 입력해주세요"),
     COMMENT_CREATE_FAIL(BAD_REQUEST,"댓글 작성 실패 "),
+    COMMENT_UPDATE_FAIL(BAD_REQUEST,"댓글 수정 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST,"게시글 작성 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST,"신고 작성 실패"),
 

@@ -9,4 +9,6 @@ public interface CommentService {
     CommentResponseDTO.CreateCommentResultDTO createComment (CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Long postId);
 
     CommentResponseDTO.CreateCommentResultDTO createChildComment  (CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Long commentId);
+
+    CommentResponseDTO.CreateCommentResultDTO updateComment (CommentRequestDTO.CreateCommentDTO updateCommentDTO,Account account, Long commentId);
 }

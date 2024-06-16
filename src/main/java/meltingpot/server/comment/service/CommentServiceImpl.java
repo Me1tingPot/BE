@@ -9,6 +9,7 @@ import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.repository.AccountRepository;
+import meltingpot.server.domain.repository.CommentImageRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.util.r2.FileService;
@@ -31,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
+    private final CommentImageRepository commentImageRepository;
     @Autowired
     private FileService fileService;
 
@@ -47,6 +49,21 @@ public class CommentServiceImpl implements CommentService {
         return processCommentCreation(createCommentDTO, account, childComment);
     }
 
+    public CommentResponseDTO.CreateCommentResultDTO updateComment (CommentRequestDTO.CreateCommentDTO updateCommentDTO, Account account,Long commentId){
+        Comment comment = findCommentById(commentId);
+        Post post = comment.getPost();
+        String newImageKey = updateCommentDTO.getImageKey();
+        CommentImage oldCommentImage = comment.getCommentImage();
+        if (newImageKey == null || newImageKey.isEmpty()) {
+            if (oldCommentImage != null) {
+                commentImageRepository.delete(oldCommentImage);
+                comment.setCommentImage(null);
+            }
+        } else {
+            comment = toComment(updateCommentDTO,account,post);
+        }
+        return processCommentCreation(updateCommentDTO, account, comment);
+    }
     private CommentResponseDTO.CreateCommentResultDTO processCommentCreation(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Comment comment) {
         String commentImgUrl = null;
         if (createCommentDTO.getImageKey() != null && !createCommentDTO.getImageKey().isEmpty()) {

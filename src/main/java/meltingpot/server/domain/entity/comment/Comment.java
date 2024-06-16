@@ -57,6 +57,10 @@ public class Comment extends BaseEntity {
         return account;
     }
 
+    public Post getPost(){
+        return post;
+    }
+
     public Boolean getIsAnonymous(){
         return isAnonymous;
     }
@@ -67,6 +71,7 @@ public class Comment extends BaseEntity {
     }
 
 
-
-
+    public CommentImage getCommentImage() {
+        return commentImage;
+    }
 }
