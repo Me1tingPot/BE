@@ -39,6 +39,17 @@ public class CommentController {
             return ResponseData.toResponseEntity(ResponseCode.COMMENT_CREATE_FAIL, null);
         }
     }
+
+    @Operation(summary = "댓글 수정")
+    @PutMapping("/{commentId}")
+    public ResponseEntity<ResponseData<CommentResponseDTO.CreateCommentResultDTO>> updateComment(@RequestBody CommentRequestDTO.CreateCommentDTO createCommentDTO, @CurrentUser Account account, @PathVariable Long commentId){
+        try {
+            return ResponseData.toResponseEntity(ResponseCode.UPDATE_COMMENT_SUCCESS, commentService.updateComment(createCommentDTO,account,commentId));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.COMMENT_UPDATE_FAIL, null);
+        }
+    }
+
 }
 
 
