@@ -30,7 +30,7 @@ public class MailUtil {
             helper.setSubject(title);
 
             // 수신자 설정
-            helper.setFrom("멜팅팟 <meltingpot@meltingpot.kr>");
+            helper.setFrom("멜팅팟 <support@meltingpot.kr>");
             helper.setTo(to);
 
             // 템플릿에 전달할 데이터 설정
