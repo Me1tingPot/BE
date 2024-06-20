@@ -29,7 +29,7 @@ public class MailController {
 
     // 정회원 인증 메일 전송
     @PostMapping("")
-    @Operation(summary="이메일 인증번호 전송 [임시]", description="[이메일 인증 임시 구현 SMTP]\n 입력 받은 이메일로 인증 번호를 전송합니다.")
+    @Operation(summary="이메일 인증번호 전송", description="입력 받은 이메일로 인증 번호를 전송합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "MAIL_VERIFICATION_SEND_SUCCESS", description = "이메일 인증번호 전송 성공"),
             @ApiResponse(responseCode = "VERIFICATION_CODE_ALREADY_EXIST", description = "이미 생성한 인증 번호가 있습니다"),
