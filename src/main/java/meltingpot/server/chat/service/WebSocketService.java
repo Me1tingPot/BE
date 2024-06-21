@@ -56,7 +56,7 @@ public class WebSocketService {
         ChatMessage newChatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .content(chatMessageSendRequest.content())
-                .userId(account.getId())
+                .account(account)
                 .role(role)
                 .build();
 
@@ -90,7 +90,7 @@ public class WebSocketService {
     }
 
     private boolean isSender(Account account, ChatMessage chatMessage) {
-        return account.getId().equals(chatMessage.getUserId());
+        return account.getId().equals(chatMessage.getAccount().getId());
     }
 
     private void sendNotificationOrMessage(Account account, ChatMessage chatMessage) {

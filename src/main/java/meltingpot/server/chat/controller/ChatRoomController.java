@@ -58,7 +58,7 @@ public class ChatRoomController {
 
     // [CHECK] PageResponse
     @PostMapping("/chat/{chatRoomId}")
-    @Operation(summary = "채팅방 채팅 내역 조회", description = "채팅방 입장 후, 채팅방 메시지 조회. (위치 고정) 좌측 : 주최자가 전송한 메세지 / 우측 : 참여자가 전송한 메세지")
+    @Operation(summary = "채팅방 채팅 내역 조회", description = "채팅방 입장 후, 채팅방 메시지 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 채팅 내역 조회 성공"),
             @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다"),
@@ -68,17 +68,6 @@ public class ChatRoomController {
             @PathVariable("chatRoomId") Long chatRoomId,
             @RequestBody @Valid PageGetRequest pageGetRequest
             ) {
-        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessage(chatRoomId, pageGetRequest));
-    }
-
-    @GetMapping("/chat/{chatRoomId}/detail")
-    @Operation(summary = "채팅방 상단", description = "채팅방 상단 위치. 채팅방 정보")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "OK", description = "채팅방 상단 조회 성공"),
-            @ApiResponse(responseCode = "NOT_FOUND", description = "채팅방 정보를 찾을 수 없습니다"),
-            @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 상단 조회 실패")
-    })
-    public ResponseEntity<ResponseData<ChatRoomDetailGetResponse>> getChatRoomDetail(@PathVariable("chatRoomId") Long chatRoomId) {
-        return ResponseData.toResponseEntity(CHAT_DETAIL_GET_SUCCESS, chatRoomQueryService.getRoomDetail(chatRoomId));
+        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessages(chatRoomId, pageGetRequest));
     }
 }
