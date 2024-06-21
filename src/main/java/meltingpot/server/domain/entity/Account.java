@@ -3,6 +3,7 @@ package meltingpot.server.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
+import meltingpot.server.domain.entity.chat.ChatMessage;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.common.BaseEntity;
@@ -71,6 +72,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<ChatMessage> chatMessages = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "account")

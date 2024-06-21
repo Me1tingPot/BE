@@ -35,4 +35,9 @@ public class ChatMessage extends BaseEntity {
     @Column(name = "is_leader")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public void setAccount(Account account) {
+        this.account = account;
+        account.getChatMessages().add(this);
+    }
 }
