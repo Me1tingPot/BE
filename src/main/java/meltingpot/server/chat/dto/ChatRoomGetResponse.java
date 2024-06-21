@@ -15,6 +15,8 @@ public record ChatRoomGetResponse(
         String partyLocationAddress,
         LocalDateTime partyStartTime,
         int userCnt,
+        int partyMinParticipant,
+        int partyMaxParticipant,
         int messageCnt
 ) {
     public static ChatRoomGetResponse from(ChatRoomUser chatRoomUser) {
@@ -33,6 +35,8 @@ public record ChatRoomGetResponse(
                 chatRoomUser.getChatRoom().getParty().getPartyLocationAddress(),
                 chatRoomUser.getChatRoom().getParty().getPartyStartTime(),
                 chatRoomUser.getChatRoom().getChatRoomUserList().size(),
+                chatRoomUser.getChatRoom().getParty().getPartyMinParticipant(),
+                chatRoomUser.getChatRoom().getParty().getPartyMaxParticipant(),
                 chatRoomUser.getUnreadMessageCnt()
         );
     }
