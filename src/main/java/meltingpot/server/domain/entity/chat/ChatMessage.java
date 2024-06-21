@@ -3,6 +3,7 @@ package meltingpot.server.domain.entity.chat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.chat.enums.Role;
 import meltingpot.server.domain.entity.common.BaseEntity;
 
@@ -26,8 +27,9 @@ public class ChatMessage extends BaseEntity {
     private String content;
 
     @NotNull
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Account account;
 
     @NotNull
     @Column(name = "is_leader")

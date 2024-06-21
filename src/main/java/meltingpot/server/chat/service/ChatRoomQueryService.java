@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static meltingpot.server.util.ResponseCode.CHAT_ROOM_NOT_FOUND;
 import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 
 @Slf4j
@@ -30,22 +31,16 @@ public class ChatRoomQueryService {
     private final ChatMessageRepository chatMessageRepository;
     private final PartyRepository partyRepository;
 
-    public ChatRoomDetailGetResponse getRoomDetail(Long chatRoomId) {
-        Party party = partyRepository.findByChatRoomId(chatRoomId)
-                .orElseThrow(() -> new ResourceNotFoundException(PARTY_NOT_FOUND));
-        return ChatRoomDetailGetResponse.from(party);
-    }
-
     // [CHECK] 1. slice or page or list 2. PageResponse api
-    public ChatMessagePageResponse getChatMessage(Long chatRoomId, PageGetRequest pageGetRequest) {
+    public ChatMessagePageResponse getChatMessages(Long chatRoomId, PageGetRequest pageGetRequest) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("ChatRoom not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CHAT_ROOM_NOT_FOUND));
 
         PageRequest pageRequest = PageRequest.of(pageGetRequest.page(), pageGetRequest.size(), Sort.by(Sort.Direction.DESC, "id"));
 
         Slice<ChatMessage> chatMessagesSlice = chatMessageRepository.findAllByChatRoomId(chatRoom.getId(), pageRequest);
 
-        return ChatMessagePageResponse.from(chatMessagesSlice);
+        return ChatMessagePageResponse.from(chatMessagesSlice, chatRoom);
     }
 
     public ChatRoomsPageResponse getChatRooms(Long userId, PageGetRequest pageGetRequest) {
