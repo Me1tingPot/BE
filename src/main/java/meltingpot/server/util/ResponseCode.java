@@ -31,13 +31,18 @@ public enum ResponseCode {
     CHAT_DETAIL_GET_SUCCESS(OK, "채팅방 상단 조회 성공"),
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
     CHAT_ROOMS_LIST_GET_SUCCESS(OK, "전체 채팅방 조회 성공"),
+
     POST_LIST_FETCH_SUCCESS(OK,"게시글 목록 불러오기 성공"),
+
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
     UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
     UPDATE_PROFILE_IMAGE_SUCCESS(OK, "프로필 이미지 추가 성공"),
     PROFILE_IMAGE_DELETE_SUCCESS(OK, "프로필 이미지 삭제 성공"),
     PROFILE_CHANGE_THUMBNAIL_SUCCESS(OK, "대표 사진 변경 성공"),
     PROFILE_IMAGE_ALREADY_THUMBNAIL(OK, "이미 대표사진입니다"),
+    READ_USERS_POSTS_SUCCESS(OK,"사용자가 작성한 게시글 불러오기 성공"),
+    READ_USERS_COMMENTS_SUCCESS(OK,"사용자가 댓글을 작성한 게시글 불러오기 성공"),
+    READ_USERS_PARTIES_SUCCESS(OK,"사용자가 참여한 파티 불러오기 성공"),
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -80,6 +85,9 @@ public enum ResponseCode {
     PROFILE_IMAGE_UPDATE_FAIL(BAD_REQUEST, "프로필 이미지 수정 실패"),
     PROFILE_IMAGE_NOT_FOUND(BAD_REQUEST,"해당 이미지는 존재하지 않습니다"),
     PROFILE_IMAGE_LESS_THAN_TWO(BAD_REQUEST,"프로필 이미지가 하나인 경우 삭제할 수 없습니다"),
+    READ_USERS_POSTS_FAIL(BAD_REQUEST, "사용자가 작성한 게시글 불러오기 실패"),
+    READ_USERS_COMMENTS_FAIL(BAD_REQUEST, "사용자가 댓글을 작성한 게시글 불러오기 실패"),
+    READ_USERS_PARTIES_FAIL(BAD_REQUEST, "사용자가 참여한 파티 불러오기 실패"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

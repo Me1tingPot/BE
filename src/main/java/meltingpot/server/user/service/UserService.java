@@ -3,22 +3,33 @@ package meltingpot.server.user.service;
 
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
+import meltingpot.server.comment.service.CommentService;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
+import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
+import meltingpot.server.domain.repository.CommentRepository;
+import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.domain.repository.party.PartyParticipantRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
+import meltingpot.server.domain.specification.party.PartySpecification;
+import meltingpot.server.party.dto.PartyResponse;
+import meltingpot.server.post.service.PostService;
 import meltingpot.server.user.controller.dto.NewProfileImageRequestDto;
+import meltingpot.server.user.controller.dto.PostResponse;
+import meltingpot.server.user.controller.dto.UserDetailRequestDto;
 import meltingpot.server.user.controller.dto.UserResponseDto;
 import meltingpot.server.user.service.dto.UpdateBioServiceDto;
 import meltingpot.server.user.service.dto.UpdateNameServiceDto;
 import meltingpot.server.user.service.dto.UserImagesResponseDto;
+import meltingpot.server.util.PageResponse;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +43,12 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final AccountRepository accountRepository;
-    private  final AccountProfileImageRepository accountProfileImageRepository;
+    private final AccountProfileImageRepository accountProfileImageRepository;
     private final PartyRepository partyRepository;
     private final PartyParticipantRepository partyParticipantRepository;
     private final FileService fileService;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto readProfile(Account account) {
@@ -164,5 +177,17 @@ public class UserService {
 
         return ResponseCode.PROFILE_CHANGE_THUMBNAIL_SUCCESS;
 
+    }
+
+    public PageResponse<PostResponse> readUsersPosts(UserDetailRequestDto userDetailRequestDto) {
+        return null;
+    }
+
+    public PageResponse<PostResponse>  readUsersComments(UserDetailRequestDto userDetailRequestDto) {
+        return null;
+    }
+
+    public PageResponse<PartyResponse>  readUsersParties(UserDetailRequestDto userDetailRequestDto) {
+        return null;
     }
 }
