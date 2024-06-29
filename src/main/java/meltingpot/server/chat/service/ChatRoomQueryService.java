@@ -6,7 +6,6 @@ import meltingpot.server.chat.dto.*;
 import meltingpot.server.domain.entity.chat.ChatMessage;
 import meltingpot.server.domain.entity.chat.ChatRoom;
 import meltingpot.server.domain.entity.chat.ChatRoomUser;
-import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.repository.chat.ChatMessageRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomUserRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static meltingpot.server.util.ResponseCode.CHAT_ROOM_NOT_FOUND;
-import static meltingpot.server.util.ResponseCode.PARTY_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -32,19 +30,19 @@ public class ChatRoomQueryService {
     private final PartyRepository partyRepository;
 
     // [CHECK] 1. slice or page or list 2. PageResponse api
-    public ChatMessagePageResponse getChatMessages(Long chatRoomId, PageGetRequest pageGetRequest) {
+    public ChatMessagePageResponse getChatMessages(Long chatRoomId, int page, int size) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ResourceNotFoundException(CHAT_ROOM_NOT_FOUND));
 
-        PageRequest pageRequest = PageRequest.of(pageGetRequest.page(), pageGetRequest.size(), Sort.by(Sort.Direction.DESC, "id"));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
         Slice<ChatMessage> chatMessagesSlice = chatMessageRepository.findAllByChatRoomId(chatRoom.getId(), pageRequest);
 
         return ChatMessagePageResponse.from(chatMessagesSlice, chatRoom);
     }
 
-    public ChatRoomsPageResponse getChatRooms(Long userId, PageGetRequest pageGetRequest) {
-        PageRequest pageRequest = PageRequest.of(pageGetRequest.page(), pageGetRequest.size(), Sort.by(Sort.Direction.ASC, "exitAt"));
+    public ChatRoomsPageResponse getChatRooms(Long userId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "exitAt"));
 
         Slice<ChatRoomUser> chatRoomUserSlice = chatRoomUserRepository.findAllByUserId(userId, pageRequest);
 

@@ -1,5 +1,6 @@
 package meltingpot.server.chat.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.chat.dto.SocketTokenGetResponse;
 import meltingpot.server.chat.service.ChatService;
@@ -19,6 +20,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/token")
+    @Operation(summary = "소켓 전용 토큰 발급", description = "사용자가 채팅방에 입장하기 전에, 소켓 전용 토큰 발급")
     public ResponseEntity<ResponseData<SocketTokenGetResponse>> getToken(@CurrentUser Account account) {
         SocketTokenGetResponse data = chatService.getToken(account);
 

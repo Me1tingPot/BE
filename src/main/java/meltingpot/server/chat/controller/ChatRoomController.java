@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.chat.dto.*;
@@ -28,7 +27,7 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     // [CHECK] 1. Post @RequestBody or 2. Get @ModelAttribute
-    @PostMapping()
+    @GetMapping()
     @Operation(summary = "채팅방 전체 목록 조회", description = "사용자가 참여하는 전체 채팅방 조회. 파티에 참여하면 채팅방 자동으로 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 전체 목록 조회 성공"),
@@ -37,9 +36,10 @@ public class ChatRoomController {
     })
     public ResponseEntity<ResponseData<ChatRoomsPageResponse>> getChatRooms(
             @CurrentUser Account user,
-            @RequestBody @Valid PageGetRequest pageGetRequest
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size
     ) {
-        return ResponseData.toResponseEntity(CHAT_ROOMS_LIST_GET_SUCCESS, chatRoomQueryService.getChatRooms(user.getId(), pageGetRequest));
+        return ResponseData.toResponseEntity(CHAT_ROOMS_LIST_GET_SUCCESS, chatRoomQueryService.getChatRooms(user.getId(), page, size));
     }
 
     @PostMapping("/alarm/{chatRoomId}")
@@ -57,7 +57,7 @@ public class ChatRoomController {
     }
 
     // [CHECK] PageResponse
-    @PostMapping("/chat/{chatRoomId}")
+    @GetMapping("/chat/{chatRoomId}")
     @Operation(summary = "채팅방 채팅 내역 조회", description = "채팅방 입장 후, 채팅방 메시지 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 채팅 내역 조회 성공"),
@@ -66,8 +66,9 @@ public class ChatRoomController {
     })
     public ResponseEntity<ResponseData<ChatMessagePageResponse>> getChatMessage(
             @PathVariable("chatRoomId") Long chatRoomId,
-            @RequestBody @Valid PageGetRequest pageGetRequest
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size
             ) {
-        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessages(chatRoomId, pageGetRequest));
+        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessages(chatRoomId, page, size));
     }
 }
