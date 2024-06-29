@@ -30,7 +30,7 @@ public class ChatRoomQueryService {
     private final PartyRepository partyRepository;
 
     // [CHECK] 1. slice or page or list 2. PageResponse api
-    public ChatMessagePageResponse getChatMessages(Long chatRoomId, int page, int size) {
+    public ChatMessagePageResponse getChatMessages(Long userId, Long chatRoomId, int page, int size) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ResourceNotFoundException(CHAT_ROOM_NOT_FOUND));
 
