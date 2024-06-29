@@ -65,10 +65,21 @@ public class ChatRoomController {
             @ApiResponse(responseCode = "BAD_REQUEST", description = "채팅방 메세지 조회 실패")
     })
     public ResponseEntity<ResponseData<ChatMessagePageResponse>> getChatMessage(
+            @CurrentUser Account user,
             @PathVariable("chatRoomId") Long chatRoomId,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "size") int size
             ) {
-        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessages(chatRoomId, page, size));
+        return ResponseData.toResponseEntity(CHAT_MESSAGE_GET_SUCCESS, chatRoomQueryService.getChatMessages(user.getId(), chatRoomId, page, size));
     }
+
+    @DeleteMapping("/{chatRoomId}")
+    public ResponseEntity<ResponseData> deleteChatRoomUser(
+            @CurrentUser Account user,
+            @PathVariable Long chatRoomId
+    ) {
+        chatRoomService.deleteChatRoomUser(user.getId(), chatRoomId);
+        return ResponseData.toResponseEntity(chatRoomService.deleteChatRoomUser(user.getId(), chatRoomId));
+    }
+
 }

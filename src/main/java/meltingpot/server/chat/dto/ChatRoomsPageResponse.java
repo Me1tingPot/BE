@@ -1,6 +1,5 @@
 package meltingpot.server.chat.dto;
 
-import lombok.Builder;
 import meltingpot.server.domain.entity.chat.ChatRoomUser;
 import org.springframework.data.domain.Slice;
 
