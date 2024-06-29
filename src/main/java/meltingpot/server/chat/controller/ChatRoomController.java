@@ -42,7 +42,7 @@ public class ChatRoomController {
         return ResponseData.toResponseEntity(CHAT_ROOMS_LIST_GET_SUCCESS, chatRoomQueryService.getChatRooms(user.getId(), page, size));
     }
 
-    @PostMapping("/alarm/{chatRoomId}")
+    @PostMapping("/alarm")
     @Operation(summary = "채팅방 알림 설정 변경", description = "채팅방 전체 목록에서 각 채팅방의 알림 (ON / OFF) 설정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "OK", description = "채팅방 알림 설정 변경 성공"),
@@ -51,9 +51,9 @@ public class ChatRoomController {
     })
     public ResponseEntity<ResponseData> updateAlarmStatus(
             @CurrentUser Account user,
-            @PathVariable("chatRoomId") Long chatRoomId
+            @RequestBody ChatRoomAlarmUpdateRequest request
     ) {
-        return ResponseData.toResponseEntity(chatRoomService.updateAlarmStatus(user.getId(), chatRoomId));
+        return ResponseData.toResponseEntity(chatRoomService.updateAlarmStatus(user.getId(), request));
     }
 
     // [CHECK] PageResponse
