@@ -18,6 +18,10 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,13 +39,10 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     private final String SUB_MESSAGE_PREFIX = "/sub/";
 
     private final TokenProvider tokenProvider;
-    private final AccountRepository accountRepository;
-    private final ChatRoomUserRepository chatRoomUSerRepository;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
 
@@ -49,24 +50,13 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
             if (authorization == null || authorization.size() != 1) {
                 throw new BadRequestException(AUTHORIZATION_CHECK_FAIL);
             }
-            String accessToken = authorization.get(0);
+            String accessToken = authorization.get(0).substring(7);
 
             if (tokenProvider.validateToken(accessToken)) {
-                Claims claims = tokenProvider.getSocketTokenClaims(accessToken);
-                String username = claims.getSubject();
+                Authentication authentication = tokenProvider.getAuthentication(accessToken);
 
-                Account account = accountRepository.findByUsername(username)
-                        .orElseThrow(() -> new ResourceNotFoundException(ACCOUNT_NOT_FOUND));
-
-                List<ChatRoomUser> chatRoomUsers = chatRoomUSerRepository.findAllByUserId(account.getId());
-                List<Long> chatRooms = chatRoomUsers.stream()
-                        .map(ChatRoomUser::getChatRoom)
-                        .map(ChatRoom::getId)
-                        .toList();
-
-                sessionAttributes.put("username", account.getUsername());
-                sessionAttributes.put("chatRooms", chatRooms);
-                headerAccessor.setSessionAttributes(sessionAttributes);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                headerAccessor.setUser(authentication);
             } else {
                 throw new InvalidTokenException(ResponseCode.INVALID_AUTH_TOKEN);
             }
