@@ -54,6 +54,14 @@ public class Party extends BaseEntity {
     private Boolean partyLocationCanBeChanged;
 
     @NotNull
+    @Column(columnDefinition = "decimal(11, 7)")
+    private Double partyLocationLatitude;
+
+    @NotNull
+    @Column(columnDefinition = "decimal(11, 7)")
+    private Double partyLocationLongitude;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_area")
     private Area partyArea;

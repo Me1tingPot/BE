@@ -24,7 +24,7 @@ public class PartySearchController {
     private final PartySearchService partySearchService;
 
     @PostMapping("")
-    @Operation(summary = "파티 검색", description = "파티를 검색합니다. TemporalFilter(기간 필터)는 중복 선택이 가능하나, 1주일/한달, 오름차순/내림차순은 중복 선택이 불가능합니다.")
+    @Operation(summary = "파티 검색", description = "파티를 검색합니다. TemporalFilter(기간 필터)는 중복 선택이 가능하나, 1주일/한달, 오름차순/내림차순은 중복 선택이 불가능합니다. CoordFilter의 경우 화면 좌측 상단의 좌표, 우측 하단의 좌표를 입력해 해당 화면 내에 존재하는 파티만을 필터할 수 있습니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "OK", description = "파티 검색 성공"),
         @ApiResponse(responseCode = "BAD_REQUEST", description = "파티 검색 실패")
