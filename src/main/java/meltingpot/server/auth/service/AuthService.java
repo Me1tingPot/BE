@@ -18,7 +18,6 @@ import meltingpot.server.util.AccountUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.SecurityUtil;
 import meltingpot.server.util.TokenDto;
-import meltingpot.server.util.push.PushService;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,8 +44,6 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
     private final AccountPushTokenRepository accountPushTokenRepository;
-
-    private final PushService pushService;
 
     // 회원가입
     @Transactional

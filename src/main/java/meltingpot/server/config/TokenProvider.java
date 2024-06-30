@@ -85,7 +85,6 @@ public class TokenProvider {
                 .build();
     }
 
-
     // 재발급 TokenDto 반환
     public TokenDto generateReissuedTokenDto(String accessToken) {
         // accessToken에서 username 추출
@@ -122,24 +121,6 @@ public class TokenProvider {
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(newRefreshToken)
                 .build();
-    }
-
-    public String generateSocketToken(Account account) {
-        final long now = (new Date()).getTime();
-        final long expiredTime = (long) 1000 * 60;
-        Date accessTokenExpiresIn = new Date(now + expiredTime);
-
-        String socketToken = Jwts.builder()
-                .setSubject(account.getUsername())
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-
-        return socketToken;
-    }
-
-    public Claims getSocketTokenClaims(String accessToken) {
-        return parseClaims(accessToken);
     }
 
     // 저장되어있는 RefreshToken의 account와 접속한 계정이 동일한지 확인
