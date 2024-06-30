@@ -18,16 +18,19 @@ import meltingpot.server.exception.BadRequestException;
 import meltingpot.server.exception.ResourceNotFoundException;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static meltingpot.server.util.ResponseCode.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class WebSocketService {
     private final ChatMessageRepository chatMessageRepository;
@@ -121,19 +124,21 @@ public class WebSocketService {
     }
 
     public SocketSession onConnect(MessageHeaders headers) {
-        Object attributes = headers.get("simpSessionAttributes");
-        Object sessionId = headers.get("simpSessionId");
+        UsernamePasswordAuthenticationToken user = (UsernamePasswordAuthenticationToken) headers.get("simpUser");
+        String simpSessionId = headers.get("simpSessionId").toString();
 
-        if (attributes == null || sessionId == null) {
+        if (user == null) {
             throw new BadRequestException(SOCKET_CONNECT_HEADER_CHECK_FAIL);
         } else {
-            String username = attributes.toString().split("username=")[1].split("}")[0];
-            Long chatRoomId = Long.parseLong(attributes.toString().split("chatRoomId=")[1].split(",")[0]);
+            UserDetails attributes = (UserDetails) user.getPrincipal();
+
+            String username = attributes.getUsername();
+//            Long chatRoomId = Long.parseLong(attributes.toString().split("chatRoomId=")[1].split(",")[0]);
 
             SocketSession newSocketSession = SocketSession.builder()
-                    .sessionId(sessionId.toString())
+                    .sessionId(simpSessionId)
                     .username(username)
-                    .chatRoomId(chatRoomId)
+                    .chatRoomId(1l)
                     .build();
 
             return socketSessionRepository.save(newSocketSession);
