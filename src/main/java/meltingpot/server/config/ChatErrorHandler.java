@@ -23,7 +23,6 @@ public class ChatErrorHandler extends StompSubProtocolErrorHandler {
 
     @Override
     public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, Throwable ex) {
-
         if(ex.getCause().getMessage().equals("jwt")) {
             return jwtException(clientMessage, ex);
         }
