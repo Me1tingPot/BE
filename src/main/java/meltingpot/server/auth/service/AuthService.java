@@ -2,17 +2,14 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import meltingpot.server.auth.controller.dto.ReissueTokenRequestDto;
 import meltingpot.server.auth.controller.dto.ReissueTokenResponseDto;
 import meltingpot.server.auth.controller.dto.SignupRequestDto;
-import meltingpot.server.domain.entity.AccountLanguage;
-import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.*;
 import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.domain.repository.AccountPushTokenRepository;
 import meltingpot.server.domain.repository.MailVerificationRepository;
 import meltingpot.server.exception.*;
 import meltingpot.server.config.TokenProvider;
-import meltingpot.server.domain.entity.RefreshToken;
-import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.repository.RefreshTokenRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.auth.controller.dto.AccountResponseDto;
@@ -21,6 +18,7 @@ import meltingpot.server.util.AccountUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.SecurityUtil;
 import meltingpot.server.util.TokenDto;
+import meltingpot.server.util.push.PushService;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +44,9 @@ public class AuthService implements UserDetailsService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
-    private final MailVerificationRepository mailVerificationRepository;
+    private final AccountPushTokenRepository accountPushTokenRepository;
+
+    private final PushService pushService;
 
     // 회원가입
     @Transactional
@@ -94,6 +94,7 @@ public class AuthService implements UserDetailsService {
         return signin(SigninServiceDto.builder()
                 .username(account.getUsername())
                 .password(signupRequest.password())
+                .pushToken(signupRequest.pushToken())
                 .build());
 
     }
@@ -123,6 +124,16 @@ public class AuthService implements UserDetailsService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
+
+
+        if (!accountPushTokenRepository.existsAccountPushByAccountAndToken(account, serviceDto.getPushToken())) {
+            AccountPushToken accountPushToken = AccountPushToken.builder()
+                    .account(account)
+                    .token(serviceDto.getPushToken())
+                    .build();
+
+            accountPushTokenRepository.save(accountPushToken);
+        }
 
         //인증된 Authentication를 SecurityContext에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);

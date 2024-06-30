@@ -48,6 +48,10 @@ dependencies {
 	implementation 'software.amazon.ion:ion-java:1.0.3'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	// firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
+
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	if (isAppleSilicon()) {
 		runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.94.Final:osx-aarch_64")
