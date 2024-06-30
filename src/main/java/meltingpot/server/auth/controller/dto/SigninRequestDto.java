@@ -2,7 +2,6 @@ package meltingpot.server.auth.controller.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,10 +20,14 @@ public class SigninRequestDto {
     @NotBlank(message = "password is required")
     private String password;
 
+    @NotBlank(message = "pushToken is required")
+    private String pushToken;
+
     public SigninServiceDto toServiceDto() {
         return SigninServiceDto.builder()
                 .username(getEmail())
                 .password(getPassword())
+                .pushToken(getPushToken())
                 .build();
     }
 }
