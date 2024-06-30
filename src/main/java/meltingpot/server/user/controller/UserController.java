@@ -50,11 +50,12 @@ public class UserController {
     @Operation(summary="프로필 닉네임 수정", description="프로필 수정 - 사용자 닉네임 수정\n" )
     public ResponseEntity<ResponseData<UserResponseDto>> updateProfileName(
             @CurrentUser Account account, @Valid @RequestBody UpdateNameRequestDto request ){
-        UserResponseDto data = userService.updateProfileName(account, request.toServiceDto());
-        if (account != null) {
-            logger.info("UPDATE_NICKNAME_SUCCESS (200 OK) :: userId = {}", data.getId());
+        try{
+            return ResponseData.toResponseEntity(ResponseCode.UPDATE_NICKNAME_SUCCESS, userService.updateProfileName(account, request));
         }
-        return ResponseData.toResponseEntity(ResponseCode.UPDATE_NICKNAME_SUCCESS, data);
+        catch (NoSuchElementException e){
+            return ResponseData.toResponseEntity(ResponseCode.PROFILE_UPDATE_FAIL, null);
+        }
     }
 
     // 프로필 소개 수정
@@ -62,11 +63,12 @@ public class UserController {
     @Operation(summary="프로필 소개 수정", description="프로필 수정 - 사용자 소개 수정\n" )
     public ResponseEntity<ResponseData<UserResponseDto>> updateProfileBio(
             @CurrentUser Account account, @Valid @RequestBody UpdateBioRequestDto request ){
-        UserResponseDto data = userService.updateProfileBio(account, request.toServiceDto());
-        if (account != null) {
-            logger.info("UPDATE_NICKNAME_SUCCESS (200 OK) :: userId = {}", data.getId());
+        try{
+            return ResponseData.toResponseEntity(ResponseCode.UPDATE_BIO_SUCCESS, userService.updateProfileBio(account, request ));
         }
-        return ResponseData.toResponseEntity(ResponseCode.UPDATE_NICKNAME_SUCCESS, data);
+        catch (NoSuchElementException e){
+            return ResponseData.toResponseEntity(ResponseCode.PROFILE_UPDATE_FAIL, null);
+        }
     }
 
     // 사용자 프로필 이미지 조회

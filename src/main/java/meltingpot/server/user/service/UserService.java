@@ -2,7 +2,6 @@ package meltingpot.server.user.service;
 
 
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
@@ -12,9 +11,9 @@ import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.party.PartyParticipantRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.user.controller.dto.NewProfileImageRequestDto;
+import meltingpot.server.user.controller.dto.UpdateBioRequestDto;
+import meltingpot.server.user.controller.dto.UpdateNameRequestDto;
 import meltingpot.server.user.controller.dto.UserResponseDto;
-import meltingpot.server.user.service.dto.UpdateBioServiceDto;
-import meltingpot.server.user.service.dto.UpdateNameServiceDto;
 import meltingpot.server.user.service.dto.UserImagesResponseDto;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.r2.FileService;
@@ -26,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -54,16 +52,16 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateProfileName(Account account, UpdateNameServiceDto serviceDto) {
-        account.updateName(serviceDto.getName());
+    public UserResponseDto updateProfileName(Account account, UpdateNameRequestDto serviceDto) {
+        account.updateName(serviceDto.nickname());
         accountRepository.save(account);
 
         return readProfile(account);
     }
 
     @Transactional
-    public UserResponseDto updateProfileBio(Account account, UpdateBioServiceDto serviceDto) {
-        account.updateBio(serviceDto.getBio());
+    public UserResponseDto updateProfileBio(Account account, UpdateBioRequestDto serviceDto) {
+        account.updateBio(serviceDto.bio());
         accountRepository.save(account);
 
         return readProfile(account);

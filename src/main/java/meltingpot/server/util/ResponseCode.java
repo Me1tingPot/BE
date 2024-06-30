@@ -33,8 +33,10 @@ public enum ResponseCode {
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
     CHAT_ROOMS_LIST_GET_SUCCESS(OK, "전체 채팅방 조회 성공"),
     POST_LIST_FETCH_SUCCESS(OK,"게시글 목록 불러오기 성공"),
+
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
     UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
+    UPDATE_BIO_SUCCESS(OK, "프로필 자기소개 수정 성공"),
     UPDATE_PROFILE_IMAGE_SUCCESS(OK, "프로필 이미지 추가 성공"),
     PROFILE_IMAGE_DELETE_SUCCESS(OK, "프로필 이미지 삭제 성공"),
     PROFILE_CHANGE_THUMBNAIL_SUCCESS(OK, "대표 사진 변경 성공"),
