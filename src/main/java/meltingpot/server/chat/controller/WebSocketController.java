@@ -7,12 +7,14 @@ import meltingpot.server.chat.service.WebSocketService;
 import meltingpot.server.domain.entity.chat.ChatMessage;
 import meltingpot.server.domain.entity.chat.SocketSession;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Slf4j
 @RestController
@@ -35,6 +37,16 @@ public class WebSocketController {
 
         log.info("sessionId = {}", socketSession.getSessionId());
     }
+
+    @EventListener(SessionSubscribeEvent.class)
+    public void onSubscribe(SessionConnectEvent event){
+        final MessageHeaders headers = event.getMessage().getHeaders();
+
+        SocketSession socketSession = webSocketService.onSubscribe(headers);
+
+        log.info("sessionId = {}", socketSession.getSessionId());
+    }
+
 
     @EventListener(SessionDisconnectEvent.class)
     public void onDisconnect(SessionDisconnectEvent event) {

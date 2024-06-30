@@ -46,6 +46,8 @@ public class ChatRoomQueryService {
 
         Slice<ChatRoomUser> chatRoomUserSlice = chatRoomUserRepository.findAllByUserId(userId, pageRequest);
 
+
+
         return ChatRoomsPageResponse.from(chatRoomUserSlice);
     }
 }

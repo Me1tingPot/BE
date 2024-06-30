@@ -23,7 +23,10 @@ public class SocketSession {
     @Column(name = "username")
     private String username;
 
-    @NotNull
     @Column(name = "chatRoom_id")
     private Long chatRoomId;
+
+    public void setChatRoomId(Long chatRoomId) {
+        this.chatRoomId = chatRoomId;
+    }
 }

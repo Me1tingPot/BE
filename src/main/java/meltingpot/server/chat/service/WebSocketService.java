@@ -1,6 +1,7 @@
 package meltingpot.server.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.chat.dto.ChatMessageGetResponse;
 import meltingpot.server.chat.dto.ChatMessageSendRequest;
 import meltingpot.server.chat.dto.UnreadChatMessageSendDTO;
@@ -16,8 +17,12 @@ import meltingpot.server.domain.repository.chat.SocketSessionRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.exception.BadRequestException;
 import meltingpot.server.exception.ResourceNotFoundException;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,7 @@ import java.util.Optional;
 
 import static meltingpot.server.util.ResponseCode.*;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -120,24 +126,54 @@ public class WebSocketService {
     private void sendNotification(Account account, ChatMessage chatMessage) {
     }
 
+    @Transactional
     public SocketSession onConnect(MessageHeaders headers) {
-        Object attributes = headers.get("simpSessionAttributes");
-        Object sessionId = headers.get("simpSessionId");
+        UsernamePasswordAuthenticationToken user = (UsernamePasswordAuthenticationToken) headers.get("simpUser");
+        String simpSessionId = headers.get("simpSessionId").toString();
 
-        if (attributes == null || sessionId == null) {
+        if (user == null) {
             throw new BadRequestException(SOCKET_CONNECT_HEADER_CHECK_FAIL);
         } else {
-            String username = attributes.toString().split("username=")[1].split("}")[0];
-            Long chatRoomId = Long.parseLong(attributes.toString().split("chatRoomId=")[1].split(",")[0]);
+            UserDetails attributes = (UserDetails) user.getPrincipal();
+
+            String username = attributes.getUsername();
 
             SocketSession newSocketSession = SocketSession.builder()
-                    .sessionId(sessionId.toString())
+                    .sessionId(simpSessionId)
                     .username(username)
-                    .chatRoomId(chatRoomId)
                     .build();
 
             return socketSessionRepository.save(newSocketSession);
         }
+    }
+
+    @Transactional
+    public SocketSession onSubscribe(MessageHeaders headers) {
+        String simpSessionId = headers.get("simpSessionId").toString();
+
+        // Long chatRoomId = Long.parseLong(accessor.getFirstNativeHeader("chatRoomId"));
+        String chatRoomIdStr = (getChatRoomId(
+                Optional.ofNullable((String) headers.get("destination"))
+                        .orElse(CHAT_ROOM_NOT_FOUND.getDetail())));
+
+        Long chatRoomId;
+        try {
+            chatRoomId = Long.parseLong(chatRoomIdStr);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException(CHAT_ROOM_NOT_FOUND);
+        }
+
+        SocketSession socketSession = socketSessionRepository.findBySessionId(simpSessionId);
+        socketSession.setChatRoomId(chatRoomId);
+
+        return socketSessionRepository.save(socketSession);
+    }
+
+    private String getChatRoomId(String destination) {
+        String[] test = destination.split("/");
+        String chatRoomId = test[test.length - 1];
+
+        return chatRoomId;
     }
 
     public void onDisconnect(String sessionId) {

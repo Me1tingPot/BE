@@ -48,7 +48,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 || request.getRequestURI().contains("/docs") || request.getRequestURI()
                 .contains("/favicon.ico") || request.getRequestURI().contains("/h2-console") ||
                 request.getRequestURI().contains("/swagger-ui") ||
-                request.getRequestURI().contains("/api-docs")) {
+                request.getRequestURI().contains("/api-docs") ||
+                request.getRequestURI().contains("/chat")) {
             filterChain.doFilter(request, response);
         }
         // 권한이 필요한 요청은 custom jwt filter를 거치도록 설정
