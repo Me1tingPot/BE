@@ -27,7 +27,7 @@ import static meltingpot.server.util.ResponseCode.*;
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class JwtChannelInterceptor implements ChannelInterceptor {
 
-    private final String PUB_MESSAGE_PREFIX = "/pub/";
+    private final String PUB_MESSAGE_PREFIX = "/chat/pub/";
     private final String SUB_MESSAGE_PREFIX = "/chat/sub/";
 
     private final TokenProvider tokenProvider;

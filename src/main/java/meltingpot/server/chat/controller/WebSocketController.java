@@ -7,7 +7,6 @@ import meltingpot.server.chat.service.WebSocketService;
 import meltingpot.server.domain.entity.chat.ChatMessage;
 import meltingpot.server.domain.entity.chat.SocketSession;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -39,7 +38,7 @@ public class WebSocketController {
     }
 
     @EventListener(SessionSubscribeEvent.class)
-    public void onSubscribe(SessionConnectEvent event){
+    public void onSubscribe(SessionSubscribeEvent event){
         final MessageHeaders headers = event.getMessage().getHeaders();
 
         SocketSession socketSession = webSocketService.onSubscribe(headers);
