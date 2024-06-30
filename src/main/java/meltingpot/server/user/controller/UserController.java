@@ -11,13 +11,11 @@ import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.user.controller.dto.*;
 import meltingpot.server.user.service.UserService;
 import meltingpot.server.user.service.dto.UserImagesResponseDto;
-import meltingpot.server.util.CurrentUser;
-import meltingpot.server.util.PageResponse;
-import meltingpot.server.util.ResponseCode;
-import meltingpot.server.util.ResponseData;
+import meltingpot.server.util.*;
 import meltingpot.server.util.r2.FileUploadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -138,39 +136,39 @@ public class UserController {
     }
 
     // 프로필 상세 보기: 사용자가 작성한 게시글 조회
-    @GetMapping("/posts")
+    @GetMapping("/posts/{userId}")
     @Operation(summary="마이페이지 사용자가 작성한 게시글 조회", description="마이페이지에서 사용자가 작성한 게시글을 불러옵니다.\n" )
-    public ResponseEntity<ResponseData<PageResponse<PostResponse>>> readUsersPosts(
-            @RequestBody @Valid UserDetailRequestDto userDetailRequestDto
+    public ResponseEntity<ResponseData<SliceResponse<PostResponseDto>>> readUsersPosts(
+            @PathVariable long userId, Pageable pageable
             ){
         try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_SUCCESS, userService.readUsersPosts(userDetailRequestDto));
+            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_SUCCESS, userService.readUsersPosts(userId, pageable));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_FAIL, null);
         }
     }
 
     // 프로필 상세 보기: 사용자가 작성한 게시글 조회
-    @GetMapping("/comments")
+    @GetMapping("/comments/{userId}")
     @Operation(summary="마이페이지 사용자가 댓글 단 게시글 조회", description="마이페이지에서 사용자가 댓글을 남긴 게시글을 불러옵니다.\n" )
-    public ResponseEntity<ResponseData<PageResponse<PostResponse>>> readUsersCommentPosts(
-            @RequestBody @Valid UserDetailRequestDto userDetailRequestDto
+    public ResponseEntity<ResponseData<SliceResponse<PostResponseDto>>> readUsersCommentPosts(
+            @PathVariable long userId, Pageable pageable
     ){
         try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_SUCCESS, userService.readUsersComments(userDetailRequestDto));
+            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_SUCCESS, userService.readUsersComments(userId, pageable));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_FAIL, null);
         }
     }
 
     // 프로필 상세 보기: 사용자가 작성한 게시글 조회
-    @GetMapping("/parties")
+    @GetMapping("/parties/{userId}")
     @Operation(summary="마이페이지 사용자가 참여한 파티 조회", description="마이페이지에서 사용자가 참여 혹은 주최한 파티를 불러옵니다.\n" )
-    public ResponseEntity<ResponseData<PageResponse<PartyResponse>>> readUsersParties(
-            @RequestBody @Valid UserDetailRequestDto userDetailRequestDto
+    public ResponseEntity<ResponseData<SliceResponse<PartyResponse>>> readUsersParties(
+            @PathVariable long userId, Pageable pageable
     ){
         try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_SUCCESS, userService.readUsersParties(userDetailRequestDto));
+            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_SUCCESS, userService.readUsersParties(userId, pageable));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_FAIL, null);
         }

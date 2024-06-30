@@ -2,34 +2,29 @@ package meltingpot.server.user.service;
 
 
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
-import meltingpot.server.comment.service.CommentService;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
-import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.domain.repository.party.PartyParticipantRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
-import meltingpot.server.domain.specification.party.PartySpecification;
 import meltingpot.server.party.dto.PartyResponse;
-import meltingpot.server.post.service.PostService;
 import meltingpot.server.user.controller.dto.NewProfileImageRequestDto;
-import meltingpot.server.user.controller.dto.PostResponse;
-import meltingpot.server.user.controller.dto.UserDetailRequestDto;
+import meltingpot.server.user.controller.dto.PostResponseDto;
 import meltingpot.server.user.controller.dto.UserResponseDto;
 import meltingpot.server.user.service.dto.UpdateBioServiceDto;
 import meltingpot.server.user.service.dto.UpdateNameServiceDto;
 import meltingpot.server.user.service.dto.UserImagesResponseDto;
-import meltingpot.server.util.PageResponse;
 import meltingpot.server.util.ResponseCode;
+import meltingpot.server.util.SliceResponse;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -54,8 +48,7 @@ public class UserService {
     public UserResponseDto readProfile(Account account) {
 
         // 프로필 사진 가져오기
-        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
-        String thumbnailUrl = fileService.getCdnUrl("userProfile-image", thumbnail.getImageKey());
+        String thumbnailUrl = getThumbnailImage(account);
 
         // 파티 주최 횟수
         int partyHostCnt = partyRepository.countByAccountAndPartyStatus(account, PartyStatus.DONE);
@@ -64,6 +57,12 @@ public class UserService {
         int partyParticipateCnt = partyParticipantRepository.countByParty_PartyStatusAndParticipantStatusAndAccount(PartyStatus.DONE, ParticipantStatus.APPROVED, account);
 
         return UserResponseDto.of(account,thumbnailUrl, partyHostCnt, partyParticipateCnt);
+    }
+
+    @Transactional
+    public String getThumbnailImage(Account account){
+        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
+        return fileService.getCdnUrl("userProfile-image", thumbnail.getImageKey());
     }
 
     @Transactional
@@ -102,6 +101,8 @@ public class UserService {
 
     @Transactional
     public ResponseCode createNewProfileImage(NewProfileImageRequestDto request, Account account) {
+
+        //TODO 이미 존재하는 시퀀스인지, 프로필 이미지가 3개 이하인지 확인하라
         AccountProfileImage newProfileImage = AccountProfileImage.builder()
                 .account(account)
                 .imageKey(request.imageKey())
@@ -179,15 +180,24 @@ public class UserService {
 
     }
 
-    public PageResponse<PostResponse> readUsersPosts(UserDetailRequestDto userDetailRequestDto) {
+    @Transactional
+    public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Pageable pageable) {
+        Account account = accountRepository.findById(userId).orElseThrow();
+        try {
+            return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
+                    .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
+
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
+        }
+    }
+
+    public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Pageable pageable) {
         return null;
     }
 
-    public PageResponse<PostResponse>  readUsersComments(UserDetailRequestDto userDetailRequestDto) {
-        return null;
-    }
-
-    public PageResponse<PartyResponse>  readUsersParties(UserDetailRequestDto userDetailRequestDto) {
+    public SliceResponse<PartyResponse>  readUsersParties(Long userId, Pageable pageable) {
         return null;
     }
 }
