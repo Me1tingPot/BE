@@ -153,7 +153,7 @@ public class WebSocketService {
 
         // Long chatRoomId = Long.parseLong(accessor.getFirstNativeHeader("chatRoomId"));
         String chatRoomIdStr = (getChatRoomId(
-                Optional.ofNullable((String) headers.get("destination"))
+                Optional.ofNullable((String) headers.get("simpDestination"))
                         .orElse(CHAT_ROOM_NOT_FOUND.getDetail())));
 
         Long chatRoomId;

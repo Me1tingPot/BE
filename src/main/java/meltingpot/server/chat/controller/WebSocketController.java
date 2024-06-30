@@ -39,7 +39,7 @@ public class WebSocketController {
     }
 
     @EventListener(SessionSubscribeEvent.class)
-    public void onSubscribe(SessionConnectEvent event){
+    public void onSubscribe(SessionSubscribeEvent event){
         final MessageHeaders headers = event.getMessage().getHeaders();
 
         SocketSession socketSession = webSocketService.onSubscribe(headers);
