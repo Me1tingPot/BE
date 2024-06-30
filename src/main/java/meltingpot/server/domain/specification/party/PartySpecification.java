@@ -3,6 +3,7 @@ package meltingpot.server.domain.specification.party;
 import meltingpot.server.domain.entity.Area;
 import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
+import meltingpot.server.party.dto.PartyCoordRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -54,5 +55,12 @@ public interface PartySpecification {
 
     static Specification<Party> isStatus(PartyStatus q) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("partyStatus"), q);
+    }
+
+    static Specification<Party> isInCoordinate(PartyCoordRequest leftTop, PartyCoordRequest rightBottom) {
+        return (root, query, criteriaBuilder) ->  criteriaBuilder.and(
+            criteriaBuilder.between(root.get("partyLocationLatitude"), rightBottom.latitude(), leftTop.latitude()),
+            criteriaBuilder.between(root.get("partyLocationLongitude"), leftTop.longitude(), rightBottom.longitude())
+        );
     }
 }

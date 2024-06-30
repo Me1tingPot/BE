@@ -110,6 +110,10 @@ public class PartySearchService {
             spec = spec.and(PartySpecification.isStatus(PartyStatus.RECRUIT_OPEN));
         }
 
+        if (partySearchRequest.coordLeftTopFilter() != null && partySearchRequest.coordRightBottomFilter() != null) {
+            spec.and(PartySpecification.isInCoordinate(partySearchRequest.coordLeftTopFilter(), partySearchRequest.coordRightBottomFilter()));
+        }
+
         // 전체 개수 카운트
         int totalCount = (int) partyRepository.count(spec);
 

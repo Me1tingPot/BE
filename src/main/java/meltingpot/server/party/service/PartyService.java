@@ -140,6 +140,8 @@ public class PartyService {
                 .partyLocationReserved(partyCreateRequest.locationIsReserved())
                 .partyLocationCanBeChanged(partyCreateRequest.locationCanBeChanged())
                 .partyStatus(partyStatus)
+                .partyLocationLatitude(partyCreateRequest.locationLatitude())
+                .partyLocationLongitude(partyCreateRequest.locationLongitude())
                 .build();
         party.setPartyImages(partyCreateRequest.imageKey().stream().map((key) -> PartyImage.builder().partyImageUploader(user).party(party).partyImageKey(key).partyImageOriginalName("").build()).toList());
         party.setPartyContents(List.of(PartyContent.builder().party(party).partyContentLang(partyCreateRequest.descriptionLanguage()).partyContent(partyCreateRequest.description()).build()));
