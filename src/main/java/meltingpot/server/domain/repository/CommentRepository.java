@@ -1,8 +1,12 @@
 package meltingpot.server.domain.repository;
 
+import aj.org.objectweb.asm.commons.Remapper;
+import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.comment.Comment;
+import meltingpot.server.domain.entity.post.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +26,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         List<Comment> findChildCommentsByParentId(@Param("parentId") Long parentId, Pageable pageable);
 
 
-
-
+    Slice<Comment> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package meltingpot.server.domain.repository;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.enums.PostType;
@@ -18,4 +19,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable page);
 
 
+    Slice<Post> findByIdAndDeletedAtIsNull(Long id);
 }

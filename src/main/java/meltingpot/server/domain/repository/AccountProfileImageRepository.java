@@ -16,4 +16,5 @@ public interface AccountProfileImageRepository extends JpaRepository<AccountProf
 
     int countByAccountAndDeletedAtIsNull(Account account);
 
+    boolean existsByAccountAndSequence(Account account, int sequence);
 }

@@ -130,7 +130,7 @@ public class UserController {
         try{
             return ResponseData.toResponseEntity(userService.changeThumbnailImage(account, imageId));
 
-        } catch(NoSuchElementException e){
+        } catch(Exception e){
             return ResponseData.toResponseEntity(ResponseCode.PROFILE_IMAGE_NOT_FOUND);
         }
     }

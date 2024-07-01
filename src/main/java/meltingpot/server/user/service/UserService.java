@@ -4,8 +4,10 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
+import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
@@ -25,13 +27,13 @@ import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -61,8 +63,12 @@ public class UserService {
 
     @Transactional
     public String getThumbnailImage(Account account){
-        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
-        return fileService.getCdnUrl("userProfile-image", thumbnail.getImageKey());
+        Optional<AccountProfileImage> thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account);
+        if(thumbnail.isEmpty()) {
+            System.out.println("에러 발생: 썸네일 사진이 없습니다");
+            throw new NoSuchElementException();
+        }
+        return fileService.getCdnUrl("userProfile-image", thumbnail.get().getImageKey());
     }
 
     @Transactional
@@ -103,6 +109,7 @@ public class UserService {
     public ResponseCode createNewProfileImage(NewProfileImageRequestDto request, Account account) {
 
         //TODO 이미 존재하는 시퀀스인지, 프로필 이미지가 3개 이하인지 확인하라
+
         AccountProfileImage newProfileImage = AccountProfileImage.builder()
                 .account(account)
                 .imageKey(request.imageKey())
@@ -156,15 +163,16 @@ public class UserService {
         return fileService.getPreSignedUrl("userProfile-image");
     }
 
+    @Transactional
     public ResponseCode changeThumbnailImage(Account account, long imageId) {
-        AccountProfileImage newThumbnailImage = accountProfileImageRepository.findById(imageId).orElseThrow();
+        AccountProfileImage newThumbnailImage = accountProfileImageRepository.findById(imageId).orElseThrow(()-> new IllegalArgumentException("사진이 존재하지 않습니다"));
 
         if(!newThumbnailImage.getAccount().equals(account)){
             return ResponseCode.PROFILE_IMAGE_UPDATE_NOT_OWNER;
         }
 
         // 기존 대표 사진 가져오기
-        AccountProfileImage oldThumbnailImage = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
+        AccountProfileImage oldThumbnailImage = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow(()-> new IllegalArgumentException("썸네일이 존재하지 않습니다"));
 
         // 이미 대표 사진인 경우
         if(newThumbnailImage.equals(oldThumbnailImage)) return ResponseCode.PROFILE_IMAGE_ALREADY_THUMBNAIL;
@@ -183,18 +191,31 @@ public class UserService {
     @Transactional
     public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Pageable pageable) {
         Account account = accountRepository.findById(userId).orElseThrow();
-        try {
-            return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
-                    .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
+        return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
+                .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
 
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
-        }
     }
 
+    @Transactional
     public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Pageable pageable) {
-        return null;
+        Account account = accountRepository.findById(userId).orElseThrow();
+
+        // Post 중복 제거
+        Set<Post> uniquePosts = commentRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
+                .stream()
+                .map(Comment::getPost)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        // uniquePosts를 Pageable로 변환하여 Slice로 생성
+        Slice<PostResponseDto> postSlice = uniquePosts.stream()
+                .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount())))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    int start = (int) pageable.getOffset();
+                    int end = Math.min((start + pageable.getPageSize()), list.size());
+                    return new SliceImpl<>(list.subList(start, end), pageable, end < list.size());
+                }));
+
+        return new SliceResponse<>(postSlice);
     }
 
     public SliceResponse<PartyResponse>  readUsersParties(Long userId, Pageable pageable) {
