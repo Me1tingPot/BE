@@ -6,9 +6,11 @@ import meltingpot.server.chat.dto.ChatMessageGetResponse;
 import meltingpot.server.chat.dto.ChatMessageSendRequest;
 import meltingpot.server.chat.dto.UnreadChatMessageSendDTO;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.AccountProfileImage;
 import meltingpot.server.domain.entity.chat.*;
 import meltingpot.server.domain.entity.chat.enums.Role;
 import meltingpot.server.domain.entity.party.Party;
+import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.chat.ChatMessageRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomRepository;
@@ -17,16 +19,14 @@ import meltingpot.server.domain.repository.chat.SocketSessionRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.exception.BadRequestException;
 import meltingpot.server.exception.ResourceNotFoundException;
-import org.springframework.messaging.Message;
+import meltingpot.server.util.r2.FileService;
 import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +44,8 @@ public class WebSocketService {
     private final SocketSessionRepository socketSessionRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final SimpMessagingTemplate template;
+    private final AccountProfileImageRepository accountProfileImageRepository;
+    private final FileService fileService;
 
     @Transactional
     public ChatMessage createChatMessage(String sessionId, ChatMessageSendRequest chatMessageSendRequest) {
@@ -86,7 +88,7 @@ public class WebSocketService {
                 .forEach(account -> Optional.of(socketSessionUsernames.contains(account.getUsername()))
                         .filter(Boolean::booleanValue)
                         .ifPresentOrElse(
-                                isPresent -> template.convertAndSend("/sub/chat" + chatMessage.getChatRoom().getId(), ChatMessageGetResponse.from(chatMessage)),
+                                isPresent -> template.convertAndSend("/sub/chat" + chatMessage.getChatRoom().getId(), ChatMessageGetResponse.from(chatMessage, getThumbnailUrl(account))),
                                 () -> sendNotificationOrMessage(account, chatMessage)
                         ));
     }
@@ -98,6 +100,12 @@ public class WebSocketService {
 
     private boolean isSender(Account account, ChatMessage chatMessage) {
         return account.getId().equals(chatMessage.getAccount().getId());
+    }
+
+    public String getThumbnailUrl(Account account) {
+        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
+
+        return fileService.getCdnUrl("userProfile-image",  thumbnail.getImageKey());
     }
 
     private void sendNotificationOrMessage(Account account, ChatMessage chatMessage) {
@@ -152,7 +160,6 @@ public class WebSocketService {
     public SocketSession onSubscribe(MessageHeaders headers) {
         String simpSessionId = headers.get("simpSessionId").toString();
 
-        // Long chatRoomId = Long.parseLong(accessor.getFirstNativeHeader("chatRoomId"));
         String chatRoomIdStr = (getChatRoomId(
                 Optional.ofNullable((String) headers.get("simpDestination"))
                         .orElse(CHAT_ROOM_NOT_FOUND.getDetail())));

@@ -10,9 +10,9 @@ public record ChatRoomsPageResponse(
         Boolean isFirst,
         Boolean hasNext
 ) {
-    public static ChatRoomsPageResponse from(Slice<ChatRoomUser> chatRoomUserSlice) {
+    public static ChatRoomsPageResponse from(List<ChatRoomGetResponse> chatRoomGetResponseList, Slice<ChatRoomUser> chatRoomUserSlice) {
         return new ChatRoomsPageResponse(
-                chatRoomUserSlice.stream().map(ChatRoomGetResponse::from).toList(),
+                chatRoomGetResponseList,
                 chatRoomUserSlice.isFirst(),
                 chatRoomUserSlice.hasNext()
         );
