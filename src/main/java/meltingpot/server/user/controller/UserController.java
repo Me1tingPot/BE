@@ -116,7 +116,7 @@ public class UserController {
         try{
             return ResponseData.toResponseEntity(userService.deleteProfileImage(account, imageId));
 
-        } catch(NoSuchElementException e){
+        } catch(Exception e){
             return ResponseData.toResponseEntity(ResponseCode.PROFILE_IMAGE_DELETE_FAIL);
         }
     }

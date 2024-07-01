@@ -108,7 +108,15 @@ public class UserService {
     @Transactional
     public ResponseCode createNewProfileImage(NewProfileImageRequestDto request, Account account) {
 
-        //TODO 이미 존재하는 시퀀스인지, 프로필 이미지가 3개 이하인지 확인하라
+        // 입력값 검증[1]: 이미 존재하는 시퀀스인지 확인하기
+        if(accountProfileImageRepository.existsByAccountAndSequence(account,request.sequence())){
+            throw new IllegalArgumentException("이 자리에는 이미 존재하는 사진이 있습니다.");
+        }
+
+        // 입력값 검증[2]: 프로필 사진이 세 개 이하로 있는지 확인하라
+        if(accountProfileImageRepository.countByAccountAndDeletedAtIsNull(account)>3){
+            throw new IllegalArgumentException("프로필 사진은 네 장 이상 추가할 수 없습니다.");
+        }
 
         AccountProfileImage newProfileImage = AccountProfileImage.builder()
                 .account(account)
@@ -119,6 +127,7 @@ public class UserService {
 
         accountProfileImageRepository.save(newProfileImage);
         return ResponseCode.UPDATE_PROFILE_IMAGE_SUCCESS;
+
     }
 
     @Transactional
@@ -128,7 +137,9 @@ public class UserService {
         int image_count = accountProfileImageRepository.countByAccountAndDeletedAtIsNull(account);
         if(image_count < 2) return ResponseCode.PROFILE_IMAGE_LESS_THAN_TWO;
 
-        AccountProfileImage oldProfileImage = accountProfileImageRepository.findById(imageId).orElseThrow();
+        AccountProfileImage oldProfileImage = accountProfileImageRepository.findById(imageId).orElseThrow(
+                ()-> new NoSuchElementException("해당 이미지가 존재하지 않습니다.")
+        );
 
         // 권한 확인
         if( !oldProfileImage.getAccount().equals(account)){

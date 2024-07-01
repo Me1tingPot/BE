@@ -18,6 +18,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Slice<Post> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable page);
 
-
     Slice<Post> findByIdAndDeletedAtIsNull(Long id);
 }
