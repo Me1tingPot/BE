@@ -19,17 +19,11 @@ public record ChatRoomGetResponse(
         int partyMaxParticipant,
         int messageCnt
 ) {
-    public static ChatRoomGetResponse from(ChatRoomUser chatRoomUser) {
-        String thumbnailImageKey = chatRoomUser.getChatRoom().getParty().getAccount().getProfileImages().stream()
-                .filter(AccountProfileImage::isThumbnail)
-                .findFirst()
-                .map(AccountProfileImage::getImageKey)
-                .orElse(null);
-
+    public static ChatRoomGetResponse from(ChatRoomUser chatRoomUser, String thumbnailUrl) {
         return new ChatRoomGetResponse(
                 chatRoomUser.getChatRoom().getParty().getChatRoom().getId(),
                 chatRoomUser.getChatRoom().getParty().getAccount().getUsername(),
-                thumbnailImageKey,
+                thumbnailUrl,
                 chatRoomUser.getChatRoom().getParty().getPartySubject(),
                 chatRoomUser.getChatRoom().getParty().getPartyStatus(),
                 chatRoomUser.getChatRoom().getParty().getPartyLocationAddress(),
