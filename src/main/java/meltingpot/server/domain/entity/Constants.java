@@ -11,4 +11,7 @@ public final class Constants {
     // 이메일 인증 번호 확인 제한 시간(분)
     public static final Integer AUTH_TIME_LIMIT = 10;
 
+    // 무한스크롤 페이지 디폴트 사이즈
+    public static final Integer PAGE_DEFAULT_SIZE = 5;
+
 }

@@ -4,43 +4,52 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.Constants;
+import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
+import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.AccountRepository;
+import meltingpot.server.domain.repository.CommentRepository;
+import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.domain.repository.party.PartyParticipantRepository;
 import meltingpot.server.domain.repository.party.PartyRepository;
+import meltingpot.server.party.dto.PartyResponse;
 import meltingpot.server.user.controller.dto.NewProfileImageRequestDto;
+import meltingpot.server.user.controller.dto.PostResponseDto;
 import meltingpot.server.user.controller.dto.UpdateBioRequestDto;
 import meltingpot.server.user.controller.dto.UpdateNameRequestDto;
 import meltingpot.server.user.controller.dto.UserResponseDto;
 import meltingpot.server.user.service.dto.UserImagesResponseDto;
 import meltingpot.server.util.ResponseCode;
+import meltingpot.server.util.SliceResponse;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final AccountRepository accountRepository;
-    private  final AccountProfileImageRepository accountProfileImageRepository;
+    private final AccountProfileImageRepository accountProfileImageRepository;
     private final PartyRepository partyRepository;
     private final PartyParticipantRepository partyParticipantRepository;
     private final FileService fileService;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto readProfile(Account account) {
 
         // 프로필 사진 가져오기
-        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
-        String thumbnailUrl = fileService.getCdnUrl("userProfile-image", thumbnail.getImageKey());
+        String thumbnailUrl = getThumbnailImage(account);
 
         // 파티 주최 횟수
         int partyHostCnt = partyRepository.countByAccountAndPartyStatus(account, PartyStatus.DONE);
@@ -49,6 +58,16 @@ public class UserService {
         int partyParticipateCnt = partyParticipantRepository.countByParty_PartyStatusAndParticipantStatusAndAccount(PartyStatus.DONE, ParticipantStatus.APPROVED, account);
 
         return UserResponseDto.of(account,thumbnailUrl, partyHostCnt, partyParticipateCnt);
+    }
+
+    @Transactional
+    public String getThumbnailImage(Account account){
+        Optional<AccountProfileImage> thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account);
+        if(thumbnail.isEmpty()) {
+            System.out.println("에러 발생: 썸네일 사진이 없습니다");
+            throw new NoSuchElementException();
+        }
+        return fileService.getCdnUrl("userProfile-image", thumbnail.get().getImageKey());
     }
 
     @Transactional
@@ -87,6 +106,17 @@ public class UserService {
 
     @Transactional
     public ResponseCode createNewProfileImage(NewProfileImageRequestDto request, Account account) {
+
+        // 입력값 검증[1]: 이미 존재하는 시퀀스인지 확인하기
+        if(accountProfileImageRepository.existsByAccountAndSequence(account,request.sequence())){
+            throw new IllegalArgumentException("이 자리에는 이미 존재하는 사진이 있습니다.");
+        }
+
+        // 입력값 검증[2]: 프로필 사진이 세 개 이하로 있는지 확인하라
+        if(accountProfileImageRepository.countByAccountAndDeletedAtIsNull(account)>3){
+            throw new IllegalArgumentException("프로필 사진은 네 장 이상 추가할 수 없습니다.");
+        }
+
         AccountProfileImage newProfileImage = AccountProfileImage.builder()
                 .account(account)
                 .imageKey(request.imageKey())
@@ -105,7 +135,9 @@ public class UserService {
         int image_count = accountProfileImageRepository.countByAccountAndDeletedAtIsNull(account);
         if(image_count < 2) return ResponseCode.PROFILE_IMAGE_LESS_THAN_TWO;
 
-        AccountProfileImage oldProfileImage = accountProfileImageRepository.findById(imageId).orElseThrow();
+        AccountProfileImage oldProfileImage = accountProfileImageRepository.findById(imageId).orElseThrow(
+                ()-> new NoSuchElementException("해당 이미지가 존재하지 않습니다.")
+        );
 
         // 권한 확인
         if( !oldProfileImage.getAccount().equals(account)){
@@ -140,15 +172,16 @@ public class UserService {
         return fileService.getPreSignedUrl("userProfile-image");
     }
 
+    @Transactional
     public ResponseCode changeThumbnailImage(Account account, long imageId) {
-        AccountProfileImage newThumbnailImage = accountProfileImageRepository.findById(imageId).orElseThrow();
+        AccountProfileImage newThumbnailImage = accountProfileImageRepository.findById(imageId).orElseThrow(()-> new IllegalArgumentException("사진이 존재하지 않습니다"));
 
         if(!newThumbnailImage.getAccount().equals(account)){
             return ResponseCode.PROFILE_IMAGE_UPDATE_NOT_OWNER;
         }
 
         // 기존 대표 사진 가져오기
-        AccountProfileImage oldThumbnailImage = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
+        AccountProfileImage oldThumbnailImage = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow(()-> new IllegalArgumentException("썸네일이 존재하지 않습니다"));
 
         // 이미 대표 사진인 경우
         if(newThumbnailImage.equals(oldThumbnailImage)) return ResponseCode.PROFILE_IMAGE_ALREADY_THUMBNAIL;
@@ -162,5 +195,43 @@ public class UserService {
 
         return ResponseCode.PROFILE_CHANGE_THUMBNAIL_SUCCESS;
 
+    }
+
+    @Transactional
+    public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Integer page) {
+        Account account = accountRepository.findById(userId).orElseThrow();
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
+        return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageRequest)
+                .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
+
+    }
+
+    @Transactional
+    public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Integer page) {
+        Account account = accountRepository.findById(userId).orElseThrow();
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
+
+        // Post 중복 제거
+        Set<Post> uniquePosts = commentRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageRequest)
+                .stream()
+                .map(Comment::getPost)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        // uniquePosts를 Pageable로 변환하여 Slice로 생성
+        Slice<PostResponseDto> postSlice = uniquePosts.stream()
+                .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount())))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    int start = (int) pageRequest.getOffset();
+                    int end = Math.min((start + pageRequest.getPageSize()), list.size());
+                    return new SliceImpl<>(list.subList(start, end), pageRequest, end < list.size());
+                }));
+
+        return new SliceResponse<>(postSlice);
+    }
+
+    public SliceResponse<PartyResponse> readUsersParties(Long userId, Integer page) {
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
+
+        return null;
     }
 }
