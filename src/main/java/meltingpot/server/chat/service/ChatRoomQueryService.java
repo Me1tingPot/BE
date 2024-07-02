@@ -12,7 +12,6 @@ import meltingpot.server.domain.repository.AccountProfileImageRepository;
 import meltingpot.server.domain.repository.chat.ChatMessageRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomRepository;
 import meltingpot.server.domain.repository.chat.ChatRoomUserRepository;
-import meltingpot.server.domain.repository.party.PartyRepository;
 import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.util.r2.FileService;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +32,6 @@ public class ChatRoomQueryService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final PartyRepository partyRepository;
     private final AccountProfileImageRepository accountProfileImageRepository;
     private final FileService fileService;
 
@@ -67,8 +65,10 @@ public class ChatRoomQueryService {
     }
 
     public String getThumbnailUrl(Account account) {
-        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElseThrow();
+        AccountProfileImage thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account).orElse(null);
 
-        return fileService.getCdnUrl("userProfile-image",  thumbnail.getImageKey());
+        return thumbnail != null
+                ? fileService.getCdnUrl("userProfile-image", thumbnail.getImageKey())
+                : "default-thumbnail-url";
     }
 }
