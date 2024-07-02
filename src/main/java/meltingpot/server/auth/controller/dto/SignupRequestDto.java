@@ -23,6 +23,6 @@ public record SignupRequestDto(
         LocalDate birth,
         String nationality,
         List<String> languages,
-        List<ProfileImageRequestDto> profileImages
-
+        List<ProfileImageRequestDto> profileImages,
+        String pushToken
 ){}

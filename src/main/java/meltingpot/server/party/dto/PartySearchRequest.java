@@ -10,21 +10,27 @@ public record PartySearchRequest(
     String query,
     String areaIdFilter,
     List<String> temporalFilter,
-    String statusFilter
+    String statusFilter,
+    PartyCoordRequest coordLeftTopFilter,
+    PartyCoordRequest coordRightBottomFilter
 ) {
     public static PartySearchRequest of(
             Integer page,
             String query,
             String areaIdFilter,
             List<String> temporalFilter,
-            String statusFilter
+            String statusFilter,
+            PartyCoordRequest coordLeftTopFilter,
+            PartyCoordRequest coordRightBottomFilter
     ) {
         return new PartySearchRequest(
             page,
             query,
             areaIdFilter,
             temporalFilter,
-            statusFilter
+            statusFilter,
+            coordLeftTopFilter,
+            coordRightBottomFilter
         );
     }
 }

@@ -11,6 +11,8 @@ public class SigninServiceDto {
     private final String username;
     private final String password;
 
+    private final String pushToken;
+
     // 미인증 토큰 생성
     public UsernamePasswordAuthenticationToken toAuthentication() {
         return new UsernamePasswordAuthenticationToken(getUsername(), getPassword());

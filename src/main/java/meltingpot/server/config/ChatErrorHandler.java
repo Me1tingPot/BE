@@ -1,5 +1,6 @@
 package meltingpot.server.config;
 
+import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.util.ErrorCode;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.messaging.StompSubProtocolErrorHandler;
 
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @Component
 public class ChatErrorHandler extends StompSubProtocolErrorHandler {
     // Interceptor 통해 jwt 검사하는 과정에서 에러 발생한 경우, 에러 핸들링

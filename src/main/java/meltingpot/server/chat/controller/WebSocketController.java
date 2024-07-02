@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Slf4j
 @RestController
@@ -35,6 +36,16 @@ public class WebSocketController {
 
         log.info("sessionId = {}", socketSession.getSessionId());
     }
+
+    @EventListener(SessionSubscribeEvent.class)
+    public void onSubscribe(SessionSubscribeEvent event){
+        final MessageHeaders headers = event.getMessage().getHeaders();
+
+        SocketSession socketSession = webSocketService.onSubscribe(headers);
+
+        log.info("sessionId = {}", socketSession.getSessionId());
+    }
+
 
     @EventListener(SessionDisconnectEvent.class)
     public void onDisconnect(SessionDisconnectEvent event) {

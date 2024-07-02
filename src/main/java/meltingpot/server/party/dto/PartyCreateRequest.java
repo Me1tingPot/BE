@@ -18,6 +18,8 @@ public record PartyCreateRequest(
     Integer partyMaxParticipant,
     Boolean locationIsReserved,
     Boolean locationCanBeChanged,
-    Boolean isTempSave
+    Boolean isTempSave,
+    Double locationLatitude,
+    Double locationLongitude
 ) {
 }
