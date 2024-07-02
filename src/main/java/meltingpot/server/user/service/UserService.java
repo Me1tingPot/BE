@@ -4,6 +4,7 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.Constants;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
@@ -25,9 +26,7 @@ import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.SliceResponse;
 import meltingpot.server.util.r2.FileService;
 import meltingpot.server.util.r2.FileUploadResponse;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -200,19 +199,21 @@ public class UserService {
     }
 
     @Transactional
-    public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Pageable pageable) {
+    public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Integer page) {
         Account account = accountRepository.findById(userId).orElseThrow();
-        return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
+        return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageRequest)
                 .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
 
     }
 
     @Transactional
-    public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Pageable pageable) {
+    public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Integer page) {
         Account account = accountRepository.findById(userId).orElseThrow();
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
 
         // Post 중복 제거
-        Set<Post> uniquePosts = commentRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageable)
+        Set<Post> uniquePosts = commentRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageRequest)
                 .stream()
                 .map(Comment::getPost)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -221,15 +222,17 @@ public class UserService {
         Slice<PostResponseDto> postSlice = uniquePosts.stream()
                 .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount())))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
-                    int start = (int) pageable.getOffset();
-                    int end = Math.min((start + pageable.getPageSize()), list.size());
-                    return new SliceImpl<>(list.subList(start, end), pageable, end < list.size());
+                    int start = (int) pageRequest.getOffset();
+                    int end = Math.min((start + pageRequest.getPageSize()), list.size());
+                    return new SliceImpl<>(list.subList(start, end), pageRequest, end < list.size());
                 }));
 
         return new SliceResponse<>(postSlice);
     }
 
-    public SliceResponse<PartyResponse>  readUsersParties(Long userId, Pageable pageable) {
+    public SliceResponse<PartyResponse> readUsersParties(Long userId, Integer page) {
+        PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
+
         return null;
     }
 }

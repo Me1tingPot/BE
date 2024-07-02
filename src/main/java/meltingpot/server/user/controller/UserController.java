@@ -139,10 +139,10 @@ public class UserController {
     @GetMapping("/posts/{userId}")
     @Operation(summary="마이페이지 사용자가 작성한 게시글 조회", description="마이페이지에서 사용자가 작성한 게시글을 불러옵니다.\n" )
     public ResponseEntity<ResponseData<SliceResponse<PostResponseDto>>> readUsersPosts(
-            @PathVariable long userId, Pageable pageable
+            @PathVariable long userId, @RequestParam(value = "page", defaultValue = "0") Integer page
             ){
         try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_SUCCESS, userService.readUsersPosts(userId, pageable));
+            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_SUCCESS, userService.readUsersPosts(userId, page));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_USERS_POSTS_FAIL, null);
         }
@@ -152,26 +152,26 @@ public class UserController {
     @GetMapping("/comments/{userId}")
     @Operation(summary="마이페이지 사용자가 댓글 단 게시글 조회", description="마이페이지에서 사용자가 댓글을 남긴 게시글을 불러옵니다.\n" )
     public ResponseEntity<ResponseData<SliceResponse<PostResponseDto>>> readUsersCommentPosts(
-            @PathVariable long userId, Pageable pageable
+            @PathVariable long userId, @RequestParam(value = "page", defaultValue = "0") Integer page
     ){
         try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_SUCCESS, userService.readUsersComments(userId, pageable));
+            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_SUCCESS, userService.readUsersComments(userId, page));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_USERS_COMMENTS_FAIL, null);
         }
     }
 
-    // 프로필 상세 보기: 사용자가 작성한 게시글 조회
-    @GetMapping("/parties/{userId}")
-    @Operation(summary="마이페이지 사용자가 참여한 파티 조회", description="마이페이지에서 사용자가 참여 혹은 주최한 파티를 불러옵니다.\n" )
-    public ResponseEntity<ResponseData<SliceResponse<PartyResponse>>> readUsersParties(
-            @PathVariable long userId, Pageable pageable
-    ){
-        try {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_SUCCESS, userService.readUsersParties(userId, pageable));
-        } catch (NoSuchElementException e) {
-            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_FAIL, null);
-        }
-    }
+//    // 프로필 상세 보기: 사용자가 참여한 파티 조회
+//    @GetMapping("/parties/{userId}")
+//    @Operation(summary="마이페이지 사용자가 참여한 파티 조회", description="마이페이지에서 사용자가 참여 혹은 주최한 파티를 불러옵니다.\n" )
+//    public ResponseEntity<ResponseData<SliceResponse<PartyResponse>>> readUsersParties(
+//            @PathVariable long userId, @RequestParam(value = "page", defaultValue = "0") Integer page
+//    ){
+//        try {
+//            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_SUCCESS, userService.readUsersParties(userId, page));
+//        } catch (NoSuchElementException e) {
+//            return ResponseData.toResponseEntity(ResponseCode.READ_USERS_PARTIES_FAIL, null);
+//        }
+//    }
 
 }

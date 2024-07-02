@@ -9,6 +9,7 @@ import meltingpot.server.auth.controller.dto.*;
 import meltingpot.server.exception.AuthException;
 import meltingpot.server.exception.DuplicateException;
 import meltingpot.server.exception.InvalidTokenException;
+import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
 import meltingpot.server.util.r2.FileUploadResponse;
@@ -75,7 +76,7 @@ public class AuthController {
                     data.getId(), data.getEmail());
             return ResponseData.toResponseEntity(ResponseCode.SIGNIN_SUCCESS, data);
 
-        }catch( NoSuchElementException e ){
+        }catch( ResourceNotFoundException e ){
             return ResponseData.toResponseEntity(ResponseCode.ACCOUNT_NOT_FOUND, null);
         }
     }
