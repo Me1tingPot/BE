@@ -4,7 +4,7 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
-import meltingpot.server.domain.entity.Constants;
+import meltingpot.server.util.Constants;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
 import meltingpot.server.domain.entity.party.enums.PartyStatus;
@@ -64,8 +64,7 @@ public class UserService {
     public String getThumbnailImage(Account account){
         Optional<AccountProfileImage> thumbnail = accountProfileImageRepository.findByAccountAndIsThumbnailTrue(account);
         if(thumbnail.isEmpty()) {
-            System.out.println("에러 발생: 썸네일 사진이 없습니다");
-            throw new NoSuchElementException();
+            return fileService.getCdnUrl("userProfile-image", Constants.DEFAULT_PROFILE_IMAGE_KEY);
         }
         return fileService.getCdnUrl("userProfile-image", thumbnail.get().getImageKey());
     }
