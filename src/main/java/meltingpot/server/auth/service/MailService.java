@@ -3,7 +3,7 @@ package meltingpot.server.auth.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.auth.controller.dto.MailVerificationRequestDto;
 import meltingpot.server.auth.controller.dto.VerificationCodeRequestDto;
-import meltingpot.server.domain.entity.Constants;
+import meltingpot.server.util.Constants;
 import meltingpot.server.domain.entity.MailVerification;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.MailVerificationRepository;

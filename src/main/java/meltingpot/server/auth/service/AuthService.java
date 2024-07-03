@@ -2,6 +2,7 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
 import meltingpot.server.auth.controller.dto.ReissueTokenResponseDto;
 import meltingpot.server.auth.controller.dto.SignupRequestDto;
 import meltingpot.server.domain.entity.*;
@@ -14,6 +15,7 @@ import meltingpot.server.domain.repository.RefreshTokenRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.auth.controller.dto.AccountResponseDto;
 import meltingpot.server.auth.service.dto.SigninServiceDto;
+import meltingpot.server.exception.IllegalArgumentException;
 import meltingpot.server.util.AccountUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.SecurityUtil;
@@ -32,6 +34,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -44,21 +49,56 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
     private final AccountPushTokenRepository accountPushTokenRepository;
+    private final MailVerificationRepository mailVerificationRepository;
 
     // 회원가입
     @Transactional
     public AccountResponseDto signup(SignupRequestDto signupRequest) {
 
-        // TODO 개발 완료 후 이메일 인증 확인 주석 풀기
-//        // 이메일 인증을 거친 유효한 이메일인지 확인
-//        if(!mailVerificationRepository.existsByEmailAndVerifiedTrue(signupRequest.email())){
-//            throw new AuthException(ResponseCode.MAIL_NOT_AUTHORIZED);
-//        };
+        // 이메일 인증을 거친 유효한 이메일인지 확인
+        if(!mailVerificationRepository.existsByEmailAndVerifiedTrue(signupRequest.email())){
+            throw new AuthException(ResponseCode.MAIL_NOT_AUTHORIZED);
+        };
 
         // 이미 가입한 이메일인지 확인
         if(accountRepository.existsByUsername(signupRequest.email())){
             throw new AuthException(ResponseCode.EMAIL_DUPLICATION);
         }
+
+        // 프로필 사진 개수 확인
+        if(signupRequest.profileImages().isEmpty()){
+            throw new AuthException(ResponseCode.PROFILE_IMAGE_LESS_THAN_ONE);
+        }
+        if(signupRequest.profileImages().size()>4){
+            throw new AuthException(ResponseCode.PROFILE_IMAGE_MORE_THAN_FOUR);
+        }
+
+        // 프로필 이미지 썸네일 지정 여부 확인
+        boolean thumbnail_check = false;
+        for(ProfileImageRequestDto image : signupRequest.profileImages()){
+            if (image.isThumbnail()) {
+                if(thumbnail_check) throw new IllegalArgumentException(ResponseCode.THUMBNAIL_IS_DUPLICATED);
+                thumbnail_check = true;
+            }
+        }
+        if(!thumbnail_check) throw new AuthException(ResponseCode.THUMBNAIL_NOT_FOUND);
+
+
+        // 시퀀스 모두 다른지 확인
+        Set<Integer> sequences = new HashSet<>();
+        for (ProfileImageRequestDto profileImage : signupRequest.profileImages()) {
+            if (!sequences.add(profileImage.getSequence())) {
+                throw new IllegalArgumentException(ResponseCode.PROFILE_IMAGE_SEQUENCE_IS_DUPLICATED);
+            }
+        }
+
+        // 성별 유효성 확인
+        boolean gender_check = false;
+        for( Gender gender : Gender.values()){
+            if(gender.toString().equals(signupRequest.gender())) gender_check = true;
+        }
+        if(!gender_check) throw new IllegalArgumentException(ResponseCode.INVALID_GENDER_IS_PROVIDED);
+
 
         Account account = Account.builder()
                 .username(signupRequest.email())
@@ -93,7 +133,6 @@ public class AuthService implements UserDetailsService {
                 .password(signupRequest.password())
                 .pushToken(signupRequest.pushToken())
                 .build());
-
     }
 
 
@@ -121,7 +160,6 @@ public class AuthService implements UserDetailsService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
-
 
         if (!accountPushTokenRepository.existsAccountPushByAccountAndToken(account, serviceDto.getPushToken())) {
             AccountPushToken accountPushToken = AccountPushToken.builder()

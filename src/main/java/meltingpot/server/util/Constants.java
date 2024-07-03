@@ -1,4 +1,4 @@
-package meltingpot.server.domain.entity;
+package meltingpot.server.util;
 
 public final class Constants {
 
@@ -13,5 +13,8 @@ public final class Constants {
 
     // 무한스크롤 페이지 디폴트 사이즈
     public static final Integer PAGE_DEFAULT_SIZE = 5;
+
+    // 기본 프로필 이미지키
+    public static final String DEFAULT_PROFILE_IMAGE_KEY = "65352995-3744-4482-8d0f-8b7baf5d0903";
 
 }
