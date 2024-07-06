@@ -4,6 +4,7 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.party.Party;
 import meltingpot.server.util.Constants;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
@@ -143,7 +144,7 @@ public class UserService {
             return ResponseCode.PROFILE_IMAGE_UPDATE_NOT_OWNER;
         }
 
-        // 삭제하려는 사진이 대표 사진인 경우 다른 사진을 대표 사진으로 임시 설정
+        // 삭제하려는 사진이 대표 사진인 경우 다른 사진을 대표 사진으로 임시 설정한다.
         if(oldProfileImage.isThumbnail()){
             List<AccountProfileImage> profileImages = accountProfileImageRepository.findAllByAccountAndDeletedAtIsNull(account);
 
@@ -198,7 +199,7 @@ public class UserService {
 
     @Transactional
     public SliceResponse<PostResponseDto> readUsersPosts(Long userId, Integer page) {
-        Account account = accountRepository.findById(userId).orElseThrow();
+        Account account = accountRepository.findById(userId).orElseThrow( () -> new NoSuchElementException("계정을 찾을 수 없습니다"));
         PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
         return new SliceResponse<>(postRepository.findAllByAccountAndDeletedAtIsNullOrderByIdDesc(account, pageRequest)
                 .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount()))));
@@ -207,7 +208,7 @@ public class UserService {
 
     @Transactional
     public SliceResponse<PostResponseDto>  readUsersComments(Long userId, Integer page) {
-        Account account = accountRepository.findById(userId).orElseThrow();
+        Account account = accountRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다"));
         PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
 
         // Post 중복 제거
@@ -216,7 +217,6 @@ public class UserService {
                 .map(Comment::getPost)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        // uniquePosts를 Pageable로 변환하여 Slice로 생성
         Slice<PostResponseDto> postSlice = uniquePosts.stream()
                 .map(post -> PostResponseDto.of(post, getThumbnailImage(post.getAccount())))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
@@ -229,8 +229,12 @@ public class UserService {
     }
 
     public SliceResponse<PartyResponse> readUsersParties(Long userId, Integer page) {
+        Account account = accountRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다"));
         PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
 
-        return null;
+
+        return new SliceResponse<> (partyRepository.findByAccountFromPartyAndPartyParticipant(account,pageRequest)
+                .map(party -> PartyResponse.of(party)));
+
     }
 }
