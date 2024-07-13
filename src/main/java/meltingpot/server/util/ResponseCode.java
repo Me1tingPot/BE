@@ -17,6 +17,7 @@ public enum ResponseCode {
     MAIL_VERIFICATION_SEND_SUCCESS(OK, "이메일 인증번호 전송 성공"),
     MAIL_VERIFICATION_CHECK_SUCCESS(OK, "인증번호가 일치합니다"),
     MAIL_AVAILABLE(OK, "사용 가능한 이메일입니다"),
+    ACCOUNT_DELETE_SUCCESS(OK,"회원 탈퇴 성공"),
 
     PARTY_FETCH_SUCCESS(OK, "파티 정보 불러오기 성공"),
     PARTY_SEARCH_SUCCESS(OK, "파티 검색 성공"),
@@ -98,6 +99,11 @@ public enum ResponseCode {
     READ_USERS_POSTS_FAIL(BAD_REQUEST, "사용자가 작성한 게시글 불러오기 실패"),
     READ_USERS_COMMENTS_FAIL(BAD_REQUEST, "사용자가 댓글을 작성한 게시글 불러오기 실패"),
     READ_USERS_PARTIES_FAIL(BAD_REQUEST, "사용자가 참여한 파티 불러오기 실패"),
+
+    ACCOUNT_DELETE_FAIL(BAD_REQUEST,"회원 탈퇴 실패"),
+    PARTY_HOST_ACCOUNT_DELETE_DENIED(BAD_REQUEST,"파티가 예정된 주최자는 탈퇴할 수 없습니다."),
+    PARTY_PARTICIPANT_ACCOUNT_DELETE_DENIED(BAD_REQUEST,"파티가 예정된 참여자는 탈퇴할 수 없습니다."),
+
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

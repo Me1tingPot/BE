@@ -59,6 +59,8 @@ public class Account extends BaseEntity {
 
     private LocalDateTime deletedAt;
 
+    private Boolean isQuit; // 탈퇴 여부
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<AccountProfileImage> profileImages = new ArrayList<>();

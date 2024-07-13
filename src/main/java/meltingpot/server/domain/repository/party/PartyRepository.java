@@ -10,12 +10,15 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 public interface PartyRepository extends JpaRepository<Party, Integer>, JpaSpecificationExecutor<Party> {
     Optional<Party> findByChatRoomId(Long chatRoomId);
 
     Party findByAccountAndPartyStatus(Account account, PartyStatus status);
+
+    boolean existsByAccountAndPartyStatusIn(Account account, EnumSet<PartyStatus> statuses);
 
     int countByAccountAndPartyStatus(Account account, PartyStatus status);
 

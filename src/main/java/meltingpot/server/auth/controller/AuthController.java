@@ -111,11 +111,4 @@ public class AuthController {
             return ResponseData.toResponseEntity(ResponseCode.INVALID_REFRESH_TOKEN, null);
         }
     }
-
-
-    // 비밀번호 재설정
-
-    // 탈퇴
-
-
 }
