@@ -41,8 +41,6 @@ public class PostConverter {
 //                .collect(Collectors.toList());
 //    }
 
-
-
     /*post 목록 조회*/
     public  static PostResponseDTO.PostsListDTO toPostsListDTO(Post post) {
         List<String> imgUrls = post.getPostImages().stream()
