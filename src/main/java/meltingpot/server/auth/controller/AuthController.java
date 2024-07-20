@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import meltingpot.server.auth.controller.dto.*;
+import meltingpot.server.auth.service.OAuthService;
+import meltingpot.server.auth.service.dto.OAuthSignInResponseDto;
 import meltingpot.server.exception.AuthException;
 import meltingpot.server.exception.DuplicateException;
 import meltingpot.server.exception.IllegalArgumentException;
