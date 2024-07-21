@@ -176,4 +176,21 @@ public class UserController {
         }
     }
 
+    //탈퇴
+    @DeleteMapping("")
+    @Operation(summary="마이페이지 회원 탈퇴", description="회원 삭제가 아닌 소프트 마킹으로 구현했습니다." )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "OK", description = "회원 탈퇴 성공"),
+            @ApiResponse(responseCode = "BAD_REQUEST", description = "예정된 파티가 있는 경우")
+    })
+    public ResponseEntity<ResponseData> deleteAccount(
+            @CurrentUser Account account
+    ){
+        try{
+            return ResponseData.toResponseEntity(userService.deleteAccount(account));
+        }
+        catch (NoSuchElementException e){
+            return ResponseData.toResponseEntity(ResponseCode.ACCOUNT_DELETE_FAIL);
+        }
+    }
 }

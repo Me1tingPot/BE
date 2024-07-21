@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import meltingpot.server.auth.controller.dto.*;
+import meltingpot.server.auth.service.OAuthService;
+import meltingpot.server.auth.service.dto.OAuthSignInResponseDto;
 import meltingpot.server.exception.AuthException;
 import meltingpot.server.exception.DuplicateException;
 import meltingpot.server.exception.IllegalArgumentException;
@@ -31,9 +33,10 @@ import java.util.NoSuchElementException;
 public class AuthController {
 
     private final AuthService authService;
+    private final OAuthService oAuthService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // 회원 가입
+    // 일반 회원 가입
     @PostMapping("signup")
     @Operation(summary="회원가입", description="회원가입 API 입니다.\n 회원가입 성공시 자동 로그인되어 AccessToken이 반환됩니다. " )
     @ApiResponses(value = {
@@ -55,6 +58,28 @@ public class AuthController {
             return ResponseData.toResponseEntity( e.getResponseCode(), null);
         }
     }
+
+    // SNS 회원 가입
+    @PostMapping("/signup/oauth")
+    @Operation(summary="SNS 회원가입", description="SNS 회원가입 API 입니다.\n" )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "CREATED", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "BAD_REQUEST", description = "회원가입 실패")
+    })
+    public ResponseEntity<ResponseData<OAuthSignInResponseDto>> oauthSignup(
+            @RequestBody @Valid OAuthSignupRequestDto request
+    ){
+        try{
+            return ResponseData.toResponseEntity(ResponseCode.OAUTH_SIGNUP_SUCCESS, oAuthService.oauthSignup(request));
+
+        }catch ( AuthException e ){
+            return ResponseData.toResponseEntity( e.getResponseCode(), null);
+        }catch ( IllegalArgumentException e ){
+            return ResponseData.toResponseEntity( e.getResponseCode(), null);
+        }
+    }
+
+
 
     // 프로필 이미지 URL 생성
     @GetMapping("/image-url")
@@ -86,6 +111,25 @@ public class AuthController {
         }
     }
 
+    // SNS 로그인
+    @PostMapping("signin/oauth")
+    @Operation(summary="SNS 로그인", description="SNS 로그인 API 입니다" )
+    public ResponseEntity<ResponseData<OAuthSignInResponseDto>> SNSLogin(
+            @RequestBody @Valid OAuthSignInRequestDto request
+    ){
+        try{
+            OAuthSignInResponseDto data = oAuthService.SNSLogin(request);
+            return ResponseData.toResponseEntity(ResponseCode.OAUTH_SIGNIN_SUCCESS, data);
+
+        }catch( ResourceNotFoundException e ){
+            return ResponseData.toResponseEntity(ResponseCode.ACCOUNT_NOT_FOUND, null);
+        }catch ( InvalidTokenException e ){
+            return ResponseData.toResponseEntity(ResponseCode.REFRESH_TOKEN_NOT_FOUND, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     // 로그아웃
     @GetMapping("signout")
@@ -111,11 +155,4 @@ public class AuthController {
             return ResponseData.toResponseEntity(ResponseCode.INVALID_REFRESH_TOKEN, null);
         }
     }
-
-
-    // 비밀번호 재설정
-
-    // 탈퇴
-
-
 }

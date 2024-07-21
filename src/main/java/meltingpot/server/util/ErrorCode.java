@@ -2,7 +2,7 @@ package meltingpot.server.util;
 
 public enum ErrorCode {
     INVALID_MESSAGE(400, "Invalid message format."),
-    INVALID_TOKEN(401, "Invalid token.");
+    INVALID_TOKEN(401, "Invalid code.");
 
     private final int status;
     private final String message;

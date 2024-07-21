@@ -8,6 +8,7 @@ import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.comment.CommentImage;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.domain.entity.enums.OAuthType;
 import meltingpot.server.domain.entity.post.Post;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -42,7 +43,6 @@ public class Account extends BaseEntity {
     @NotNull
     private String name;
 
-    @NotNull
     private String password;
 
     @NotNull
@@ -58,6 +58,10 @@ public class Account extends BaseEntity {
     private String bio; // 사용자 자기소개
 
     private LocalDateTime deletedAt;
+
+    private Boolean isQuit; // 탈퇴 여부
+
+    private OAuthType oAuthType; 
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default

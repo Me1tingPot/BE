@@ -2,18 +2,16 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
-import meltingpot.server.auth.controller.dto.ReissueTokenResponseDto;
-import meltingpot.server.auth.controller.dto.SignupRequestDto;
+import meltingpot.server.auth.controller.dto.*;
 import meltingpot.server.domain.entity.*;
 import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.domain.entity.enums.OAuthType;
 import meltingpot.server.domain.repository.AccountPushTokenRepository;
 import meltingpot.server.domain.repository.MailVerificationRepository;
 import meltingpot.server.exception.*;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.repository.RefreshTokenRepository;
 import meltingpot.server.domain.repository.AccountRepository;
-import meltingpot.server.auth.controller.dto.AccountResponseDto;
 import meltingpot.server.auth.service.dto.SigninServiceDto;
 import meltingpot.server.exception.IllegalArgumentException;
 import meltingpot.server.util.AccountUser;
@@ -107,6 +105,8 @@ public class AuthService implements UserDetailsService {
                 .gender(Gender.valueOf(signupRequest.gender()))
                 .birth(signupRequest.birth())
                 .nationality(signupRequest.nationality())
+                .isQuit(false)
+                .oAuthType(OAuthType.NONE)
                 .build();
 
         account.setProfileImages(signupRequest.profileImages().stream().map(
@@ -152,7 +152,7 @@ public class AuthService implements UserDetailsService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // 4. RefreshToken 저장
-        Account account = accountRepository.findByUsername(authentication.getName())
+        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
         RefreshToken refreshToken = RefreshToken.builder()
                 .account(account)
@@ -201,7 +201,7 @@ public class AuthService implements UserDetailsService {
     // 로그인 유저 정보 반환 to @CurrentUser
     @Transactional(readOnly = true)
     public Account getUserInfo(){
-        return accountRepository.findByUsernameAndDeletedAtIsNull(SecurityUtil.getCurrentUserName())
+        return accountRepository.findByUsernameAndIsQuitIsFalse(SecurityUtil.getCurrentUserName())
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
     }
 
@@ -209,7 +209,7 @@ public class AuthService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username)
+        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         return new AccountUser(account);
     }

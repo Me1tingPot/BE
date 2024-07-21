@@ -4,7 +4,9 @@ package meltingpot.server.user.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.AccountProfileImage;
+import meltingpot.server.domain.entity.enums.Gender;
 import meltingpot.server.domain.entity.party.Party;
+import meltingpot.server.domain.entity.party.PartyParticipant;
 import meltingpot.server.util.Constants;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.party.enums.ParticipantStatus;
@@ -88,7 +90,7 @@ public class UserService {
 
     @Transactional
     public List<UserImagesResponseDto> readProfileImages( long accountId ) {
-        Account account = accountRepository.findByIdAndDeletedAtIsNull(accountId);
+        Account account = accountRepository.findByIdAndIsQuitIsFalse(accountId);
         if(account == null) throw new NoSuchElementException();
 
         List<AccountProfileImage> accountProfileImages = accountProfileImageRepository.findAllByAccountAndDeletedAtIsNull(account);
@@ -228,6 +230,8 @@ public class UserService {
         return new SliceResponse<>(postSlice);
     }
 
+    // 마이페이지 사용자 파티 참여/주최 내역
+    @Transactional
     public SliceResponse<PartyResponse> readUsersParties(Long userId, Integer page) {
         Account account = accountRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다"));
         PageRequest pageRequest = PageRequest.of(page, Constants.PAGE_DEFAULT_SIZE, Sort.by("createdAt").descending());
@@ -236,5 +240,43 @@ public class UserService {
         return new SliceResponse<> (partyRepository.findByAccountFromPartyAndPartyParticipant(account,pageRequest)
                 .map(party -> PartyResponse.of(party)));
 
+    }
+
+    // 회원 탈퇴
+    @Transactional
+    public ResponseCode deleteAccount(Account account) {
+
+        EnumSet<PartyStatus> plannedPartyStatus = EnumSet.of(PartyStatus.RECRUIT_SCHEDULED, PartyStatus.RECRUIT_OPEN, PartyStatus.RECRUIT_CLOSED, PartyStatus.RUNNING);
+
+        // 주최 중인 파티 있는지 확인
+        if(partyRepository.existsByAccountAndPartyStatusIn(account, plannedPartyStatus)){
+            return ResponseCode.PARTY_HOST_ACCOUNT_DELETE_DENIED;
+        }
+
+        // 참여 중인 파티 있는지 확인
+        boolean hasActiveParty = partyParticipantRepository.findAllByAccount(account).stream()
+                .map(participant -> participant.getParty().getPartyStatus())
+                .anyMatch(plannedPartyStatus::contains);
+
+        if (hasActiveParty) {
+            return ResponseCode.PARTY_PARTICIPANT_ACCOUNT_DELETE_DENIED;
+        }
+
+        account.setUsername("");
+        account.setLanguages(new ArrayList<>());
+        account.setName("UNKNOWN");
+        account.setPassword("");
+        account.setGender(Gender.UNKNOWN);
+        account.setBirth(null);
+        account.setBio("This account is deleted");
+        account.setNationality("");
+        account.setIsQuit(true);
+
+        // 프로필 이미지 삭제
+        for(AccountProfileImage image : account.getProfileImages()){
+            deleteProfileImage(account, image.getId());
+        }
+
+        return ResponseCode.ACCOUNT_DELETE_SUCCESS;
     }
 }

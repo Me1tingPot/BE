@@ -37,6 +37,7 @@ dependencies {
 	// mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -53,9 +54,16 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	if (isAppleSilicon()) {
 		runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.94.Final:osx-aarch_64")
 	}
+
+	//Apple Login
+	implementation 'com.nimbusds:nimbus-jose-jwt:3.10'
+
+	//Json
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'

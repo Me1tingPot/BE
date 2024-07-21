@@ -90,7 +90,7 @@ public class TokenProvider {
         // accessToken에서 username 추출
         String username = parseClaims(accessToken).getSubject();
         // username으로 account 조회
-        Account account = accountRepository.findByUsername(username)
+        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(username)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
         // account에서 account_roles -> authorities로 변환
         String authorities = account.toAuthStringList().stream().collect(Collectors.joining(","));
@@ -126,7 +126,7 @@ public class TokenProvider {
     // 저장되어있는 RefreshToken의 account와 접속한 계정이 동일한지 확인
     public Boolean validRefreshToken(String refreshToken, String accessToken) {
         String username = parseClaims(accessToken).getSubject();
-        Account account = accountRepository.findByUsername(username)
+        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(username)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
 
         RefreshToken matchRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
@@ -141,7 +141,7 @@ public class TokenProvider {
     // 재발급한 RefreshToken 저장
     public void updateRefreshToken(String accessToken, String newRefreshToken) {
         String username = parseClaims(accessToken).getSubject();
-        Account account = accountRepository.findByUsername(username)
+        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(username)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseCode.ACCOUNT_NOT_FOUND));
 
         // 재발급한 refresh token 저장
