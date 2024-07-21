@@ -66,16 +66,16 @@ public class AuthController {
             @ApiResponse(responseCode = "CREATED", description = "회원가입 성공"),
             @ApiResponse(responseCode = "BAD_REQUEST", description = "회원가입 실패")
     })
-    public ResponseEntity<ResponseData> oauthSignup(
+    public ResponseEntity<ResponseData<OAuthSignInResponseDto>> oauthSignup(
             @RequestBody @Valid OAuthSignupRequestDto request
     ){
         try{
-            return ResponseData.toResponseEntity(oAuthService.oauthSignup(request));
+            return ResponseData.toResponseEntity(ResponseCode.OAUTH_SIGNUP_SUCCESS, oAuthService.oauthSignup(request));
 
         }catch ( AuthException e ){
-            return ResponseData.toResponseEntity( e.getResponseCode());
+            return ResponseData.toResponseEntity( e.getResponseCode(), null);
         }catch ( IllegalArgumentException e ){
-            return ResponseData.toResponseEntity( e.getResponseCode());
+            return ResponseData.toResponseEntity( e.getResponseCode(), null);
         }
     }
 
@@ -119,7 +119,7 @@ public class AuthController {
     ){
         try{
             OAuthSignInResponseDto data = oAuthService.SNSLogin(request);
-            return ResponseData.toResponseEntity(ResponseCode.SIGNIN_SUCCESS, data);
+            return ResponseData.toResponseEntity(ResponseCode.OAUTH_SIGNIN_SUCCESS, data);
 
         }catch( ResourceNotFoundException e ){
             return ResponseData.toResponseEntity(ResponseCode.ACCOUNT_NOT_FOUND, null);

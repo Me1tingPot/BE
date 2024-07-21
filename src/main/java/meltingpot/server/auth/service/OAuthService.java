@@ -2,6 +2,7 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import meltingpot.server.auth.controller.dto.AccountResponseDto;
 import meltingpot.server.auth.controller.dto.OAuthSignInRequestDto;
 import meltingpot.server.auth.controller.dto.OAuthSignupRequestDto;
 import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
@@ -50,7 +51,9 @@ public class OAuthService {
 
 
     // SNS 회원 가입
-    public ResponseCode oauthSignup(OAuthSignupRequestDto signupRequest) {
+    @Transactional
+    public OAuthSignInResponseDto oauthSignup(OAuthSignupRequestDto signupRequest) {
+
         // 프로필 사진 개수 확인
         if(signupRequest.profileImages().isEmpty()){
             throw new AuthException(ResponseCode.PROFILE_IMAGE_LESS_THAN_ONE);
@@ -115,7 +118,13 @@ public class OAuthService {
 
         accountRepository.save(account);
 
-        return ResponseCode.SIGNUP_SUCCESS;
+
+        return OAuthSignInResponseDto.builder().
+                register_required(false)
+                .nickName(account.getName())
+                .email(account.getUsername())
+                .tokenDto(setSecurityContext(account, signupRequest.pushToken()))
+                .build();
 
     }
 
@@ -136,61 +145,66 @@ public class OAuthService {
                 // 회원 가입이 필요한 경우
                 return OAuthSignInResponseDto.builder()
                         .register_required(true)
-                        .accessToken(tokenDto.accessToken())
-                        .refreshToken(tokenDto.refreshToken())
                         .nickName(kakaoDto.getNickname())
                         .email(kakaoDto.getEmail())
+                        .tokenDto(null)
                         .build();
 
             } else {
 
-                // 발급 받은 토큰 Spring Security Context에 저장
-                OAuthUserDetails oAuthUserDetails= new OAuthUserDetails(account.get());
-                Authentication authentication = new UsernamePasswordAuthenticationToken(oAuthUserDetails, null, oAuthUserDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // 인증 정보를 기반으로 JWT 토큰 생성
-                TokenDto jwtTokenDto = tokenProvider.generateTokenDto(authentication);
-
-                // RefreshToken 저장
-                RefreshToken refreshToken = RefreshToken.builder()
-                        .account(account.get())
-                        .tokenValue(jwtTokenDto.getRefreshToken())
-                        .build();
-
-                refreshTokenRepository.save(refreshToken);
-
-                if (!accountPushTokenRepository.existsAccountPushByAccountAndToken(account.get(), request.push_token())) {
-                    AccountPushToken accountPushToken = AccountPushToken.builder()
-                            .account(account.get())
-                            .token(request.push_token())
-                            .build();
-
-                    accountPushTokenRepository.save(accountPushToken);
-                }
-
-                //인증된 Authentication를 SecurityContext에 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-                return OAuthSignInResponseDto.builder()
-                        .register_required(false)
-                        .accessToken(jwtTokenDto.getAccessToken())
-                        .refreshToken(jwtTokenDto.getRefreshToken())
+                return OAuthSignInResponseDto.builder().
+                        register_required(false)
                         .nickName(kakaoDto.getNickname())
                         .email(kakaoDto.getEmail())
+                        .tokenDto(setSecurityContext(account.get(), request.push_token()))
                         .build();
             }
         }
+//        else if(request.type() == OAuthType.APPLE) {
+//
+//        }
+//        else if(request.type() == OAuthType.GOOGLE) {
+//
+//        }
         else {
             throw new NoSuchElementException();
         }
 
     }
 
+    @Transactional
+    public TokenDto setSecurityContext(Account account, String pushToken ){
 
+        OAuthUserDetails oAuthUserDetails= new OAuthUserDetails(account);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(oAuthUserDetails, null, oAuthUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // 인증 정보를 기반으로 JWT 토큰 생성
+        TokenDto jwtTokenDto = tokenProvider.generateTokenDto(authentication);
 
+        // RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .account(account)
+                .tokenValue(jwtTokenDto.getRefreshToken())
+                .build();
 
+        refreshTokenRepository.save(refreshToken);
+
+        // PushToken 저장
+        if (!accountPushTokenRepository.existsAccountPushByAccountAndToken(account, pushToken)) {
+            AccountPushToken accountPushToken = AccountPushToken.builder()
+                    .account(account)
+                    .token(pushToken)
+                    .build();
+
+            accountPushTokenRepository.save(accountPushToken);
+        }
+
+        //인증된 Authentication를 SecurityContext에 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return jwtTokenDto;
+
+    }
 
 }

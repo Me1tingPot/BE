@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.auth.controller.dto.*;
 import meltingpot.server.domain.entity.*;
 import meltingpot.server.domain.entity.enums.Gender;
+import meltingpot.server.domain.entity.enums.OAuthType;
 import meltingpot.server.domain.repository.AccountPushTokenRepository;
 import meltingpot.server.domain.repository.MailVerificationRepository;
 import meltingpot.server.exception.*;
@@ -105,6 +106,7 @@ public class AuthService implements UserDetailsService {
                 .birth(signupRequest.birth())
                 .nationality(signupRequest.nationality())
                 .isQuit(false)
+                .oAuthType(OAuthType.NONE)
                 .build();
 
         account.setProfileImages(signupRequest.profileImages().stream().map(

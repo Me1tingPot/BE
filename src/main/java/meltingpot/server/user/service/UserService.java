@@ -90,7 +90,7 @@ public class UserService {
 
     @Transactional
     public List<UserImagesResponseDto> readProfileImages( long accountId ) {
-        Account account = accountRepository.findByIdAndDeletedAtIsNull(accountId);
+        Account account = accountRepository.findByIdAndIsQuitIsFalse(accountId);
         if(account == null) throw new NoSuchElementException();
 
         List<AccountProfileImage> accountProfileImages = accountProfileImageRepository.findAllByAccountAndDeletedAtIsNull(account);

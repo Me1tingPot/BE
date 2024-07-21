@@ -1,13 +1,13 @@
 package meltingpot.server.auth.service.dto;
 
 import lombok.Builder;
+import meltingpot.server.util.TokenDto;
 
 @Builder
 public record OAuthSignInResponseDto(
-        String accessToken,
-        String refreshToken,
+        boolean register_required,
         String email,
         String nickName,
-        boolean register_required
+        TokenDto tokenDto
 ) {
 }

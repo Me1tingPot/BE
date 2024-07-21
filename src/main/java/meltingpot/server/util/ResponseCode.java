@@ -12,6 +12,7 @@ public enum ResponseCode {
 
     /* 200 OK : 요청 성공 */
     SIGNIN_SUCCESS(OK, "로그인 성공"),
+    OAUTH_SIGNIN_SUCCESS(OK, "SNS 로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
     MAIL_VERIFICATION_SEND_SUCCESS(OK, "이메일 인증번호 전송 성공"),
@@ -60,6 +61,7 @@ public enum ResponseCode {
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
     PARTY_CREATE_SUCCESS(CREATED, "파티 생성 성공"),
     IMAGE_URL_GENERATE_SUCCESS(CREATED, "이미지 URL 생성 성공"),
+    OAUTH_SIGNUP_SUCCESS(CREATED, "SNS 회원가입 성공"),
 
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
