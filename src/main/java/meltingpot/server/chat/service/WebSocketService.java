@@ -55,7 +55,7 @@ public class WebSocketService {
         Party party = partyRepository.findByChatRoomId(chatRoom.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(PARTY_NOT_FOUND));
 
-        Account account = accountRepository.findByUsernameAndIsQuitIsFalse(socketSessionRepository.findBySessionId(sessionId).getUsername())
+        Account account = accountRepository.findByUsername(socketSessionRepository.findBySessionId(sessionId).getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException(ACCOUNT_NOT_FOUND));
 
         Role role = (party.getAccount().getId().equals(account.getId()))
