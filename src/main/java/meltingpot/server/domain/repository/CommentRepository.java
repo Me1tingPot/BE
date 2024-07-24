@@ -19,22 +19,15 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findById(Long id);
 
-    @Query("SELECT c FROM Comment c WHERE c.post.id = :postId AND c.id < :cursor ORDER BY c.id DESC")
-    List<Comment> findParentComments(Long postId, Long cursor, Pageable pageable);
+    // parentComment를 가져오는 메서드
+    @Query("SELECT c FROM Comment c WHERE c.post.id = :postId AND c.parent IS NULL AND c.id > :cursor ORDER BY c.id ASC")
+    List<Comment> findParentComments(@Param("postId") Long postId, @Param("cursor") Long cursor, Pageable pageable);
 
-    // 자식 댓글을 조회하는 메서드
-    @Query("SELECT c FROM Comment c WHERE c.parent.id = :parentId")
-    List<Comment> findChildrenComments(Long parentId);
+    // childComment를 가져오는 메서드
+    @Query("SELECT c FROM Comment c WHERE c.parent.id = :parentId AND c.id > :cursor ORDER BY c.id ASC")
+    List<Comment> findChildComments(@Param("parentId") Long parentId, @Param("cursor") Long cursor, Pageable pageable);
 
-    // 부모가 없는 첫 번째 댓글을 찾기 위한 메서드 (가장 상위 댓글)
-    Optional<Comment> findFirstByPostIdAndParentIsNull(Long postId);
 
-    // 특정 부모 댓글의 자식 댓글을 페이지로 가져오는 메서드
-    List<Comment> findByParent(Comment parent, Pageable pageable);
-
-    // 다음 부모 댓글을 찾기 위한 메서드
-    @Query("SELECT c FROM Comment c WHERE c.post.id = :postId AND c.parent IS NULL AND c.id > :parentId ORDER BY c.id ASC")
-    Optional<Comment> findNextParentComment(Long parentId, Long postId);
 
     Slice<Comment> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable pageable);
 }

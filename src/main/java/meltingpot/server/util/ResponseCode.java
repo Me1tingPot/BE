@@ -88,6 +88,7 @@ public enum ResponseCode {
     DESTINATION_NOT_VALID(BAD_REQUEST, "잘못된 목적지로 접근하였습니다"),
     COMMENT_CREATE_FAIL(BAD_REQUEST, "댓글 작성 실패 "),
     COMMENT_UPDATE_FAIL(BAD_REQUEST, "댓글 수정 실패 "),
+    READ_COMMENT_FAIL(BAD_REQUEST, "댓글 불러오기 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST, "게시글 작성 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST, "신고 작성 실패"),
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),

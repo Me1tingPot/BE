@@ -58,7 +58,7 @@ public class CommentController {
         try{
             return ResponseData.toResponseEntity(ResponseCode.READ_COMMENTS_LIST_SUCCESS, commentService.getCommentsList(account,postId,cursor,pageSize));
         }catch (NoSuchElementException e) {
-            return ResponseData.toResponseEntity(ResponseCode.COMMENT_UPDATE_FAIL, null);
+            return ResponseData.toResponseEntity(ResponseCode.READ_COMMENT_FAIL, null);
         }
     }
 
