@@ -27,6 +27,7 @@ public class PostResponseDTO {
         private String name;
         private String title;
         private String content;
+        private String imgUrl;
         private List<CommentResponseDTO.CommentDetailDTO> comments;
         private LocalDateTime updatedAt;
     }
@@ -37,9 +38,11 @@ public class PostResponseDTO {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PostsListDTO {
         private Long postId;
+        private Long userId;
         private String name;
         private String title;
         private String content;
+        List<String> imgUrls;
         private Integer commentCount;
         private LocalDateTime updatedAt;
     }

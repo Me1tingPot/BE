@@ -8,6 +8,7 @@ import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CommentConverter {
@@ -38,22 +39,25 @@ public class CommentConverter {
     public static CommentResponseDTO.CommentDetailDTO toCommentDetailDTO(Comment comment){
         return CommentResponseDTO.CommentDetailDTO.builder()
                 .commentId(comment.getId())
+                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                .userId(comment.getAccount().getId())
                 .content(comment.getContent())
                 .name(comment.getAccount().getName())
+                .isAnonymous(comment.getIsAnonymous())
                 .updatedAt(comment.getUpdatedAt())
+                .children(comment.getChildren() != null ? toCommentDetailDTOList(comment.getChildren()) : null)
                 .build();
     }
 
-    public static CommentResponseDTO.ParentCommentDTO toParentCommentDTO(Comment parentComment,List<CommentResponseDTO.CommentDetailDTO>childrenComments){
-        return CommentResponseDTO.ParentCommentDTO.builder()
-                .parentComment(toCommentDetailDTO(parentComment))
-                .childrenComments(childrenComments)
-                .build();
+    public static List<CommentResponseDTO.CommentDetailDTO> toCommentDetailDTOList(List<Comment> comments) {
+        return comments.stream()
+                .map(CommentConverter::toCommentDetailDTO)
+                .collect(Collectors.toList());
     }
 
-    public static CommentResponseDTO.CommentsListDTO toCommentsListDTO(List<CommentResponseDTO.ParentCommentDTO> parentComments, Long nextCursor, Boolean isLast){
+    public static CommentResponseDTO.CommentsListDTO toCommentsListDTO(List<CommentResponseDTO.CommentDetailDTO> comments, Long nextCursor, Boolean isLast){
         return CommentResponseDTO.CommentsListDTO.builder()
-                .parentComments(parentComments)
+                .comments(comments)
                 .nextCursor(nextCursor)
                 .isLast(isLast)
                 .build();

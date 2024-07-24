@@ -48,6 +48,10 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Report> reports = new ArrayList<>();
 
+    public List<PostImage> getPostImages() {
+        return postImages;
+    }
+
     public void setPostImages(List<PostImage> postImages) {
         this.postImages = postImages.stream()
                 .map(postImage -> {

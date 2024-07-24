@@ -3,6 +3,7 @@ package meltingpot.server.post.converter;
 import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
+import meltingpot.server.domain.entity.post.PostImage;
 import meltingpot.server.post.dto.PostImageDTO;
 import meltingpot.server.post.dto.PostRequestDTO;
 import meltingpot.server.post.dto.PostResponseDTO;
@@ -42,12 +43,17 @@ public class PostConverter {
 
     /*post 목록 조회*/
     public  static PostResponseDTO.PostsListDTO toPostsListDTO(Post post) {
+        List<String> imgUrls = post.getPostImages().stream()
+                .map(PostImage::getImageKey)
+                .collect(Collectors.toList());
         return PostResponseDTO.PostsListDTO.builder()
                 .postId(post.getId())
+                .userId(post.getAccount().getId())
                 .name(post.getAccount().getName()) // Assuming Account entity has getName method
                 .title(post.getTitle())
                 .content(post.getContent())
                 .commentCount(post.getComments().size())
+                .imgUrls(imgUrls)
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
