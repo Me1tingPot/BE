@@ -2,6 +2,7 @@ package meltingpot.server.domain.entity.comment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.common.BaseEntity;
@@ -76,5 +77,12 @@ public class Comment extends BaseEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Comment getParent() { return parent;}
+
+
+    public List<Comment> getChildren() {
+        return children;
     }
 }

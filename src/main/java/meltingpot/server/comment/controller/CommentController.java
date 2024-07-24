@@ -50,6 +50,17 @@ public class CommentController {
         }
     }
 
+    @Operation(summary = "댓글 목록 가져오기")
+    @GetMapping("/list/{postId}")
+    public ResponseEntity<ResponseData<CommentResponseDTO.CommentsListDTO>> getCommentsList ( @CurrentUser Account account, @PathVariable Long postId,
+                                                                                              @RequestParam(required = false) Long cursor,
+                                                                                              @RequestParam(defaultValue = "10") int pageSize){
+        try{
+            return ResponseData.toResponseEntity(ResponseCode.READ_COMMENTS_LIST_SUCCESS, commentService.getCommentsList(account,postId,cursor,pageSize));
+        }catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.COMMENT_UPDATE_FAIL, null);
+        }
+    }
 
 
 }

@@ -75,40 +75,40 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    private CommentResponseDTO.CommentsListDTO getCommentsWithPagination(Long postId, Long cursor, int pageSize) {
-        cursor = cursor == null ? Long.MAX_VALUE : cursor;
-
-        List<CommentResponseDTO.ParentCommentDTO> parentCommentDTOs = new ArrayList<>();
-        int remainingPageSize = pageSize;
-        boolean isLast = true;
-
-        List<Comment> parentComments = commentRepository.findParentCommentsByPostIdAndCursor(postId, cursor, PageRequest.of(0, remainingPageSize + 1));
-
-        for (Comment parentComment : parentComments) {
-            if (remainingPageSize <= 0) {
-                isLast = false;
-                break;
-            }
-
-            List<CommentResponseDTO.CommentDetailDTO> childrenCommentDTOs = new ArrayList<>();
-            List<Comment> childComments = commentRepository.findChildCommentsByParentId(parentComment.getId(), PageRequest.of(0, remainingPageSize));
-            for (Comment childComment : childComments) {
-                if (remainingPageSize <= 1) {
-                    isLast = false;
-                    break;
-                }
-                childrenCommentDTOs.add(CommentConverter.toCommentDetailDTO(childComment));
-                remainingPageSize--;
-            }
-
-            parentCommentDTOs.add(CommentConverter.toParentCommentDTO(parentComment, childrenCommentDTOs));
-            remainingPageSize--;
-        }
-
-        Long nextCursor = isLast ? null : parentComments.get(parentCommentDTOs.size() - 1).getId();
-
-        return CommentConverter.toCommentsListDTO(parentCommentDTOs, nextCursor, isLast);
-    }
+//    private CommentResponseDTO.CommentsListDTO getCommentsWithPagination(Long postId, Long cursor, int pageSize) {
+//        cursor = cursor == null ? Long.MAX_VALUE : cursor;
+//
+//        List<CommentResponseDTO.ParentCommentDTO> parentCommentDTOs = new ArrayList<>();
+//        int remainingPageSize = pageSize;
+//        boolean isLast = true;
+//
+//        List<Comment> parentComments = commentRepository.findParentCommentsByPostIdAndCursor(postId, cursor, PageRequest.of(0, remainingPageSize + 1));
+//
+//        for (Comment parentComment : parentComments) {
+//            if (remainingPageSize <= 0) {
+//                isLast = false;
+//                break;
+//            }
+//
+//            List<CommentResponseDTO.CommentDetailDTO> childrenCommentDTOs = new ArrayList<>();
+//            List<Comment> childComments = commentRepository.findChildCommentsByParentId(parentComment.getId(), PageRequest.of(0, remainingPageSize));
+//            for (Comment childComment : childComments) {
+//                if (remainingPageSize <= 1) {
+//                    isLast = false;
+//                    break;
+//                }
+//                childrenCommentDTOs.add(CommentConverter.toCommentDetailDTO(childComment));
+//                remainingPageSize--;
+//            }
+//
+//            parentCommentDTOs.add(CommentConverter.toParentCommentDTO(parentComment, childrenCommentDTOs));
+//            remainingPageSize--;
+//        }
+//
+//        Long nextCursor = isLast ? null : parentComments.get(parentCommentDTOs.size() - 1).getId();
+//
+//        return CommentConverter.toCommentsListDTO(parentCommentDTOs, nextCursor, isLast);
+//    }
 
     private Account findAccountById(Long accountId) {
         return accountRepository.findById(accountId)

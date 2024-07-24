@@ -47,6 +47,8 @@ public enum ResponseCode {
     READ_USERS_COMMENTS_SUCCESS(OK, "사용자가 댓글을 작성한 게시글 불러오기 성공"),
     READ_USERS_PARTIES_SUCCESS(OK, "사용자가 참여한 파티 불러오기 성공"),
 
+    READ_COMMENTS_LIST_SUCCESS(OK,"댓글 목록 불러오기 성공"),
+
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
