@@ -2,7 +2,6 @@ package meltingpot.server.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import meltingpot.server.auth.controller.dto.AccountResponseDto;
 import meltingpot.server.auth.controller.dto.OAuthSignInRequestDto;
 import meltingpot.server.auth.controller.dto.OAuthSignupRequestDto;
 import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
@@ -20,16 +19,12 @@ import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.RefreshTokenRepository;
 import meltingpot.server.exception.AuthException;
 import meltingpot.server.exception.IllegalArgumentException;
-import meltingpot.server.exception.ResourceNotFoundException;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.TokenDto;
-import meltingpot.server.util.r2.FileService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,7 +128,7 @@ public class OAuthService {
 
         if(request.type() == OAuthType.KAKAO) {
             // 카카오 토큰 가져오기
-            KaKaoTokenDto tokenDto = kakaoService.getKakaoInfo(request.code());
+            KaKaoTokenDto tokenDto = kakaoService.getKakaoToken(request.code());
 
             // 카카오 유저 정보 가져오기
             KakaoDto kakaoDto = kakaoService.getUserInfoWithToken(tokenDto.accessToken());

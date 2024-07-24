@@ -34,7 +34,7 @@ public class KakaoService {
                 + "&response_type=code";
     }
 
-    public KaKaoTokenDto getKakaoInfo(String code) throws Exception {
+    public KaKaoTokenDto getKakaoToken(String code) throws Exception {
         if (code == null) throw new Exception("Failed get authorization code");
 
         String accessToken = "";
