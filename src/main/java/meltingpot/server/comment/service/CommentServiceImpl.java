@@ -109,6 +109,13 @@ public class CommentServiceImpl implements CommentService {
                     count++;
                 }
                 parentCursor = parentComment.getId();
+
+                // 만약 자식 댓글을 모두 가져왔고, 페이지가 꽉 차지 않았다면 다음 부모 댓글로 넘어감
+                if (count < pageSize && remainingChildren.size() < pageSize) {
+                    parentCursor = parentComment.getId();
+                }
+            } else {
+                parentCursor = cursor; // cursor가 부모 댓글인 경우
             }
         }
 
@@ -121,7 +128,7 @@ public class CommentServiceImpl implements CommentService {
                 commentDetailDTOs.add(toCommentDetailDTO(parent));
                 count++;
 
-                List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(),null);
+                List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(), null);
                 for (Comment child : children) {
                     if (count >= pageSize) break;
                     commentDetailDTOs.add(toCommentDetailDTO(child));
