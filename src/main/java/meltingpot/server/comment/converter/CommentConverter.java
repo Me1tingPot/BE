@@ -7,6 +7,7 @@ import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.CommentDetailDTO toCommentDetailDTO(Comment comment){
+    public static CommentResponseDTO.CommentDetailDTO toCommentDetailDTO(Comment comment) {
         return CommentResponseDTO.CommentDetailDTO.builder()
                 .commentId(comment.getId())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
@@ -44,8 +45,11 @@ public class CommentConverter {
                 .content(comment.getContent())
                 .name(comment.getAccount().getName())
                 .isAnonymous(comment.getIsAnonymous())
+                .imageUrl(comment.getCommentImage().getImageKey())
+//                .children(comment.getChildren() != null ? comment.getChildren().stream()
+//                        .map(child -> toCommentDetailDTO(child))
+//                        .collect(Collectors.toList()) : Collections.emptyList())
                 .updatedAt(comment.getUpdatedAt())
-                .children(comment.getChildren() != null ? toCommentDetailDTOList(comment.getChildren()) : null)
                 .build();
     }
 

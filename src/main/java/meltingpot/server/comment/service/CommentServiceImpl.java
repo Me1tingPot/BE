@@ -16,6 +16,7 @@ import meltingpot.server.util.r2.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class CommentServiceImpl implements CommentService {
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentImageRepository commentImageRepository;
+
     @Autowired
     private FileService fileService;
 
@@ -89,54 +91,63 @@ public class CommentServiceImpl implements CommentService {
         return toCreateCommentResult(commentImgUrl, comment);
     }
 
-
     public CommentResponseDTO.CommentsListDTO getCommentsList(Account account, Long postId, Long cursor, int pageSize) {
-        // Retrieve the parent comment based on cursor
-        Comment parentComment = getParentComment(cursor, postId);
+        List<CommentResponseDTO.CommentDetailDTO> commentDetailDTOs = new ArrayList<>();
+        int count = 0;
+        Long parentCursor = null;
 
-        // If no parent comment found, throw an exception or handle accordingly
-        if (parentComment == null) {
-            throw new NoSuchElementException("No parent comment found for the given cursor.");
+        // Cursor가 자식 댓글에 해당하는 경우 처리
+        if (cursor != null) {
+            // Cursor가 부모 댓글이 아닌 자식 댓글을 나타내는 경우
+            Comment childComment = commentRepository.findById(cursor).orElse(null);
+            if (childComment != null && childComment.getParent() != null) {
+                Comment parentComment = childComment.getParent();
+                List<Comment> remainingChildren = commentRepository.findChildrenCommentsByParentId(parentComment.getId(), cursor);
+                for (Comment child : remainingChildren) {
+                    if (count >= pageSize) break;
+                    commentDetailDTOs.add(toCommentDetailDTO(child));
+                    count++;
+                }
+                parentCursor = parentComment.getId();
+
+                // 만약 자식 댓글을 모두 가져왔고, 페이지가 꽉 차지 않았다면 다음 부모 댓글로 넘어감
+                if (count < pageSize && remainingChildren.size() < pageSize) {
+                    parentCursor = parentComment.getId();
+                }
+            } else {
+                parentCursor = cursor; // cursor가 부모 댓글인 경우
+            }
         }
 
-        // Retrieve child comments for the parent comment
-        List<Comment> childComments = getChildComments(parentComment, pageSize - 1); // -1 for the parent comment
+        // 부모 댓글과 자식 댓글을 가져오는 처리
+        if (count < pageSize) {
+            Pageable pageable = PageRequest.of(0, pageSize - count);
+            List<Comment> parentComments = commentRepository.findParentCommentsByPostId(postId, parentCursor, pageable);
+            for (Comment parent : parentComments) {
+                if (count >= pageSize) break;
+                commentDetailDTOs.add(toCommentDetailDTO(parent));
+                count++;
 
-        // Determine the next cursor and if it's the last page
-        Long nextCursor = determineNextCursor(parentComment, childComments, pageSize);
-        boolean isLast = nextCursor == null;
-
-        // Convert parent comment to DTO
-        CommentResponseDTO.CommentDetailDTO parentCommentDTO = CommentConverter.toCommentDetailDTO(parentComment);
-
-        // Convert child comments to DTOs
-        List<CommentResponseDTO.CommentDetailDTO> childCommentDTOs = CommentConverter.toCommentDetailDTOList(childComments);
-
-        // Add the parent comment DTO at the beginning of the list
-        childCommentDTOs.add(0, parentCommentDTO);
-
-        // Return the final DTO list with next cursor and isLast flag
-        return CommentResponseDTO.CommentsListDTO.builder()
-                .comments(childCommentDTOs)
-                .nextCursor(nextCursor)
-                .isLast(isLast)
-                .build();
-    }
-
-
-    private Comment getParentComment(Long cursor, Long postId) {
-        if (cursor == null) {
-            // Fetch the first parent comment if no cursor is provided
-            return commentRepository.findFirstByPostIdAndParentIsNull(postId).orElse(null);
-        } else {
-            // Fetch the parent comment based on the cursor
-            return commentRepository.findById(cursor).orElse(null);
+                List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(), null);
+                for (Comment child : children) {
+                    if (count >= pageSize) break;
+                    commentDetailDTOs.add(toCommentDetailDTO(child));
+                    count++;
+                }
+            }
         }
+
+        Long nextCursor = (count < pageSize) ? null : commentDetailDTOs.get(commentDetailDTOs.size() - 1).getCommentId();
+        boolean isLast = (count < pageSize);
+
+        return toCommentsListDTO(commentDetailDTOs,nextCursor,isLast);
     }
 
-    private List<Comment> getChildComments(Comment parentComment, int pageSize) {
-        return commentRepository.findByParent(parentComment, PageRequest.of(0, pageSize));
-    }
+
+
+
+
+
 
     private CommentResponseDTO.CreateCommentResultDTO processCommentCreation(CommentRequestDTO.CreateCommentDTO createCommentDTO, Account account, Comment comment) {
         String commentImgUrl = null;
@@ -167,16 +178,6 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
     }
 
-    private Long determineNextCursor(Comment parentComment, List<Comment> childComments, int pageSize) {
-        if (childComments.size() < pageSize - 1) {
-            // 자식 댓글의 수가 페이지 크기보다 적으면, 다음 부모 댓글을 가져온다.
-            Optional<Comment> nextParentComment = commentRepository.findNextParentComment(parentComment.getId(), parentComment.getPost().getId());
-            return nextParentComment.map(Comment::getId).orElse(null);
-        } else {
-            // 마지막으로 가져온 자식 댓글의 ID를 다음 커서로 설정한다.
-            return childComments.get(childComments.size() - 1).getId();
-        }
-    }
 }
 
 

@@ -27,8 +27,9 @@ public class PostResponseDTO {
         private String name;
         private String title;
         private String content;
-        private String imgUrl;
-        private List<CommentResponseDTO.CommentDetailDTO> comments;
+        List<String> imgUrls;
+        private Integer commentCount;
+        private CommentResponseDTO.CommentsListDTO commentsList;
         private LocalDateTime updatedAt;
     }
 

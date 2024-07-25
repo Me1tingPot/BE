@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Getter
+@Setter
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,5 +86,13 @@ public class Comment extends BaseEntity {
 
     public List<Comment> getChildren() {
         return children;
+    }
+
+    public void setParent(Comment parent) {
+        this.parent = parent;
+    }
+
+    public void setChildren(List<Comment> children) {
+        this.children = children;
     }
 }

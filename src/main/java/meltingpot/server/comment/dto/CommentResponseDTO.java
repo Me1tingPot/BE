@@ -33,7 +33,6 @@ public class CommentResponseDTO {
         private Boolean isAnonymous;
         private String imageUrl;
         private LocalDateTime updatedAt;
-        private List<CommentDetailDTO> children;
     }
 
 
@@ -48,14 +47,5 @@ public class CommentResponseDTO {
         private Boolean isLast;
     }
 
-    public  class CommentQueueItem {
-        public Comment parent;
-        public List<Comment> children;
-
-        public CommentQueueItem(Comment parent, List<Comment> children) {
-            this.parent = parent;
-            this.children = children;
-        }
-    }
 
 }

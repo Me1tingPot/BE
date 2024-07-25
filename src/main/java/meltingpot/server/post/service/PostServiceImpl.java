@@ -28,8 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static meltingpot.server.post.converter.PostConverter.toPost;
-import static meltingpot.server.post.converter.PostConverter.toCreatePostResult;
+import static meltingpot.server.comment.converter.CommentConverter.toCommentDetailDTO;
+import static meltingpot.server.comment.converter.CommentConverter.toCommentsListDTO;
+import static meltingpot.server.post.converter.PostConverter.*;
 import static meltingpot.server.post.converter.PostImageConverter.toPostImage;
 
 @Service
@@ -57,6 +58,15 @@ public class PostServiceImpl implements PostService {
         return toCreatePostResult(postImgUrls,post);
     }
 
+    @Override
+    public PostResponseDTO.PostDetailDTO getPostDetail(Long postId, Long cursor, int pageSize){
+        Post post = findPostById(postId);
+
+        // 댓글 목록 가져오기
+        CommentResponseDTO.CommentsListDTO commentsList = fetchCommentsList(postId, cursor, pageSize);
+        return toPostDetailDTO(post,commentsList);
+    }
+
     private List<String> getCdnUrls(List<String> imageKeys) {
         return imageKeys.stream()
                 .map(imageKey -> {
@@ -75,44 +85,67 @@ public class PostServiceImpl implements PostService {
     }
 
 
-//    private CommentResponseDTO.CommentsListDTO getCommentsWithPagination(Long postId, Long cursor, int pageSize) {
-//        cursor = cursor == null ? Long.MAX_VALUE : cursor;
-//
-//        List<CommentResponseDTO.ParentCommentDTO> parentCommentDTOs = new ArrayList<>();
-//        int remainingPageSize = pageSize;
-//        boolean isLast = true;
-//
-//        List<Comment> parentComments = commentRepository.findParentCommentsByPostIdAndCursor(postId, cursor, PageRequest.of(0, remainingPageSize + 1));
-//
-//        for (Comment parentComment : parentComments) {
-//            if (remainingPageSize <= 0) {
-//                isLast = false;
-//                break;
-//            }
-//
-//            List<CommentResponseDTO.CommentDetailDTO> childrenCommentDTOs = new ArrayList<>();
-//            List<Comment> childComments = commentRepository.findChildCommentsByParentId(parentComment.getId(), PageRequest.of(0, remainingPageSize));
-//            for (Comment childComment : childComments) {
-//                if (remainingPageSize <= 1) {
-//                    isLast = false;
-//                    break;
-//                }
-//                childrenCommentDTOs.add(CommentConverter.toCommentDetailDTO(childComment));
-//                remainingPageSize--;
-//            }
-//
-//            parentCommentDTOs.add(CommentConverter.toParentCommentDTO(parentComment, childrenCommentDTOs));
-//            remainingPageSize--;
-//        }
-//
-//        Long nextCursor = isLast ? null : parentComments.get(parentCommentDTOs.size() - 1).getId();
-//
-//        return CommentConverter.toCommentsListDTO(parentCommentDTOs, nextCursor, isLast);
-//    }
 
     private Account findAccountById(Long accountId) {
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    }
+
+    private Post findPostById(Long postId) {
+        return  postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    }
+
+    private CommentResponseDTO.CommentsListDTO fetchCommentsList(Long postId, Long cursor, int pageSize){
+        List<CommentResponseDTO.CommentDetailDTO> commentDetailDTOs = new ArrayList<>();
+        int count = 0;
+        Long parentCursor = null;
+
+        // Cursor가 자식 댓글에 해당하는 경우 처리
+        if (cursor != null) {
+            // Cursor가 부모 댓글이 아닌 자식 댓글을 나타내는 경우
+            Comment childComment = commentRepository.findById(cursor).orElse(null);
+            if (childComment != null && childComment.getParent() != null) {
+                Comment parentComment = childComment.getParent();
+                List<Comment> remainingChildren = commentRepository.findChildrenCommentsByParentId(parentComment.getId(), cursor);
+                for (Comment child : remainingChildren) {
+                    if (count >= pageSize) break;
+                    commentDetailDTOs.add(toCommentDetailDTO(child));
+                    count++;
+                }
+                parentCursor = parentComment.getId();
+
+                // 만약 자식 댓글을 모두 가져왔고, 페이지가 꽉 차지 않았다면 다음 부모 댓글로 넘어감
+                if (count < pageSize && remainingChildren.size() < pageSize) {
+                    parentCursor = parentComment.getId();
+                }
+            } else {
+                parentCursor = cursor; // cursor가 부모 댓글인 경우
+            }
+        }
+
+        // 부모 댓글과 자식 댓글을 가져오는 처리
+        if (count < pageSize) {
+            Pageable pageable = PageRequest.of(0, pageSize - count);
+            List<Comment> parentComments = commentRepository.findParentCommentsByPostId(postId, parentCursor, pageable);
+            for (Comment parent : parentComments) {
+                if (count >= pageSize) break;
+                commentDetailDTOs.add(toCommentDetailDTO(parent));
+                count++;
+
+                List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(), null);
+                for (Comment child : children) {
+                    if (count >= pageSize) break;
+                    commentDetailDTOs.add(toCommentDetailDTO(child));
+                    count++;
+                }
+            }
+        }
+
+        Long nextCursor = (count < pageSize) ? null : commentDetailDTOs.get(commentDetailDTOs.size() - 1).getCommentId();
+        boolean isLast = (count < pageSize);
+
+        return toCommentsListDTO(commentDetailDTOs,nextCursor,isLast);
     }
 
 }

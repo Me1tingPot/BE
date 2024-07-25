@@ -13,6 +13,8 @@ public interface PostService {
 
     PostResponseDTO.PageDTO getPostsList(PostType postType,Account account, Long cursor, Pageable pageable);
 
+    PostResponseDTO.PostDetailDTO getPostDetail(Long postId, Long cursor, int pageSize);
+
 
 
 }

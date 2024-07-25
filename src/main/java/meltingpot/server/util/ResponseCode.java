@@ -27,7 +27,7 @@ public enum ResponseCode {
     PARTY_DELETE_SUCCESS(OK, "파티 삭제 성공"),
     PARTY_MODIFY_SUCCESS(OK, "파티 수정 성공"),
     SOCKET_TOKEN_GET_SUCCESS(OK, "소켓 토큰 조회 성공"),
-    POST_LIST_FETCH_SUCCEESS(OK, "게시글 목록 불러오기 성공"),
+    POST_LIST_FETCH_SUCCESS(OK, "게시글 목록 불러오기 성공"),
     POST_DETAIL_FETCH_SUCCEESS(OK, "게시글 내용 불러오기 성공"),
     CHAT_ROOM_USER_DELETE_SUCCESS(OK, "채팅방 나가기 성공"),
 
@@ -36,7 +36,6 @@ public enum ResponseCode {
     CHAT_MESSAGE_GET_SUCCESS(OK, "채팅 메세지 조회 성공"),
     CHAT_ROOMS_LIST_GET_SUCCESS(OK, "전체 채팅방 조회 성공"),
 
-    POST_LIST_FETCH_SUCCESS(OK, "게시글 목록 불러오기 성공"),
 
     READ_PROFILE_SUCCESS(OK, "사용자 프로필 불러오기 성공"),
     UPDATE_NICKNAME_SUCCESS(OK, "프로필 닉네임 수정 성공"),
@@ -88,6 +87,7 @@ public enum ResponseCode {
     DESTINATION_NOT_VALID(BAD_REQUEST, "잘못된 목적지로 접근하였습니다"),
     COMMENT_CREATE_FAIL(BAD_REQUEST, "댓글 작성 실패 "),
     COMMENT_UPDATE_FAIL(BAD_REQUEST, "댓글 수정 실패 "),
+    READ_COMMENT_FAIL(BAD_REQUEST, "댓글 불러오기 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST, "게시글 작성 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST, "신고 작성 실패"),
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
