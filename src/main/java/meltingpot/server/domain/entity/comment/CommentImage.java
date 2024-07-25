@@ -12,6 +12,7 @@ import meltingpot.server.domain.entity.common.BaseEntity;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@Setter
 public class CommentImage extends BaseEntity {
 
     @Id

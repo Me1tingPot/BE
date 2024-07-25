@@ -7,6 +7,7 @@ import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,9 @@ public class CommentConverter {
                 .name(comment.getAccount().getName())
                 .isAnonymous(comment.getIsAnonymous())
                 .imageUrl(comment.getCommentImage().getImageKey())
+//                .children(comment.getChildren() != null ? comment.getChildren().stream()
+//                        .map(child -> toCommentDetailDTO(child))
+//                        .collect(Collectors.toList()) : Collections.emptyList())
                 .updatedAt(comment.getUpdatedAt())
                 .build();
     }

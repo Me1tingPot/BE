@@ -20,16 +20,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findById(Long id);
 
-    // 부모 댓글 가져오기 (오래된 순으로 정렬)
-    List<Comment> findTopByPostIdAndParentNullOrderByIdAsc(Long postId, Pageable pageable);
-
-    // 커서 이후의 부모 댓글 가져오기 (오래된 순으로 정렬)
-    List<Comment> findByPostIdAndParentNullAndIdGreaterThanOrderByIdAsc(Long postId, Long cursor, Pageable pageable);
-
-    // 특정 부모 댓글의 자식 댓글 가져오기
-    List<Comment> findByParentId(Long parentId);
 
 
+    @Query("SELECT c FROM Comment c WHERE c.post.id = :postId AND c.parent IS NULL AND (:cursor IS NULL OR c.id > :cursor) ORDER BY c.id ASC")
+    List<Comment> findParentCommentsByPostId(@Param("postId") Long postId, @Param("cursor") Long cursor, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c WHERE c.parent.id = :parentId AND (:cursor IS NULL OR c.id > :cursor) ORDER BY c.id ASC")
+    List<Comment> findChildrenCommentsByParentId(@Param("parentId") Long parentId, @Param("cursor") Long cursor);
 
     Slice<Comment> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable pageable);
 
