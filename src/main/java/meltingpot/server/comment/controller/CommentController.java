@@ -3,8 +3,6 @@ package meltingpot.server.comment.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.comment.dto.CommentCreateRequest;
-import meltingpot.server.comment.dto.CommentRequestDTO;
-import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.comment.service.CommentService;
 import meltingpot.server.domain.entity.Account;

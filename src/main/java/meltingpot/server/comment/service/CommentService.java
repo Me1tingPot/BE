@@ -1,10 +1,7 @@
 package meltingpot.server.comment.service;
 
 import lombok.RequiredArgsConstructor;
-import meltingpot.server.comment.converter.CommentConverter;
 import meltingpot.server.comment.dto.CommentCreateRequest;
-import meltingpot.server.comment.dto.CommentRequestDTO;
-import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.comment.Comment;
@@ -23,10 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static meltingpot.server.comment.converter.CommentConverter.*;
-import static meltingpot.server.comment.converter.CommentImageConverter.toCommentImage;
 
 @Service
 @RequiredArgsConstructor

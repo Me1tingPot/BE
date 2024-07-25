@@ -1,7 +1,6 @@
 package meltingpot.server.post.dto;
 
 import lombok.*;
-import meltingpot.server.comment.dto.CommentResponseDTO;
 import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.post.PostImage;
