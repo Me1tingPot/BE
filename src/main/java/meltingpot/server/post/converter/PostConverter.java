@@ -32,14 +32,24 @@ public class PostConverter {
                 .build();
     }
 
-//    public static List<PostImageDTO> toPostImageDto(Post post) {
-//        return post.getPostImages().stream()
-//                .map(p -> PostImageDTO.builder()
-//                        .id(p.getId())
-//                        .imgUrl(p.getImageUrl())
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
+    public static PostResponseDTO.PostDetailDTO toPostDetailDTO(Post post, CommentResponseDTO.CommentsListDTO commentsList) {
+        List<String> imgUrls = post.getPostImages().stream()
+                .map(PostImage::getImageKey)
+                .collect(Collectors.toList());
+        int commentCount = post.getComments().stream()
+                .mapToInt(parentComment -> 1 + parentComment.getChildren().size())
+                .sum();
+        return PostResponseDTO.PostDetailDTO.builder()
+                .postId(post.getId())
+                .name(post.getAccount().getName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imgUrls(imgUrls)
+                .commentCount(commentCount)
+                .commentsList(commentsList)
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
 
     /*post 목록 조회*/
     public  static PostResponseDTO.PostsListDTO toPostsListDTO(Post post) {

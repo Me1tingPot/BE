@@ -49,5 +49,15 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{postId}")
+    @Operation(summary = "커뮤니티 글 내용 조회", description = "postId로 커뮤니티 글 내용을 조회합니다.")
+    public ResponseEntity<ResponseData<PostResponseDTO.PostDetailDTO>> getPostDetail(@CurrentUser Account account, @PathVariable Long postId,@RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
+        try{
+            return ResponseData.toResponseEntity(ResponseCode.POST_DETAIL_FETCH_SUCCEESS,postService.getPostDetail(postId,cursor, pageSize));
+        }catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
+        }
+    }
+
 
 }
