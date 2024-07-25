@@ -21,10 +21,7 @@ public class PostImage extends BaseEntity {
     private Long id;
 
     @NotNull
-    private String imageKey;
-
-    @NotNull
-    private String postImageOriginalName;
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

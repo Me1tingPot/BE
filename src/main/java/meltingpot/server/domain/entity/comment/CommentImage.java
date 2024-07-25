@@ -21,7 +21,7 @@ public class CommentImage extends BaseEntity {
     private Long id;
 
     @NotNull
-    private String imageKey;
+    private String imageUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
@@ -34,7 +34,7 @@ public class CommentImage extends BaseEntity {
     public void setComment(Comment comment) {
         this.comment = comment;
     }
-    public void setImageKey(String imageKey) {
-        this.imageKey = imageKey;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
