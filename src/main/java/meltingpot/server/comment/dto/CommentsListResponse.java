@@ -41,7 +41,7 @@ public class CommentsListResponse {
                     .content(comment.getContent())
                     .name(comment.getAccount().getName())
                     .isAnonymous(comment.getIsAnonymous())
-                    .imageUrl(comment.getCommentImage() != null ? comment.getCommentImage().getImageKey() : null)
+                    .imageUrl(comment.getCommentImage() != null ? comment.getCommentImage().getImageUrl() : null)
                     .updatedAt(comment.getUpdatedAt())
                     .build();
         }

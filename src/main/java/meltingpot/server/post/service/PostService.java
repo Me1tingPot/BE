@@ -45,16 +45,7 @@ public class PostService {
     public ResponseCode createPost(PostCreateRequest createPostDTO,Account account){
         Post post = createPostDTO.toEntity(account);
         List<String> postImgUrls = Collections.emptyList();
-        if (createPostDTO.getImageKeys() != null && !createPostDTO.getImageKeys().isEmpty()) {
-            postImgUrls = getCdnUrls(createPostDTO.getImageKeys());
-        }
-        List<PostImage> postImages = postImgUrls.stream()
-                .map(imageUrl->PostImage.builder()
-                        .imageUrl(imageUrl)
-                        .post(post)
-                        .account(account)
-                        .build())
-                .collect(Collectors.toList());
+        List<PostImage> postImages = createPostImages(createPostDTO.getImageKeys(), post, account);
         post.setPostImages(postImages);
         postRepository.save(post);
         return ResponseCode.POST_CREATE_SUCCESS;
@@ -65,8 +56,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostDetailResponse getPostDetail(Long postId, Long cursor, int pageSize){
         Post post = findPostById(postId);
-
-        // 댓글 목록 가져오기
         CommentsListResponse commentsList = fetchCommentsList(postId, cursor, pageSize);
         return PostDetailResponse.of(post,commentsList);
     }
@@ -75,17 +64,9 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostsListResponse getPostsList(Account account, PostType postType,  Long cursor, int pageSize){
         Pageable pageable = PageRequest.of(0, pageSize);
-        Long nextCursor = null;
-        boolean isLast = false;
         List<Post> posts = postRepository.findByPostTypeAndCursor(postType, cursor, pageable);
-
-        if (posts.size() > 0) {
-            nextCursor = posts.get(posts.size() - 1).getId();
-            isLast = posts.size() < pageSize;
-        } else {
-            isLast = true;
-        }
-
+        Long nextCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
+        boolean isLast = posts.size() < pageSize;
         return PostsListResponse.from(posts, nextCursor, isLast);
     }
 
@@ -110,55 +91,74 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    private List<PostImage> createPostImages(List<String> imageKeys, Post post, Account account) {
+        List<String> postImgUrls = getCdnUrls(imageKeys);
+        return postImgUrls.stream()
+                .map(imageUrl -> PostImage.builder()
+                        .imageUrl(imageUrl)
+                        .post(post)
+                        .account(account)
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     private CommentsListResponse fetchCommentsList(Long postId, Long cursor, int pageSize) {
-        List<CommentsListResponse.CommentDetail> commentDetails = new ArrayList<>();
+        List<CommentsListResponse.CommentDetail> commentDetailDTOs = new ArrayList<>();
         int count = 0;
         Long parentCursor = null;
 
-        // Handle case where cursor points to a child comment
+        // Cursor가 자식 댓글에 해당하는 경우 처리
         if (cursor != null) {
-            Comment childComment = commentRepository.findById(cursor).orElse(null);
-            if (childComment != null && childComment.getParent() != null) {
-                Comment parentComment = childComment.getParent();
+            Comment cursorComment = commentRepository.findById(cursor).orElse(null);
+            if (cursorComment != null) {
+                Comment parentComment;
+                if (cursorComment.getParent() != null) {
+                    // Cursor가 자식 댓글을 나타내는 경우
+                    parentComment = cursorComment.getParent();
+                } else {
+                    // Cursor가 부모 댓글을 나타내는 경우
+                    parentComment = cursorComment;
+                }
+
                 List<Comment> remainingChildren = commentRepository.findChildrenCommentsByParentId(parentComment.getId(), cursor);
                 for (Comment child : remainingChildren) {
                     if (count >= pageSize) break;
-                    commentDetails.add(CommentsListResponse.CommentDetail.from(child));
+                    commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(child));
                     count++;
                 }
                 parentCursor = parentComment.getId();
 
-                // If there are more parent comments to fetch after children
+                // 만약 자식 댓글을 모두 가져왔고, 페이지가 꽉 차지 않았다면 다음 부모 댓글로 넘어감
                 if (count < pageSize && remainingChildren.size() < pageSize) {
                     parentCursor = parentComment.getId();
                 }
             } else {
-                parentCursor = cursor; // cursor points to a parent comment
+                parentCursor = cursor; // cursor가 부모 댓글인 경우
             }
         }
 
-        // Fetch parent comments and their children
+        // 부모 댓글과 자식 댓글을 가져오는 처리
         if (count < pageSize) {
             Pageable pageable = PageRequest.of(0, pageSize - count);
             List<Comment> parentComments = commentRepository.findParentCommentsByPostId(postId, parentCursor, pageable);
             for (Comment parent : parentComments) {
                 if (count >= pageSize) break;
-                commentDetails.add(CommentsListResponse.CommentDetail.from(parent));
+                commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(parent));
                 count++;
 
                 List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(), null);
                 for (Comment child : children) {
                     if (count >= pageSize) break;
-                    commentDetails.add(CommentsListResponse.CommentDetail.from(child));
+                    commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(child));
                     count++;
                 }
             }
         }
 
-        Long nextCursor = (count < pageSize) ? null : commentDetails.get(commentDetails.size() - 1).getCommentId();
+        Long nextCursor = (count < pageSize) ? null : commentDetailDTOs.get(commentDetailDTOs.size() - 1).getCommentId();
         boolean isLast = (count < pageSize);
 
-        return CommentsListResponse.from(commentDetails, nextCursor, isLast);
+        return CommentsListResponse.from(commentDetailDTOs, nextCursor, isLast);
     }
 
 
