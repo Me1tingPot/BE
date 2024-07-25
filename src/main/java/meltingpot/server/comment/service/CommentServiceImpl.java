@@ -34,6 +34,9 @@ public class CommentServiceImpl implements CommentService {
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentImageRepository commentImageRepository;
+    // 큐 구조를 유지하기 위한 클래스 멤버
+    private Queue<CommentResponseDTO.CommentDetailDTO> commentQueue = new LinkedList<>();
+
     @Autowired
     private FileService fileService;
 
@@ -91,47 +94,40 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public CommentResponseDTO.CommentsListDTO getCommentsList(Account account, Long postId, Long cursor, int pageSize) {
-        List<CommentResponseDTO.CommentDetailDTO> commentDetails = new ArrayList<>();
-        Long nextCursor = null;
-        boolean isLast = true;
+        // 부모 댓글 가져오기
+        List<Comment> parentComments;
+        if (cursor == null) {
+            parentComments = commentRepository.findTopByPostIdAndParentNullOrderByIdAsc(postId, PageRequest.of(0, pageSize));
+        } else {
+            parentComments = commentRepository.findByPostIdAndParentNullAndIdGreaterThanOrderByIdAsc(postId, cursor, PageRequest.of(0, pageSize));
+        }
 
-        // 부모 댓글을 가져옵니다. (최대 1개)
-        Pageable pageable = PageRequest.of(0, 1);
-        List<Comment> parentComments = commentRepository.findParentComments(postId, cursor, pageable);
-        if (!parentComments.isEmpty()) {
-            Comment parentComment = parentComments.get(0);
-            Long parentCommentId = parentComment.getId();
-            commentDetails.add(CommentConverter.toCommentDetailDTO(parentComment));
-
-            // 자식 댓글을 가져옵니다.
-            Pageable childPageable = PageRequest.of(0, pageSize - 1);
-            List<Comment> childComments = commentRepository.findChildComments(parentCommentId, null, childPageable);
-            commentDetails.addAll(CommentConverter.toCommentDetailDTOList(childComments));
-
-            // 남은 자식 댓글 수에 따라 다음 cursor 및 isLast 설정
-            if (childComments.size() == pageSize - 1) {
-                nextCursor = parentCommentId; // 자식 댓글이 꽉 찼다면, 다음 커서를 설정
-                isLast = false;
-            } else {
-                // 추가 부모 댓글을 가져옴
-                List<Comment> moreParentComments = commentRepository.findParentComments(postId, parentCommentId, pageable);
-                if (!moreParentComments.isEmpty()) {
-                    Comment nextParentComment = moreParentComments.get(0);
-                    Long nextParentCommentId = nextParentComment.getId();
-                    nextCursor = nextParentCommentId;
-                    isLast = false;
-
-                    // 다음 부모 댓글의 자식 댓글을 가져옵니다.
-                    Pageable moreChildPageable = PageRequest.of(0, pageSize - 1 - childComments.size());
-                    List<Comment> moreChildComments = commentRepository.findChildComments(nextParentCommentId, null, moreChildPageable);
-                    commentDetails.add(CommentConverter.toCommentDetailDTO(nextParentComment));
-                    commentDetails.addAll(CommentConverter.toCommentDetailDTOList(moreChildComments));
-                }
+        // 부모 댓글과 자식 댓글을 큐에 추가
+        for (Comment parent : parentComments) {
+            commentQueue.add(CommentConverter.toCommentDetailDTO(parent));
+            for (Comment child : parent.getChildren()) {
+                commentQueue.add(CommentConverter.toCommentDetailDTO(child));
             }
         }
 
+        // 큐에서 댓글을 꺼내기
+        List<CommentResponseDTO.CommentDetailDTO> commentDetails = new ArrayList<>();
+        int count = 0;
+        while (count < pageSize && !commentQueue.isEmpty()) {
+            commentDetails.add(commentQueue.poll());
+            count++;
+        }
+
+        // 다음 커서 설정
+        Long nextCursor = parentComments.isEmpty() ? null : parentComments.get(parentComments.size() - 1).getId();
+        Boolean isLast = nextCursor == null;
+
         return CommentConverter.toCommentsListDTO(commentDetails, nextCursor, isLast);
     }
+
+
+
+
 
 
 

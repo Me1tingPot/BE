@@ -36,7 +36,7 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.CommentDetailDTO toCommentDetailDTO(Comment comment){
+    public static CommentResponseDTO.CommentDetailDTO toCommentDetailDTO(Comment comment) {
         return CommentResponseDTO.CommentDetailDTO.builder()
                 .commentId(comment.getId())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
@@ -44,8 +44,8 @@ public class CommentConverter {
                 .content(comment.getContent())
                 .name(comment.getAccount().getName())
                 .isAnonymous(comment.getIsAnonymous())
+                .imageUrl(comment.getCommentImage().getImageKey())
                 .updatedAt(comment.getUpdatedAt())
-                .children(comment.getChildren() != null ? toCommentDetailDTOList(comment.getChildren()) : null)
                 .build();
     }
 

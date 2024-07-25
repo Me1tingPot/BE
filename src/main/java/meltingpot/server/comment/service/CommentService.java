@@ -12,5 +12,5 @@ public interface CommentService {
 
     CommentResponseDTO.CreateCommentResultDTO updateComment (CommentRequestDTO.CreateCommentDTO updateCommentDTO,Account account, Long commentId);
 
-    CommentResponseDTO.CommentsListDTO getCommentsList(Account account, Long postId, Long cursor, int pageSize);
+    CommentResponseDTO.CommentsListDTO getCommentsList(Account account, Long postId,  Long cursor, int pageSize);
 }
