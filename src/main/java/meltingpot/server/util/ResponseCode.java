@@ -50,6 +50,8 @@ public enum ResponseCode {
 
     READ_COMMENTS_LIST_SUCCESS(OK,"댓글 목록 불러오기 성공"),
 
+    POST_CREATE_SUCCESS(OK,"게시글 생성 성공"),
+
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),

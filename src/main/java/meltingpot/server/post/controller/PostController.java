@@ -1,21 +1,21 @@
 package meltingpot.server.post.controller;
 
+import lombok.RequiredArgsConstructor;
+import java.util.NoSuchElementException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
-import meltingpot.server.domain.entity.Account;
-import meltingpot.server.domain.entity.enums.PostType;
-import meltingpot.server.post.dto.PostRequestDTO;
-import meltingpot.server.post.dto.PostResponseDTO;
-import meltingpot.server.post.service.PostService;
-import meltingpot.server.util.*;
-import org.springframework.data.domain.PageRequest;
+import meltingpot.server.post.dto.PostDetailResponse;
+import meltingpot.server.post.dto.PostsListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import meltingpot.server.util.*;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.enums.PostType;
+import meltingpot.server.post.dto.PostCreateRequest;
+import meltingpot.server.post.service.PostService;
 
-import org.springframework.data.domain.Pageable;
-import java.util.NoSuchElementException;
+
 
 
 @RestController
@@ -26,11 +26,11 @@ public class PostController {
 
     @Operation(summary = "게시물 작성")
     @PostMapping("")
-    public ResponseEntity<ResponseData<PostResponseDTO.CreatePostResultDTO>> createPost( @CurrentUser Account account,@RequestBody PostRequestDTO.CreatePostDTO createPostDTO) {
+    public ResponseEntity<ResponseData> createPost( @CurrentUser Account account,@RequestBody PostCreateRequest createPostDTO) {
         try{
-            return ResponseData.toResponseEntity(ResponseCode.CREATE_POST_SUCCESS, postService.createPost(createPostDTO,account));
+            return ResponseData.toResponseEntity(postService.createPost(createPostDTO,account));
         }catch (NoSuchElementException e) {
-            return ResponseData.toResponseEntity(ResponseCode.POST_CREATE_FAIL,null);
+            return ResponseData.toResponseEntity(ResponseCode.POST_CREATE_FAIL);
         }
     }
 
@@ -40,10 +40,9 @@ public class PostController {
             @ApiResponse(responseCode = "OK", description = "커뮤니티 글 목록 조회 성공"),
             @ApiResponse(responseCode = "NOT_FOUND", description = "커뮤니티 글을 찾을 수 없습니다")
     })
-    public ResponseEntity<ResponseData<PostResponseDTO.PageDTO>> getPostList(@PathVariable PostType postType, @CurrentUser Account account,  @RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
-        Pageable pageable = (Pageable) PageRequest.of(0, pageSize);
+    public ResponseEntity<ResponseData<PostsListResponse>> getPostList(@CurrentUser Account account, @PathVariable PostType postType , @RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
         try {
-            return ResponseData.toResponseEntity(ResponseCode.POST_LIST_FETCH_SUCCESS, postService.getPostsList(postType,account,cursor, pageable));
+            return ResponseData.toResponseEntity(ResponseCode.POST_LIST_FETCH_SUCCESS, postService.getPostsList(account,postType, cursor, pageSize));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
         }
@@ -51,13 +50,11 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "커뮤니티 글 내용 조회", description = "postId로 커뮤니티 글 내용을 조회합니다.")
-    public ResponseEntity<ResponseData<PostResponseDTO.PostDetailDTO>> getPostDetail(@CurrentUser Account account, @PathVariable Long postId,@RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
+    public ResponseEntity<ResponseData<PostDetailResponse>> getPostDetail(@CurrentUser Account account, @PathVariable Long postId, @RequestParam(name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
         try{
             return ResponseData.toResponseEntity(ResponseCode.POST_DETAIL_FETCH_SUCCEESS,postService.getPostDetail(postId,cursor, pageSize));
         }catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
         }
     }
-
-
 }

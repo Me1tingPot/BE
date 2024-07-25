@@ -7,14 +7,18 @@ import meltingpot.server.domain.entity.enums.PostType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findByPostType(@Param("postType") PostType postType, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.postType = :postType AND (:cursor IS NULL OR p.id > :cursor) ORDER BY p.id ASC")
+    List<Post> findByPostTypeAndCursor(@Param("postType") PostType postType, @Param("cursor") Long cursor, Pageable pageable);
 
     Slice<Post> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable page);
 
