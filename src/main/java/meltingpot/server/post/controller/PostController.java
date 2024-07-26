@@ -5,6 +5,9 @@ import java.util.NoSuchElementException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import meltingpot.server.domain.entity.comment.Comment;
+import meltingpot.server.domain.entity.post.Post;
+import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.post.dto.PostDetailResponse;
 import meltingpot.server.post.dto.PostsListResponse;
 import org.springframework.http.ResponseEntity;
@@ -68,4 +71,16 @@ public class PostController {
             return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
         }
     }
+
+
+    @DeleteMapping("/{postId}")
+    @Operation(summary = "커뮤니티 글 삭제", description = "postId로 커뮤니티 글 삭제")
+    public ResponseEntity<ResponseData> deletePost(@CurrentUser Account account,@PathVariable Long postId) {
+        try {
+            return ResponseData.toResponseEntity(postService.deletePost(postId, account));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.POST_DELETE_FAIL);
+        }
+    }
+
 }

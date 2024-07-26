@@ -133,6 +133,7 @@ public class CommentService  {
 //    }
 
     public CommentsListResponse getCommentsList(Account account, Long postId, Long cursor, int pageSize) {
+        Post post = findPostById(postId);
         List<CommentsListResponse.CommentDetail> commentDetailDTOs = new ArrayList<>();
         int count = 0;
         Long parentCursor = null;

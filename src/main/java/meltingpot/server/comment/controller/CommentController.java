@@ -6,6 +6,7 @@ import meltingpot.server.comment.dto.CommentCreateRequest;
 import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.comment.service.CommentService;
 import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.util.CurrentUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;

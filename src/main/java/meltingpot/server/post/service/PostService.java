@@ -92,6 +92,27 @@ public class PostService {
         return PostsListResponse.from(posts, nextCursor, isLast);
     }
 
+    /*post 삭제하기*/
+    public ResponseCode deletePost(Long postId, Account account){
+        Post post = findPostById(postId);
+        Account postAccount = findAccountById(post.getAccount().getId());
+
+        // 게시물에 연관된 이미지 삭제
+        if (!post.getPostImages().isEmpty()) {
+            postImageRepository.deleteAll(post.getPostImages());
+        }
+
+        // 게시물에 연관된 댓글 삭제
+        if (!post.getComments().isEmpty()) {
+            commentRepository.deleteAll(post.getComments());
+        }
+
+        // 게시물 삭제
+        postRepository.delete(post);
+
+        return ResponseCode.POST_DELETE_SUCCESS;
+
+    }
 
 
     private Account findAccountById(Long accountId) {
