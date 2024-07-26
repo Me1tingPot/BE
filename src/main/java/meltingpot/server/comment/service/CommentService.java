@@ -16,11 +16,11 @@ import meltingpot.server.util.r2.FileService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,8 +131,10 @@ public class CommentService  {
 //
 //        return CommentsListResponse.from(commentDetailDTOs,nextCursor,isLast);
 //    }
-
+    /* 댓글 목록 불러오기 */
+    @Transactional(readOnly = true)
     public CommentsListResponse getCommentsList(Account account, Long postId, Long cursor, int pageSize) {
+        Post post = findPostById(postId);
         List<CommentsListResponse.CommentDetail> commentDetailDTOs = new ArrayList<>();
         int count = 0;
         Long parentCursor = null;
@@ -192,7 +194,40 @@ public class CommentService  {
     }
 
 
+    /* 댓글 삭제하기 */
+    @Transactional
+    public ResponseCode deleteComment(Long commentId, Account account) {
+        Comment comment = findCommentById(commentId);
 
+        if (!comment.getAccount().getId().equals(account.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+        }
+        if (comment.getParent() == null) {
+            comment.setContent("삭제된 댓글입니다.");
+            comment.setAccount(null);
+            comment.setIsAnonymous(true);
+
+            if (comment.getCommentImage() != null) {
+                CommentImage commentImage = comment.getCommentImage();
+                comment.setCommentImage(null);
+                commentImageRepository.delete(commentImage);
+            }
+            // 자식 댓글이 남아있지 않으면 부모 댓글도 삭제
+            if (comment.getChildren().isEmpty()) {
+                commentRepository.delete(comment);
+            }
+
+
+        } else {
+            Comment parentComment = comment.getParent();
+            commentRepository.delete(comment);
+            parentComment.getChildren().remove(comment);
+            if (parentComment.getChildren().isEmpty()) {
+                commentRepository.delete(parentComment);
+            }
+        }
+        return ResponseCode.COMMENT_DELETE_SUCCESS;
+    }
 
     private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId)

@@ -56,11 +56,22 @@ public class CommentController {
                                                                                @RequestParam(required = false) Long cursor,
                                                                                @RequestParam(defaultValue = "10") int pageSize){
         try{
-            return ResponseData.toResponseEntity(ResponseCode.READ_COMMENTS_LIST_SUCCESS, commentService.getCommentsList(account,postId,cursor,pageSize));
+            return ResponseData.toResponseEntity(ResponseCode.READ_COMMENTS_LIST_SUCCESS, commentService.getCommentsList(account, postId, cursor,pageSize));
         }catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.READ_COMMENT_FAIL, null);
         }
     }
+
+    @Operation (summary = "댓글 삭제하기")
+    @DeleteMapping("{commentId}")
+    public ResponseEntity<ResponseData> createComment( @CurrentUser Account account, @PathVariable Long commentId) {
+        try {
+            return ResponseData.toResponseEntity(commentService.deleteComment(commentId,account));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.COMMENT_DELETE_FAIL);
+        }
+    }
+
 }
 
 

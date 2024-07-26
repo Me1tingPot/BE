@@ -80,6 +80,14 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public void setIsAnonymous (Boolean isAnonymous) {
+        this.isAnonymous = isAnonymous;
+    }
+
     public Comment getParent() { return parent;}
 
 
