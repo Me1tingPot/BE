@@ -24,7 +24,7 @@ import meltingpot.server.post.service.PostService;
 public class PostController {
     private final PostService postService;
 
-    @Operation(summary = "게시물 작성")
+    @Operation(summary = "게시물 작성, 이미지가 없을 때는 빈 값으로 주시면 됩니다. ")
     @PostMapping("")
     public ResponseEntity<ResponseData> createPost( @CurrentUser Account account,@RequestBody PostCreateRequest createPostDTO) {
         try{
@@ -33,6 +33,17 @@ public class PostController {
             return ResponseData.toResponseEntity(ResponseCode.POST_CREATE_FAIL);
         }
     }
+
+    @Operation(summary = "게시물 수정, 이미지가 없을 때는 빈 값으로 주시면 됩니다. ")
+    @PutMapping("/{postId}")
+    public ResponseEntity<ResponseData> updatePost(@CurrentUser Account account,@PathVariable Long postId, @RequestBody PostCreateRequest updateRequest) {
+        try {
+            return ResponseData.toResponseEntity(postService.updatePost(updateRequest,postId, account));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.POST_UPDATE_FAIL);
+        }
+    }
+
 
     @GetMapping("/type/{postType}")
     @Operation(summary = "커뮤니티 글 목록 조회", description = "커뮤니티 글 목록을 조회합니다. type을 path variable로 받아 구분합니다.")

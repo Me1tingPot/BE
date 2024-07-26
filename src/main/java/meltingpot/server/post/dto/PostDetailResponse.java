@@ -18,24 +18,35 @@ public class PostDetailResponse {
     private String name;
     private String title;
     private String content;
-    List<String> imgUrls;
+    private List<ImageData> imgData;  // Image data including ID and URL
     private Integer commentCount;
     private CommentsListResponse commentsList;
     private LocalDateTime updatedAt;
 
-    public static PostDetailResponse  of (Post post, CommentsListResponse commentsList) {
-        List<String> imgUrls = post.getPostImages().stream()
-                .map(PostImage::getImageUrl)
+    // Static nested class to hold image data
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageData {
+        private Long imageId;
+        private String imageUrl;
+    }
+
+    public static PostDetailResponse of(Post post, CommentsListResponse commentsList) {
+        List<ImageData> imgData = post.getPostImages().stream()
+                .map(postImage -> new ImageData(postImage.getId(), postImage.getImageUrl()))
                 .collect(Collectors.toList());
+
         int commentCount = post.getComments().stream()
                 .mapToInt(parentComment -> 1 + parentComment.getChildren().size())
                 .sum();
+
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .name(post.getAccount().getName())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .imgUrls(imgUrls)
+                .imgData(imgData)
                 .commentCount(commentCount)
                 .commentsList(commentsList)
                 .updatedAt(post.getUpdatedAt())
