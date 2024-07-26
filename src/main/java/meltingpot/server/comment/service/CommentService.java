@@ -131,7 +131,8 @@ public class CommentService  {
 //
 //        return CommentsListResponse.from(commentDetailDTOs,nextCursor,isLast);
 //    }
-
+    /* 댓글 목록 불러오기 */
+    @Transactional(readOnly = true)
     public CommentsListResponse getCommentsList(Account account, Long postId, Long cursor, int pageSize) {
         Post post = findPostById(postId);
         List<CommentsListResponse.CommentDetail> commentDetailDTOs = new ArrayList<>();
@@ -193,6 +194,7 @@ public class CommentService  {
     }
 
 
+    /* 댓글 삭제하기 */
 
 
     private Comment findCommentById(Long commentId) {
