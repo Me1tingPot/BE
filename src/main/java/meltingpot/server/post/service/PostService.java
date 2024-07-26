@@ -16,6 +16,7 @@ import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.entity.post.PostImage;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
+import meltingpot.server.domain.repository.PostImageRepository;
 import meltingpot.server.domain.repository.PostRepository;
 import meltingpot.server.post.dto.PostCreateRequest;
 import meltingpot.server.post.dto.PostDetailResponse;
@@ -37,6 +38,7 @@ public class PostService {
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final PostImageRepository postImageRepository;
     @Autowired
     private FileService fileService;
 
@@ -48,9 +50,29 @@ public class PostService {
         List<PostImage> postImages = createPostImages(createPostDTO.getImageKeys(), post, account);
         post.setPostImages(postImages);
         postRepository.save(post);
-        return ResponseCode.POST_CREATE_SUCCESS;
+        return ResponseCode.CREATE_POST_SUCCESS;
     }
 
+    /*post 수정하기*/
+    public ResponseCode updatePost(PostCreateRequest updateRequest,Long postId, Account account){
+        Post post = findPostById(postId);
+
+        post.setTitle(updateRequest.getTitle());
+        post.setContent(updateRequest.getContent());
+
+        // 기존의 모든 PostImage 삭제
+        if (post.getPostImages() != null) {
+            postImageRepository.deleteAll(post.getPostImages());
+
+        }
+        // 새로운 PostImage 설정
+        List<PostImage> postImages = createPostImages(updateRequest.getImageKeys(), post, account);
+        post.setPostImages(postImages);
+
+        postRepository.save(post);
+
+        return ResponseCode.UPDATE_POST_SUCCESS;
+    }
 
     /*post 내용 불러오기*/
     @Transactional(readOnly = true)

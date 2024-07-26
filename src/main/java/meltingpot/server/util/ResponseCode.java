@@ -48,9 +48,11 @@ public enum ResponseCode {
     READ_USERS_COMMENTS_SUCCESS(OK, "사용자가 댓글을 작성한 게시글 불러오기 성공"),
     READ_USERS_PARTIES_SUCCESS(OK, "사용자가 참여한 파티 불러오기 성공"),
 
+    UPDATE_POST_SUCCESS(OK,"게시물 수정 성공"),
+    UPDATE_COMMENT_SUCCESS(OK, "댓글 수정 성공"),
     READ_COMMENTS_LIST_SUCCESS(OK,"댓글 목록 불러오기 성공"),
 
-    POST_CREATE_SUCCESS(OK,"게시글 생성 성공"),
+
 
 
     /* 201 CREATED : 요청 성공, 자원 생성 */
@@ -58,7 +60,6 @@ public enum ResponseCode {
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED, "게시물 작성 성공"),
     CREATE_COMMENT_SUCCESS(CREATED, "댓글 작성 성공"),
-    UPDATE_COMMENT_SUCCESS(CREATED, "댓글 수정 성공"),
     CREATE_CHILD_COMMENT_SUCCESS(CREATED, "대댓글 작성 성공"),
     REPORT_CREATE_SUCCESS(CREATED, "신고 작성 성공"),
     PARTY_REPORT_SUCCESS(CREATED, "파티 신고 성공"),
@@ -91,6 +92,7 @@ public enum ResponseCode {
     COMMENT_UPDATE_FAIL(BAD_REQUEST, "댓글 수정 실패 "),
     READ_COMMENT_FAIL(BAD_REQUEST, "댓글 불러오기 실패 "),
     POST_CREATE_FAIL(BAD_REQUEST, "게시글 작성 실패"),
+    POST_UPDATE_FAIL(BAD_REQUEST,"게시글 수정 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST, "신고 작성 실패"),
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
     AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),

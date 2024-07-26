@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 public class CommentController {
     private final CommentService commentService;
 
-    @Operation(summary = "댓글 작성")
+    @Operation(summary = "댓글 작성, 이미지가 없으면 null로 주시면 됩니다. ")
     @PostMapping("/{postId}")
     public ResponseEntity<ResponseData> createComment(@RequestBody CommentCreateRequest commentCreateRequest, @CurrentUser Account account, @PathVariable Long postId) {
         try {
@@ -30,7 +30,7 @@ public class CommentController {
         }
     }
 
-    @Operation(summary = "대댓글 작성")
+    @Operation(summary = "대댓글 작성, 이미지가 없으면 null로 주시면 됩니다.")
     @PostMapping("/child/{commentId}")
     public ResponseEntity<ResponseData> createChildComment(@RequestBody CommentCreateRequest commentCreateRequest, @CurrentUser Account account,@PathVariable Long commentId) {
         try {
@@ -40,7 +40,7 @@ public class CommentController {
         }
     }
 
-    @Operation(summary = "댓글 수정")
+    @Operation(summary = "댓글 수정, 이미지가 없으면 null로 주시면 됩니다.")
     @PutMapping("/{commentId}")
     public ResponseEntity<ResponseData> updateComment(@RequestBody CommentCreateRequest commentCreateRequest, @CurrentUser Account account, @PathVariable Long commentId){
         try {
