@@ -80,6 +80,10 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
+    public void setIsAnonymous (Boolean isAnonymous) {
+        this.isAnonymous = isAnonymous;
+    }
+
     public Comment getParent() { return parent;}
 
 

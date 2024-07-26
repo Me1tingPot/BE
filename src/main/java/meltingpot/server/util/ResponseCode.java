@@ -52,6 +52,7 @@ public enum ResponseCode {
     UPDATE_POST_SUCCESS(OK,"게시물 수정 성공"),
     UPDATE_COMMENT_SUCCESS(OK, "댓글 수정 성공"),
     READ_COMMENTS_LIST_SUCCESS(OK,"댓글 목록 불러오기 성공"),
+    COMMENT_DELETE_SUCCESS(OK, "댓글 삭제하기 성공"),
 
 
 
