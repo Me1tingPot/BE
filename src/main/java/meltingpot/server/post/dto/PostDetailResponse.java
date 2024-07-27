@@ -3,8 +3,6 @@ package meltingpot.server.post.dto;
 import lombok.*;
 import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.domain.entity.post.Post;
-import meltingpot.server.domain.entity.post.PostImage;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +47,21 @@ public class PostDetailResponse {
                 .imgData(imgData)
                 .commentCount(commentCount)
                 .commentsList(commentsList)
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    public static PostDetailResponse from(Post post) {
+        List<ImageData> imgData = post.getPostImages().stream()
+                .map(postImage -> new ImageData(postImage.getId(), postImage.getImageUrl()))
+                .collect(Collectors.toList());
+
+        return PostDetailResponse.builder()
+                .postId(post.getId())
+                .name(post.getAccount().getName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imgData(imgData)
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }

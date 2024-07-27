@@ -61,6 +61,7 @@ public enum ResponseCode {
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     CREATE_CHAT_ROOM_SUCCESS(CREATED, "채팅방 생성 성공"),
     CREATE_POST_SUCCESS(CREATED, "게시물 작성 성공"),
+    DRAFT_SAVE_SUCCESS(CREATED,"게시물 임시 저장 성공"),
     CREATE_COMMENT_SUCCESS(CREATED, "댓글 작성 성공"),
     CREATE_CHILD_COMMENT_SUCCESS(CREATED, "대댓글 작성 성공"),
     REPORT_CREATE_SUCCESS(CREATED, "신고 작성 성공"),
