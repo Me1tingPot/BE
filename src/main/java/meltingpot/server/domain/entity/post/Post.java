@@ -35,6 +35,8 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostType postType;
 
+    private Boolean isDraft;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Account account;
@@ -61,4 +63,7 @@ public class Post extends BaseEntity {
                 .collect(Collectors.toList());
     }
 
+    public void setIsDraft(boolean isDraft) {
+        this.isDraft = isDraft;
     }
+}

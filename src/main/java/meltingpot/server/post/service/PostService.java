@@ -4,8 +4,9 @@ package meltingpot.server.post.service;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import meltingpot.server.comment.dto.CommentsListResponse;
@@ -25,10 +26,13 @@ import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.r2.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.server.ResponseStatusException;
 
+import static meltingpot.server.util.ResponseCode.POST_NOT_FOUND;
 
 
 @Service
@@ -44,30 +48,34 @@ public class PostService {
 
 
     /*post 작성하기*/
-    public ResponseCode createPost(PostCreateRequest createPostDTO,Account account){
-        Post post = createPostDTO.toEntity(account);
-        List<String> postImgUrls = Collections.emptyList();
-        List<PostImage> postImages = createPostImages(createPostDTO.getImageKeys(), post, account);
-        post.setPostImages(postImages);
+    public ResponseCode createPost(PostCreateRequest postCreateRequest, Account account, boolean isDraft) {
+        Optional<Post> optionalDraft = getDraftPost(account);
+        Post post = optionalDraft.orElseGet(() -> postCreateRequest.toEntity(account));
+        System.out.println("Post  " + post.getId() + post.getTitle() + post.getIsDraft());
+
+        if (optionalDraft.isPresent()) {
+            updatePostContent(post, account, postCreateRequest);
+        }
+        setPostImages(post, account, postCreateRequest);
+        // isDraft 값을 설정하기 전에 현재 상태 출력
+        System.out.println("Setting isDraft for post with ID " + post.getId() + " to " + isDraft);
+        post.setIsDraft(isDraft);
+
+        // isDraft 값 설정 후 출력
+        System.out.println("Post isDraft status: " + post.getIsDraft());
+
         postRepository.save(post);
-        return ResponseCode.CREATE_POST_SUCCESS;
+
+        return isDraft ? ResponseCode.DRAFT_SAVE_SUCCESS : ResponseCode.CREATE_POST_SUCCESS;
     }
+
 
     /*post 수정하기*/
     public ResponseCode updatePost(PostCreateRequest updateRequest,Long postId, Account account){
         Post post = findPostById(postId);
-
-        post.setTitle(updateRequest.getTitle());
-        post.setContent(updateRequest.getContent());
-
-        // 기존의 모든 PostImage 삭제
-        if (post.getPostImages() != null) {
-            postImageRepository.deleteAll(post.getPostImages());
-
-        }
-        // 새로운 PostImage 설정
-        List<PostImage> postImages = createPostImages(updateRequest.getImageKeys(), post, account);
-        post.setPostImages(postImages);
+        isAuthenticated ( post, account);
+        updatePostContent(post, account, updateRequest);
+        setPostImages(post,account,updateRequest);
 
         postRepository.save(post);
 
@@ -95,7 +103,7 @@ public class PostService {
     /*post 삭제하기*/
     public ResponseCode deletePost(Long postId, Account account){
         Post post = findPostById(postId);
-        Account postAccount = findAccountById(post.getAccount().getId());
+        isAuthenticated ( post, account);
 
         // 게시물에 연관된 이미지 삭제
         if (!post.getPostImages().isEmpty()) {
@@ -114,6 +122,18 @@ public class PostService {
 
     }
 
+    /* 임시저장된 글 불러오기 */
+    public PostDetailResponse getTempPost (Account account ){
+        Optional<Post> optionalDraft = getDraftPost(account);
+        if(optionalDraft.isPresent()){
+            Post draftPost = optionalDraft.get();
+            return PostDetailResponse.from(draftPost);
+        }else{
+            throw new NoSuchElementException(ResponseCode.POST_NOT_FOUND.getDetail());
+        }
+    }
+
+
 
     private Account findAccountById(Long accountId) {
         return accountRepository.findById(accountId)
@@ -125,6 +145,12 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
     }
 
+    private void isAuthenticated (Post post, Account account) {
+        if (!post.getAccount().getId().equals(account.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+        }
+    }
+
     private List<String> getCdnUrls(List<String> imageKeys) {
         return imageKeys.stream()
                 .map(imageKey -> {
@@ -133,6 +159,19 @@ public class PostService {
                 })
                 .collect(Collectors.toList());
     }
+
+    private void updatePostContent(Post post, Account account, PostCreateRequest updateRequest) {
+        post.setTitle(updateRequest.getTitle());
+        post.setContent(updateRequest.getContent());
+
+        // 기존의 모든 PostImage 삭제
+        if (post.getPostImages() != null && !post.getPostImages().isEmpty()) {
+            postImageRepository.deleteAll(post.getPostImages());
+            post.getPostImages().clear();
+        }
+    }
+
+
 
     private List<PostImage> createPostImages(List<String> imageKeys, Post post, Account account) {
         List<String> postImgUrls = getCdnUrls(imageKeys);
@@ -204,6 +243,13 @@ public class PostService {
         return CommentsListResponse.from(commentDetailDTOs, nextCursor, isLast);
     }
 
+    private Optional<Post> getDraftPost(Account account) {
+        return postRepository.findByAccountAndIsDraftTrue(account);
+    }
 
+    private void setPostImages(Post post, Account account,PostCreateRequest postRequest) {
+        List<PostImage> postImages = createPostImages(postRequest.getImageKeys(), post, account);
+        post.setPostImages(postImages);
+    }
 }
 

@@ -52,4 +52,19 @@ public class PostDetailResponse {
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
+
+    public static PostDetailResponse from(Post post) {
+        List<ImageData> imgData = post.getPostImages().stream()
+                .map(postImage -> new ImageData(postImage.getId(), postImage.getImageUrl()))
+                .collect(Collectors.toList());
+
+        return PostDetailResponse.builder()
+                .postId(post.getId())
+                .name(post.getAccount().getName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imgData(imgData)
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
 }

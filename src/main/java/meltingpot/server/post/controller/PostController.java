@@ -27,11 +27,14 @@ import meltingpot.server.post.service.PostService;
 public class PostController {
     private final PostService postService;
 
-    @Operation(summary = "게시물 작성, 이미지가 없을 때는 빈 값으로 주시면 됩니다. ")
+    @Operation(summary = "게시물 작성", description="requestParam으로 임시저장 여부를 알려주세요." +
+                                                    "이미지가 없을 때는 빈 값으로 주시면 됩니다.")
     @PostMapping("")
-    public ResponseEntity<ResponseData> createPost( @CurrentUser Account account,@RequestBody PostCreateRequest createPostDTO) {
+    public ResponseEntity<ResponseData> createPost( @CurrentUser Account account,
+                                                    @RequestBody PostCreateRequest postCreateRequest,
+                                                    @RequestParam boolean isDraft) {
         try{
-            return ResponseData.toResponseEntity(postService.createPost(createPostDTO,account));
+            return ResponseData.toResponseEntity(postService.createPost(postCreateRequest,account,isDraft));
         }catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_CREATE_FAIL);
         }
@@ -80,6 +83,16 @@ public class PostController {
             return ResponseData.toResponseEntity(postService.deletePost(postId, account));
         } catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_DELETE_FAIL);
+        }
+    }
+
+    @GetMapping("/temp-saved")
+    @Operation(summary = "임시저장된 글 불러오기", description = "임시저장된 글 불러오기")
+    public ResponseEntity<ResponseData<PostDetailResponse>> getTempPost(@CurrentUser Account account) {
+        try {
+            return ResponseData.toResponseEntity(ResponseCode.POST_DETAIL_FETCH_SUCCEESS,postService.getTempPost(account));
+        } catch (NoSuchElementException e) {
+            return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND,null);
         }
     }
 

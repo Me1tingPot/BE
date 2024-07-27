@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -23,4 +24,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable page);
 
     Slice<Post> findByIdAndDeletedAtIsNull(Long id);
+
+    Optional<Post> findByAccountAndIsDraftTrue(Account account);
 }
