@@ -1,10 +1,8 @@
 package meltingpot.server.domain.repository;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.enums.PostType;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

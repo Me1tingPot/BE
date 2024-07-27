@@ -15,7 +15,6 @@ import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.entity.post.PostImage;
-import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.CommentRepository;
 import meltingpot.server.domain.repository.PostImageRepository;
 import meltingpot.server.domain.repository.PostRepository;
@@ -32,14 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 
-import static meltingpot.server.util.ResponseCode.POST_NOT_FOUND;
-
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
-    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final PostImageRepository postImageRepository;
@@ -134,12 +129,6 @@ public class PostService {
     }
 
 
-
-    private Account findAccountById(Long accountId) {
-        return accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-    }
-
     private Post findPostById(Long postId) {
         return  postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
@@ -170,8 +159,6 @@ public class PostService {
             post.getPostImages().clear();
         }
     }
-
-
 
     private List<PostImage> createPostImages(List<String> imageKeys, Post post, Account account) {
         List<String> postImgUrls = getCdnUrls(imageKeys);
