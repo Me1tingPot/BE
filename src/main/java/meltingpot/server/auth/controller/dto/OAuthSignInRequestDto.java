@@ -4,7 +4,7 @@ import meltingpot.server.domain.entity.enums.OAuthType;
 
 public record OAuthSignInRequestDto(
         OAuthType type,
-        String code,
+        String token,
         String push_token
 ) {
 }

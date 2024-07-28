@@ -6,7 +6,6 @@ import meltingpot.server.auth.controller.dto.OAuthSignInRequestDto;
 import meltingpot.server.auth.controller.dto.OAuthSignupRequestDto;
 import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
 import meltingpot.server.auth.oauth.OAuthUserDetails;
-import meltingpot.server.auth.oauth.kakao.KaKaoTokenDto;
 import meltingpot.server.auth.oauth.kakao.KakaoDto;
 import meltingpot.server.auth.oauth.kakao.KakaoService;
 import meltingpot.server.auth.service.dto.OAuthSignInResponseDto;
@@ -104,6 +103,7 @@ public class OAuthService {
                         .build()).toList()
         );
 
+
         account.setLanguages(signupRequest.languages().stream().map(
                 (language) -> AccountLanguage.builder()
                         .account(account)
@@ -127,11 +127,17 @@ public class OAuthService {
     public OAuthSignInResponseDto SNSLogin(OAuthSignInRequestDto request) throws Exception {
 
         if(request.type() == OAuthType.KAKAO) {
+
+            /* * * * RestAPI 버전 * * * /
             // 카카오 토큰 가져오기
-            KaKaoTokenDto tokenDto = kakaoService.getKakaoToken(request.code());
+            KaKaoTokenDto tokenDto = kakaoService.getKakaoToken(request.token());
 
             // 카카오 유저 정보 가져오기
-            KakaoDto kakaoDto = kakaoService.getUserInfoWithToken(tokenDto.accessToken());
+            KakaoDto kakaoDto = kakaoService.getUserInfoWithToken(request.token());
+             * * * * * * * * * * * * */
+
+            // SDK 버전: 아이디토큰으로 유저 정보 파싱해오기
+            KakaoDto kakaoDto = kakaoService.getUserInfoFromIdToken(request.token());
 
             // 이미 가입한 회원인지 확인
             Optional<Account> account = accountRepository.findByUsernameAndIsQuitIsFalse(kakaoDto.getEmail());
