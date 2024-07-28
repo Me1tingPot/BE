@@ -1,5 +1,7 @@
 package meltingpot.server.auth.oauth.kakao;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import java.util.Base64;
 
 @Service
 public class KakaoService {
@@ -26,16 +29,17 @@ public class KakaoService {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String getKakaoLogin(String redirect_uri) { // 프론트 구현부
         return KAKAO_AUTH_URI + "/oauth/authorize"
                 + "?client_id=" + KAKAO_CLIENT_ID
                 + "&redirect_uri=" + redirect_uri
-                + "&response_type=code";
+                + "&response_type=token";
     }
 
-    public KaKaoTokenDto getKakaoInfo(String code) throws Exception {
-        if (code == null) throw new Exception("Failed get authorization code");
+    public KaKaoTokenDto getKakaoToken(String code) throws Exception {
+        if (code == null) throw new Exception("Failed get authorization token");
 
         String accessToken = "";
         String refreshToken = "";
@@ -48,7 +52,7 @@ public class KakaoService {
             params.add("grant_type"   , "authorization_code");
             params.add("client_id"    , KAKAO_CLIENT_ID);
             params.add("client_secret", KAKAO_CLIENT_SECRET);
-            params.add("code"         , code);
+            params.add("token"         , code);
             params.add("redirect_uri" , redirect_uri);
 
             RestTemplate restTemplate = new RestTemplate();
@@ -103,7 +107,30 @@ public class KakaoService {
         String nickname = String.valueOf(profile.get("nickname"));
 
         return KakaoDto.builder()
-                .id(id)
+                .email(email)
+                .nickname(nickname).build();
+    }
+
+    public KakaoDto getUserInfoFromIdToken(String idToken) throws Exception {
+        // 온점 분리
+        String[] parts = idToken.split("\\.");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid IdToken");
+        }
+
+        // Payload 디코딩
+        String payload = parts[1];
+        String decodedPayload = new String(Base64.getDecoder().decode(payload));
+
+        // JSON 파싱
+        JsonNode jsonNode = objectMapper.readTree(decodedPayload);
+
+        // email과 nickname 추출
+        String email = jsonNode.path("email").asText(null);
+        String nickname = jsonNode.path("nickname").asText(null);
+
+        // 정보 담아 보내기
+        return KakaoDto.builder()
                 .email(email)
                 .nickname(nickname).build();
     }
