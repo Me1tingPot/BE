@@ -61,6 +61,7 @@ dependencies {
 
 	//Apple Login
 	implementation 'com.nimbusds:nimbus-jose-jwt:3.10'
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.72'
 
 	//Json
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'

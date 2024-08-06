@@ -61,7 +61,8 @@ public class Account extends BaseEntity {
 
     private Boolean isQuit; // 탈퇴 여부
 
-    private OAuthType oAuthType; 
+    @Enumerated(EnumType.STRING)
+    private OAuthType OAuthType;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
