@@ -1,18 +1,18 @@
 package meltingpot.server.auth.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import meltingpot.server.auth.controller.dto.OAuthSignInRequestDto;
 import meltingpot.server.auth.controller.dto.OAuthSignupRequestDto;
 import meltingpot.server.auth.controller.dto.ProfileImageRequestDto;
 import meltingpot.server.auth.oauth.OAuthUserDetails;
-import meltingpot.server.auth.oauth.kakao.KakaoDto;
-import meltingpot.server.auth.oauth.kakao.KakaoService;
+import meltingpot.server.auth.oauth.OAuthDto;
 import meltingpot.server.auth.service.dto.OAuthSignInResponseDto;
 import meltingpot.server.config.TokenProvider;
 import meltingpot.server.domain.entity.*;
 import meltingpot.server.domain.entity.enums.Gender;
-import meltingpot.server.domain.entity.enums.OAuthType;
 import meltingpot.server.domain.repository.AccountPushTokenRepository;
 import meltingpot.server.domain.repository.AccountRepository;
 import meltingpot.server.domain.repository.RefreshTokenRepository;
@@ -27,10 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,11 +35,10 @@ import java.util.Set;
 @EnableWebSecurity
 public class OAuthService {
     private final AccountRepository accountRepository;
-    private final KakaoService kakaoService;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccountPushTokenRepository accountPushTokenRepository;
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // SNS 회원 가입
     @Transactional
@@ -90,7 +86,7 @@ public class OAuthService {
                 .birth(signupRequest.birth())
                 .nationality(signupRequest.nationality())
                 .isQuit(false)
-                .oAuthType(signupRequest.OauthType())
+                .OAuthType(signupRequest.OauthType())
                 .build();
 
         account.setProfileImages(signupRequest.profileImages().stream().map(
@@ -126,49 +122,27 @@ public class OAuthService {
     @Transactional
     public OAuthSignInResponseDto SNSLogin(OAuthSignInRequestDto request) throws Exception {
 
-        if(request.type() == OAuthType.KAKAO) {
+        OAuthDto oAuthDto = getUserInfoFromIdToken(request.token());
 
-            /* * * * RestAPI 버전 * * * /
-            // 카카오 토큰 가져오기
-            KaKaoTokenDto tokenDto = kakaoService.getKakaoToken(request.token());
+        // 이미 가입한 회원인지 확인
+        Optional<Account> account = accountRepository.findByUsernameAndIsQuitFalseAndOAuthType(oAuthDto.getEmail(), request.type());
+        if (account.isEmpty()) {
 
-            // 카카오 유저 정보 가져오기
-            KakaoDto kakaoDto = kakaoService.getUserInfoWithToken(request.token());
-             * * * * * * * * * * * * */
+            // 회원 가입이 필요한 경우
+            return OAuthSignInResponseDto.builder()
+                    .register_required(true)
+                    .nickName(oAuthDto.getNickname())
+                    .email(oAuthDto.getEmail())
+                    .tokenDto(null)
+                    .build();
 
-            // SDK 버전: 아이디토큰으로 유저 정보 파싱해오기
-            KakaoDto kakaoDto = kakaoService.getUserInfoFromIdToken(request.token());
-
-            // 이미 가입한 회원인지 확인
-            Optional<Account> account = accountRepository.findByUsernameAndIsQuitIsFalse(kakaoDto.getEmail());
-            if (account.isEmpty()) {
-
-                // 회원 가입이 필요한 경우
-                return OAuthSignInResponseDto.builder()
-                        .register_required(true)
-                        .nickName(kakaoDto.getNickname())
-                        .email(kakaoDto.getEmail())
-                        .tokenDto(null)
-                        .build();
-
-            } else {
-
-                return OAuthSignInResponseDto.builder().
-                        register_required(false)
-                        .nickName(kakaoDto.getNickname())
-                        .email(kakaoDto.getEmail())
-                        .tokenDto(setSecurityContext(account.get(), request.push_token()))
-                        .build();
-            }
-        }
-//        else if(request.type() == OAuthType.APPLE) {
-//
-//        }
-//        else if(request.type() == OAuthType.GOOGLE) {
-//
-//        }
-        else {
-            throw new NoSuchElementException();
+        } else {
+            return OAuthSignInResponseDto.builder().
+                    register_required(false)
+                    .nickName(oAuthDto.getNickname())
+                    .email(oAuthDto.getEmail())
+                    .tokenDto(setSecurityContext(account.get(), request.push_token()))
+                    .build();
         }
 
     }
@@ -205,6 +179,31 @@ public class OAuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return jwtTokenDto;
+
+    }
+
+    public OAuthDto getUserInfoFromIdToken(String idToken) throws Exception {
+
+        // 온점 분리
+        String[] parts = idToken.split("\\.");
+        if (parts.length != 3) {
+            throw new java.lang.IllegalArgumentException("Invalid IdToken");
+        }
+
+        // Payload 디코딩
+        String payload = parts[1];
+        String decodedPayload = new String(Base64.getDecoder().decode(payload));
+
+        // JSON 파싱
+        JsonNode jsonNode = objectMapper.readTree(decodedPayload);
+
+        // email과 nickname 추출
+        String email = jsonNode.path("email").asText(null);
+        String nickname = jsonNode.path("nickname").asText(null);
+
+        return OAuthDto.builder()
+                .email(email)
+                .nickname(nickname).build();
 
     }
 

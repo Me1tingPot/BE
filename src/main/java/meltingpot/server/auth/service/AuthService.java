@@ -106,7 +106,7 @@ public class AuthService implements UserDetailsService {
                 .birth(signupRequest.birth())
                 .nationality(signupRequest.nationality())
                 .isQuit(false)
-                .oAuthType(OAuthType.NONE)
+                .OAuthType(OAuthType.NONE)
                 .build();
 
         account.setProfileImages(signupRequest.profileImages().stream().map(
