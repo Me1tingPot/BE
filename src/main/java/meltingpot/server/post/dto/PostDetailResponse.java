@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Builder
 public class PostDetailResponse {
     private Long postId;
+    private Long userId;
     private String name;
     private String title;
     private String content;
@@ -41,6 +42,7 @@ public class PostDetailResponse {
 
         return PostDetailResponse.builder()
                 .postId(post.getId())
+                .userId(post.getAccount().getId())
                 .name(post.getAccount().getName())
                 .title(post.getTitle())
                 .content(post.getContent())
