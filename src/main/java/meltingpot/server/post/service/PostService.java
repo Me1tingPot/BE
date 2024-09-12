@@ -2,16 +2,12 @@ package meltingpot.server.post.service;
 
 
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import meltingpot.server.comment.dto.CommentsListResponse;
 import meltingpot.server.domain.entity.Account;
-import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.entity.post.PostImage;
@@ -52,13 +48,7 @@ public class PostService {
             updatePostContent(post, account, postCreateRequest);
         }
         setPostImages(post, account, postCreateRequest);
-        // isDraft 값을 설정하기 전에 현재 상태 출력
-        System.out.println("Setting isDraft for post with ID " + post.getId() + " to " + isDraft);
         post.setIsDraft(isDraft);
-
-        // isDraft 값 설정 후 출력
-        System.out.println("Post isDraft status: " + post.getIsDraft());
-
         postRepository.save(post);
 
         return isDraft ? ResponseCode.DRAFT_SAVE_SUCCESS : ResponseCode.CREATE_POST_SUCCESS;
@@ -79,10 +69,12 @@ public class PostService {
 
     /*post 내용 불러오기*/
     @Transactional(readOnly = true)
-    public PostDetailResponse getPostDetail(Long postId, Long cursor, int pageSize){
+    public PostDetailResponse getPostDetail(Long postId){
         Post post = findPostById(postId);
-        CommentsListResponse commentsList = fetchCommentsList(postId, cursor, pageSize);
-        return PostDetailResponse.of(post,commentsList);
+        if(post.getIsDraft()){
+            throw new IllegalStateException("게시물 조회 실패");
+        }
+        return PostDetailResponse.of(post);
     }
 
     /*post 목록 불러오기*/
@@ -171,65 +163,6 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    private CommentsListResponse fetchCommentsList(Long postId, Long cursor, int pageSize) {
-        List<CommentsListResponse.CommentDetail> commentDetailDTOs = new ArrayList<>();
-        int count = 0;
-        Long parentCursor = null;
-
-        // Cursor가 자식 댓글에 해당하는 경우 처리
-        if (cursor != null) {
-            Comment cursorComment = commentRepository.findById(cursor).orElse(null);
-            if (cursorComment != null) {
-                Comment parentComment;
-                if (cursorComment.getParent() != null) {
-                    // Cursor가 자식 댓글을 나타내는 경우
-                    parentComment = cursorComment.getParent();
-                } else {
-                    // Cursor가 부모 댓글을 나타내는 경우
-                    parentComment = cursorComment;
-                }
-
-                List<Comment> remainingChildren = commentRepository.findChildrenCommentsByParentId(parentComment.getId(), cursor);
-                for (Comment child : remainingChildren) {
-                    if (count >= pageSize) break;
-                    commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(child));
-                    count++;
-                }
-                parentCursor = parentComment.getId();
-
-                // 만약 자식 댓글을 모두 가져왔고, 페이지가 꽉 차지 않았다면 다음 부모 댓글로 넘어감
-                if (count < pageSize && remainingChildren.size() < pageSize) {
-                    parentCursor = parentComment.getId();
-                }
-            } else {
-                parentCursor = cursor; // cursor가 부모 댓글인 경우
-            }
-        }
-
-        // 부모 댓글과 자식 댓글을 가져오는 처리
-        if (count < pageSize) {
-            Pageable pageable = PageRequest.of(0, pageSize - count);
-            List<Comment> parentComments = commentRepository.findParentCommentsByPostId(postId, parentCursor, pageable);
-            for (Comment parent : parentComments) {
-                if (count >= pageSize) break;
-                commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(parent));
-                count++;
-
-                List<Comment> children = commentRepository.findChildrenCommentsByParentId(parent.getId(), null);
-                for (Comment child : children) {
-                    if (count >= pageSize) break;
-                    commentDetailDTOs.add(CommentsListResponse.CommentDetail.from(child));
-                    count++;
-                }
-            }
-        }
-
-        Long nextCursor = (count < pageSize) ? null : commentDetailDTOs.get(commentDetailDTOs.size() - 1).getCommentId();
-        boolean isLast = (count < pageSize);
-
-        return CommentsListResponse.from(commentDetailDTOs, nextCursor, isLast);
-    }
-
     private Optional<Post> getDraftPost(Account account) {
         return postRepository.findByAccountAndIsDraftTrue(account);
     }
@@ -238,5 +171,7 @@ public class PostService {
         List<PostImage> postImages = createPostImages(postRequest.getImageKeys(), post, account);
         post.setPostImages(postImages);
     }
+
+
 }
 
