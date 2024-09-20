@@ -166,9 +166,6 @@ public class CommentService  {
             Comment parentComment = comment.getParent();
             commentRepository.delete(comment);
             parentComment.getChildren().remove(comment);
-            if (parentComment.getChildren().isEmpty()) {
-                commentRepository.delete(parentComment);
-            }
         }
         return ResponseCode.COMMENT_DELETE_SUCCESS;
     }
