@@ -98,6 +98,7 @@ public enum ResponseCode {
     POST_CREATE_FAIL(BAD_REQUEST, "게시글 작성 실패"),
     POST_UPDATE_FAIL(BAD_REQUEST,"게시글 수정 실패"),
     POST_DELETE_FAIL(BAD_REQUEST,"게시글 삭제 실패"),
+    POST_FETCH_FAIL(BAD_REQUEST,"게시글 조회 실패"),
     REPORT_CREATE_FAIL(BAD_REQUEST, "신고 작성 실패"),
     AREA_FETCH_FAILED(BAD_REQUEST, "지역 조회 실패"),
     AREA_FETCH_FAILED_NOT_SERVICE_AREA(BAD_REQUEST, "현재 좌표 조회는 국내에서만 사용 가능합니다"),

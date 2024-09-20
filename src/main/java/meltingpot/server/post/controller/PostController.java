@@ -64,9 +64,9 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "커뮤니티 글 내용 조회", description = "postId로 커뮤니티 글 내용을 조회합니다.")
-    public ResponseEntity<ResponseData<PostDetailResponse>> getPostDetail(@CurrentUser Account account, @PathVariable Long postId, @RequestParam(required = false, name = "cursor") Long cursor, @RequestParam(name = "pageSize") Integer pageSize) {
+    public ResponseEntity<ResponseData<PostDetailResponse>> getPostDetail(@CurrentUser Account account, @PathVariable Long postId) {
         try{
-            return ResponseData.toResponseEntity(ResponseCode.POST_DETAIL_FETCH_SUCCEESS,postService.getPostDetail(postId,cursor, pageSize));
+            return ResponseData.toResponseEntity(ResponseCode.POST_DETAIL_FETCH_SUCCEESS,postService.getPostDetail(postId));
         }catch (NoSuchElementException e) {
             return ResponseData.toResponseEntity(ResponseCode.POST_NOT_FOUND, null);
         }

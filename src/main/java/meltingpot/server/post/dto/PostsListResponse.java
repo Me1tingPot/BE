@@ -4,6 +4,7 @@ package meltingpot.server.post.dto;
 import lombok.*;
 import meltingpot.server.domain.entity.post.Post;
 import meltingpot.server.domain.entity.post.PostImage;
+import meltingpot.server.domain.entity.AccountProfileImage;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ public class PostsListResponse {
     public static class PostsList {
         private Long postId;
         private Long userId;
+        private String profileImg;
         private String name;
         private String title;
         private String content;
@@ -36,9 +38,15 @@ public class PostsListResponse {
             List<String> imgUrls = post.getPostImages().stream()
                     .map(PostImage::getImageUrl)
                     .collect(Collectors.toList());
+            String profileImgKey = post.getAccount().getProfileImages().stream()
+                    .filter(AccountProfileImage::isThumbnail)
+                    .map(AccountProfileImage::getImageKey)
+                    .findFirst()
+                    .orElse(null);
             return PostsList.builder()
                     .postId(post.getId())
                     .userId(post.getAccount().getId())
+                    .profileImg(profileImgKey)
                     .name(post.getAccount().getName())
                     .title(post.getTitle())
                     .content(post.getContent())
