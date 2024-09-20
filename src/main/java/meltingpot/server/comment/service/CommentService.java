@@ -142,7 +142,6 @@ public class CommentService  {
     @Transactional
     public ResponseCode deleteComment(Long commentId, Account account) {
         Comment comment = findCommentById(commentId);
-
         if (!comment.getAccount().getId().equals(account.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
@@ -150,25 +149,15 @@ public class CommentService  {
             comment.setContent("삭제된 댓글입니다.");
             comment.setAccount(null);
             comment.setIsAnonymous(true);
-
-            if (comment.getCommentImage() != null) {
-                CommentImage commentImage = comment.getCommentImage();
-                comment.setCommentImage(null);
-                commentImageRepository.delete(commentImage);
-            }
-            // 자식 댓글이 남아있지 않으면 부모 댓글도 삭제
+            deleteCommentImage(comment);
             if (comment.getChildren().isEmpty()) {
                 commentRepository.delete(comment);
             }
-
-
         } else {
+            deleteCommentImage(comment);
             Comment parentComment = comment.getParent();
-            commentRepository.delete(comment);
             parentComment.getChildren().remove(comment);
-            if (parentComment.getChildren().isEmpty()) {
-                commentRepository.delete(parentComment);
-            }
+            commentRepository.delete(comment);
         }
         return ResponseCode.COMMENT_DELETE_SUCCESS;
     }
@@ -212,6 +201,14 @@ public class CommentService  {
             } else {
                 createCommentImage(comment, account, newImageUrl);
             }
+        }
+    }
+
+    private void deleteCommentImage(Comment comment) {
+        if (comment.getCommentImage() != null) {
+            CommentImage commentImage = comment.getCommentImage();
+            comment.setCommentImage(null);
+            commentImageRepository.delete(commentImage);
         }
     }
 

@@ -42,7 +42,6 @@ public class PostService {
     public ResponseCode createPost(PostCreateRequest postCreateRequest, Account account, boolean isDraft) {
         Optional<Post> optionalDraft = getDraftPost(account);
         Post post = optionalDraft.orElseGet(() -> postCreateRequest.toEntity(account));
-        System.out.println("Post  " + post.getId() + post.getTitle() + post.getIsDraft());
 
         if (optionalDraft.isPresent()) {
             updatePostContent(post, account, postCreateRequest);
