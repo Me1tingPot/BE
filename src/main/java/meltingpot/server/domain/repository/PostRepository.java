@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query("SELECT p FROM Post p WHERE p.postType = :postType AND p.isDraft = false AND (:cursor IS NULL OR p.id > :cursor) ORDER BY p.id ASC")
+    @Query("SELECT p FROM Post p WHERE p.postType = :postType AND p.isDraft = false AND (:cursor IS NULL OR p.id < :cursor) ORDER BY p.id DESC")
     List<Post> findByPostTypeAndCursor(@Param("postType") PostType postType, @Param("cursor") Long cursor, Pageable pageable);
 
     Slice<Post> findAllByAccountAndDeletedAtIsNullOrderByIdDesc(Account account, Pageable page);

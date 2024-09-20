@@ -2,6 +2,7 @@ package meltingpot.server.domain.entity.post;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.Report;
@@ -28,8 +29,10 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
 
+    @Size(min = 10, max = 500)
     private String title;
 
+    @Size(min = 10, max = 500)
     private String content;
 
     @Enumerated(EnumType.STRING)

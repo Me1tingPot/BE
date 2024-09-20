@@ -1,6 +1,7 @@
 package meltingpot.server.domain.entity.comment;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import meltingpot.server.domain.entity.Account;
 import meltingpot.server.domain.entity.post.Post;
@@ -20,6 +21,7 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
 
+    @Size(min = 10, max = 500)
     private String content;
 
     @Column(name = "is_anonymous")
