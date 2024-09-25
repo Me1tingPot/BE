@@ -119,12 +119,13 @@ public class AuthService implements UserDetailsService {
                         .build()).toList()
         );
 
-        account.setLanguages(signupRequest.languages().stream().map(
-                (language) -> AccountLanguage.builder()
-                        .account(account)
-                        .language(language)
-                        .build()).toList()
-        );
+        if(signupRequest.languages()!=null){
+            account.setLanguages(signupRequest.languages().stream().map(
+                    (language) -> AccountLanguage.builder()
+                            .account(account)
+                            .language(language)
+                            .build()).toList());
+        }
 
         accountRepository.save(account);
 
