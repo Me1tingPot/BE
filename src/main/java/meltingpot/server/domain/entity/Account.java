@@ -45,14 +45,11 @@ public class Account extends BaseEntity {
 
     private String password;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotNull
     private LocalDate birth;
 
-    @NotNull
     private String nationality;
 
     private String bio; // 사용자 자기소개
