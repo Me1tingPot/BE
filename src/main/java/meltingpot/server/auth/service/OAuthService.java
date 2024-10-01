@@ -70,19 +70,27 @@ public class OAuthService {
             }
         }
 
-        // 성별 유효성 확인
-        boolean gender_check = false;
-        for( Gender gender : Gender.values()){
-            if(gender.toString().equals(signupRequest.gender())) gender_check = true;
+        Gender gender;
+        if(signupRequest.gender() == null || signupRequest.gender().isEmpty()){
+            gender = Gender.UNKNOWN;
         }
-        if(!gender_check) throw new IllegalArgumentException(ResponseCode.INVALID_GENDER_IS_PROVIDED);
+        else{
+            // 성별 유효성 확인
+            boolean gender_check = false;
+            for( Gender input : Gender.values()){
+                if(input.toString().equals(signupRequest.gender())) gender_check = true;
+            }
+
+            if(!gender_check) throw new IllegalArgumentException(ResponseCode.INVALID_GENDER_IS_PROVIDED);
+            else gender = Gender.valueOf(signupRequest.gender());
+        }
 
 
         Account account = Account.builder()
                 .username(signupRequest.email())
                 .name(signupRequest.name())
                 .password("")
-                .gender(Gender.valueOf(signupRequest.gender()))
+                .gender(gender)
                 .birth(signupRequest.birth())
                 .nationality(signupRequest.nationality())
                 .isQuit(false)
