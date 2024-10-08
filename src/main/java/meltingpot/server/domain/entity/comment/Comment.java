@@ -21,7 +21,7 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    @Size(min = 10, max = 500)
+    @Column(length = 1500)
     private String content;
 
     @Column(name = "is_anonymous")

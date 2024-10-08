@@ -16,6 +16,7 @@ public class Report extends BaseEntity {
     @Column(name = "report_id")
     private Long id;
 
+    @Column(length = 1500)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

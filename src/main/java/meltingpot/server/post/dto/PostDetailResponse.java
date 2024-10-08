@@ -1,6 +1,7 @@
 package meltingpot.server.post.dto;
 
 import lombok.*;
+import meltingpot.server.domain.entity.enums.PostType;
 import meltingpot.server.domain.entity.post.Post;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,14 +14,14 @@ import java.util.stream.Collectors;
 public class PostDetailResponse {
     private Long postId;
     private Long userId;
+    private PostType postType;
     private String name;
     private String title;
     private String content;
-    private List<ImageData> imgData;  // Image data including ID and URL
+    private List<ImageData> imgData;
     private Integer commentCount;
     private LocalDateTime updatedAt;
 
-    // Static nested class to hold image data
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -41,6 +42,7 @@ public class PostDetailResponse {
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .userId(post.getAccount().getId())
+                .postType(post.getPostType())
                 .name(post.getAccount().getName())
                 .title(post.getTitle())
                 .content(post.getContent())

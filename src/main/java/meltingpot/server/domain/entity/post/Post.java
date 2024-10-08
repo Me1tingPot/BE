@@ -29,10 +29,10 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
 
-    @Size(min = 10, max = 500)
+    @Column(length = 1500)
     private String title;
 
-    @Size(min = 10, max = 500)
+    @Column(length = 1500)
     private String content;
 
     @Enumerated(EnumType.STRING)
