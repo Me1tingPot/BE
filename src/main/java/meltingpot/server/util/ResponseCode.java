@@ -15,6 +15,7 @@ public enum ResponseCode {
     OAUTH_SIGNIN_SUCCESS(OK, "SNS 로그인 성공"),
     SIGNOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_TOKEN_SUCCESS(OK, "토큰 재발급 성공"),
+    MAIL_REPORT_ALRERT_SEND_SUCCESS(OK,"누적 신고 알림 메일 전송 성공"),
     MAIL_VERIFICATION_SEND_SUCCESS(OK, "이메일 인증번호 전송 성공"),
     MAIL_VERIFICATION_CHECK_SUCCESS(OK, "인증번호가 일치합니다"),
     MAIL_AVAILABLE(OK, "사용 가능한 이메일입니다"),

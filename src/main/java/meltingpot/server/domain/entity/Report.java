@@ -2,6 +2,7 @@ package meltingpot.server.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import meltingpot.server.domain.entity.comment.Comment;
 import meltingpot.server.domain.entity.common.BaseEntity;
 import meltingpot.server.domain.entity.post.Post;
 
@@ -16,6 +17,7 @@ public class Report extends BaseEntity {
     @Column(name = "report_id")
     private Long id;
 
+    @Column(length = 1500)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,6 +25,12 @@ public class Report extends BaseEntity {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Account account;
+
+
 }
