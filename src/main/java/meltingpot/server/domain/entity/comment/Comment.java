@@ -27,7 +27,7 @@ public class Comment extends BaseEntity {
     @Column(name = "is_anonymous")
     private boolean isAnonymous = false;
 
-    @Column(name = "report_count")
+    @Column(name = "report_count",nullable = false)
     private int reportCount;
 
     @ManyToOne(fetch = FetchType.LAZY)

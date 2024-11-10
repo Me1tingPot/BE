@@ -42,7 +42,7 @@ public class Post extends BaseEntity {
 
     private Boolean isDraft;
 
-    @Column(name = "report_count")
+    @Column(name = "report_count",nullable = false)
     private int reportCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
