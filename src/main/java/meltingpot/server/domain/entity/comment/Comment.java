@@ -27,6 +27,9 @@ public class Comment extends BaseEntity {
     @Column(name = "is_anonymous")
     private boolean isAnonymous = false;
 
+    @Column(name = "report_count")
+    private int reportCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
@@ -103,5 +106,9 @@ public class Comment extends BaseEntity {
 
     public void setChildren(List<Comment> children) {
         this.children = children;
+    }
+
+    public void incrementReportCount() {
+        this.reportCount++;
     }
 }

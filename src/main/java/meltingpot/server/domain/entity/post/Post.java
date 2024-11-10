@@ -29,16 +29,21 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
 
-    @Column(length = 1500)
+    @Column(length = 500)
+    @Size(max = 500, message = "제목은 한글 기준 500자 이내로 입력해주세요.")
     private String title;
 
-    @Column(length = 1500)
+    @Column(length = 500)
+    @Size(max = 500, message = "내용은 한글 기준 500자 이내로 입력해주세요.")
     private String content;
 
     @Enumerated(EnumType.STRING)
     private PostType postType;
 
     private Boolean isDraft;
+
+    @Column(name = "report_count")
+    private int reportCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -68,5 +73,9 @@ public class Post extends BaseEntity {
 
     public void setIsDraft(boolean isDraft) {
         this.isDraft = isDraft;
+    }
+
+    public void incrementReportCount() {
+        this.reportCount++;
     }
 }

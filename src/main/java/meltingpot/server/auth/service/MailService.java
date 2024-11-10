@@ -3,6 +3,8 @@ package meltingpot.server.auth.service;
 import lombok.RequiredArgsConstructor;
 import meltingpot.server.auth.controller.dto.MailVerificationRequestDto;
 import meltingpot.server.auth.controller.dto.VerificationCodeRequestDto;
+import meltingpot.server.domain.entity.Account;
+import meltingpot.server.domain.entity.UserReportCount;
 import meltingpot.server.util.Constants;
 import meltingpot.server.domain.entity.MailVerification;
 import meltingpot.server.domain.repository.AccountRepository;
@@ -116,6 +118,23 @@ public class MailService {
         if(accountRepository.existsByUsername(username)){
             throw new DuplicateException(ResponseCode.EMAIL_DUPLICATION);
         }
+    }
+
+    @Transactional
+    public ResponseCode sendReportAlertEmail(Account account, int reportCount) {
+        String title = "누적 신고 5회 이상 알림";
+        String to = "support@meltingpot.kr";
+        String templateName = "ReportAlertTemplate.html";
+
+        Map<String, String> mailValues = Map.of(
+                "username", account.getName(),
+                "userEmail",account.getUsername(),
+                "userId", account.getId().toString(),
+                "reportCount", String.valueOf(reportCount)
+        );
+
+        mailUtil.sendMimeMessageMailWithValues(title, to, templateName, mailValues);
+        return ResponseCode.MAIL_REPORT_ALRERT_SEND_SUCCESS;
     }
 
 }
