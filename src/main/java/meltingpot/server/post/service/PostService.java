@@ -59,7 +59,7 @@ public class PostService {
         Post post = findPostById(postId);
         isAuthenticated ( post, account);
         updatePostContent(post, account, updateRequest);
-        setPostImages(post,account,updateRequest);
+        setPostImages(post, updateRequest.getImageKeys(), account);
 
         postRepository.save(post);
 
@@ -89,7 +89,7 @@ public class PostService {
     /*post 삭제하기*/
     public ResponseCode deletePost(Long postId, Account account){
         Post post = findPostById(postId);
-        isAuthenticated ( post, account);
+        isAuthenticated (post, account);
 
         // 게시물에 연관된 이미지 삭제
         if (!post.getPostImages().isEmpty()) {
@@ -131,46 +131,38 @@ public class PostService {
         }
     }
 
-    private List<String> getCdnUrls(List<String> imageKeys) {
-        return imageKeys.stream()
-                .map(imageKey -> {
-                    String prefix = "post"; // 적절한 prefix 값을 설정
-                    return fileService.getCdnUrl(prefix, imageKey);
-                })
-                .collect(Collectors.toList());
-    }
-
-    private void updatePostContent(Post post, Account account, PostCreateRequest updateRequest) {
+    private void updatePostContent(Post post, PostCreateRequest updateRequest) {
         post.setTitle(updateRequest.getTitle());
         post.setContent(updateRequest.getContent());
+    }
 
-        // 기존의 모든 PostImage 삭제
+    private void setPostImages(Post post, List<String> imageKeys, Account account) {
+        clearExistingImages(post);
+        List<PostImage> postImages = createPostImages(imageKeys, post, account);
+        post.setPostImages(postImages);
+    }
+
+    private void clearExistingImages(Post post) {
         if (post.getPostImages() != null && !post.getPostImages().isEmpty()) {
             postImageRepository.deleteAll(post.getPostImages());
             post.getPostImages().clear();
         }
     }
-
     private List<PostImage> createPostImages(List<String> imageKeys, Post post, Account account) {
-        List<String> postImgUrls = getCdnUrls(imageKeys);
-        return postImgUrls.stream()
-                .map(imageUrl -> PostImage.builder()
-                        .imageUrl(imageUrl)
-                        .post(post)
-                        .account(account)
-                        .build())
+        return imageKeys.stream()
+                .map(imageKey -> {
+                    String imageUrl = fileService.getCdnUrl("post", imageKey); // prefix는 "post"로 설정
+                    return PostImage.builder()
+                            .imageUrl(imageUrl)
+                            .post(post)
+                            .account(account)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     private Optional<Post> getDraftPost(Account account) {
         return postRepository.findByAccountAndIsDraftTrue(account);
     }
-
-    private void setPostImages(Post post, Account account,PostCreateRequest postRequest) {
-        List<PostImage> postImages = createPostImages(postRequest.getImageKeys(), post, account);
-        post.setPostImages(postImages);
-    }
-
-
 }
 

@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import meltingpot.server.post.dto.PostDetailResponse;
 import meltingpot.server.post.dto.PostsListResponse;
+import meltingpot.server.util.r2.FileService;
+import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import meltingpot.server.util.*;
@@ -23,7 +25,14 @@ import meltingpot.server.post.service.PostService;
 @RequestMapping("/api/v1/posts")
 public class PostController {
     private final PostService postService;
+    private final FileService fileService;
 
+    @Operation(summary = "이미지 업로드를 위한 Pre-signed URL 생성")
+    @PostMapping("/upload-url")
+    public ResponseEntity<FileUploadResponse> getUploadUrl(@RequestParam String prefix) {
+        FileUploadResponse response = fileService.getPreSignedUrl(prefix);
+        return ResponseEntity.ok(response);
+    }
     @Operation(summary = "게시물 작성", description="requestParam으로 임시저장 여부를 알려주세요." +
                                                     "이미지가 없을 때는 빈 값으로 주시면 됩니다.")
     @PostMapping("")
