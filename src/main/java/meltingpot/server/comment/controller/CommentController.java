@@ -9,6 +9,8 @@ import meltingpot.server.domain.entity.Account;
 import meltingpot.server.util.CurrentUser;
 import meltingpot.server.util.ResponseCode;
 import meltingpot.server.util.ResponseData;
+import meltingpot.server.util.r2.FileService;
+import meltingpot.server.util.r2.FileUploadResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,14 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/v1/comments")
 public class CommentController {
     private final CommentService commentService;
+    private final FileService fileService;
 
+    @Operation(summary = "이미지 업로드를 위한 Pre-signed URL 생성")
+    @PostMapping("/upload-url")
+    public ResponseEntity<FileUploadResponse> getUploadUrl(@RequestParam String prefix) {
+        FileUploadResponse response = fileService.getPreSignedUrl(prefix);
+        return ResponseEntity.ok(response);
+    }
     @Operation(summary = "댓글 작성, 이미지가 없으면 null로 주시면 됩니다. ")
     @PostMapping("/{postId}")
     public ResponseEntity<ResponseData> createComment(@RequestBody CommentCreateRequest commentCreateRequest, @CurrentUser Account account, @PathVariable Long postId) {
