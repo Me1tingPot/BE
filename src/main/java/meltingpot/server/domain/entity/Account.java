@@ -85,8 +85,8 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account")
     private List<AccountRole> accountRoles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user_report_count", cascade = CascadeType.ALL)
-    private UserReportCount userReportCount ;
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    private UserReportCount userReportCount;
 
     public List<String> toAuthStringList() {
         return accountRoles.stream().map(a -> a.getRole().getAuthority())

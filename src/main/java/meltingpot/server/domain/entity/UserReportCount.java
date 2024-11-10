@@ -20,7 +20,7 @@ public class UserReportCount {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    private Account account ;
+    private Account account;
 
     public void incrementReportCount() {
         this.reportCount++;
